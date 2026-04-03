@@ -661,23 +661,65 @@ function getStorageKey() {
 
 function addUser() { const name = document.getElementById("newUserName").value.trim(); if(!name) return; let users = JSON.parse(localStorage.getItem("mindUsers") || "[]"); if(!users.includes(name)) users.push(name); localStorage.setItem("mindUsers", JSON.stringify(users)); renderUserList(name); document.getElementById("newUserName").value=""; }
 function deleteUser() { const name = document.getElementById("userSelect").value; if(!name || !confirm("사용자를 삭제할까요?")) return; let users = JSON.parse(localStorage.getItem("mindUsers") || "[]").filter(u => u !== name); localStorage.setItem("mindUsers", JSON.stringify(users)); renderUserList(); }
-function renderUserList(selectName) { const select = document.getElementById("userSelect"); const users = JSON.parse(localStorage.getItem("mindUsers") || "[]"); select.innerHTML = users.length ? "" : "<option value=''>사용자 없음</option>"; users.forEach(u => { const opt = document.createElement("option"); opt.value = u; opt.innerText = u; select.appendChild(opt); }); if(selectName) select.value = selectName; else if(localStorage.getItem("lastUser")) select.value = localStorage.getItem("lastUser"); changeUser(); }
+function renderUserList(selectName) {
+    const select = document.getElementById("userSelect");
+    const users = JSON.parse(localStorage.getItem("mindUsers") || "[]");
+    select.innerHTML = users.length ? "" : "<option value=''>사용자 없음</option>";
+    
+    users.forEach(u => {
+        const opt = document.createElement("option");
+        opt.value = u;
+        opt.innerText = u;
+        select.appendChild(opt);
+    });
+    const lastUser = localStorage.getItem("lastUser");
+    if (selectName) {
+        select.value = selectName;
+    } else if (lastUser && users.includes(lastUser)) {
+        select.value = lastUser;
+    }
+    changeUser();
+}
 function changeUser() { localStorage.setItem("lastUser", document.getElementById("userSelect").value); renderEventList(); }
 function addEvent() { const user = document.getElementById("userSelect").value; const event = document.getElementById("newEventName").value.trim(); if(!user || !event) return; let events = JSON.parse(localStorage.getItem(`events_${user}`) || "[]"); if(!events.includes(event)) events.push(event); localStorage.setItem(`events_${user}`, JSON.stringify(events)); document.getElementById("newEventName").value = ""; renderEventList(event); }
 function deleteEvent() { const user = document.getElementById("userSelect").value; const event = document.getElementById("eventSelect").value; if(!event || !confirm("삭제할까요?")) return; let events = JSON.parse(localStorage.getItem(`events_${user}`) || "[]").filter(e => e !== event); localStorage.setItem(`events_${user}`, JSON.stringify(events)); renderEventList(); }
-function renderEventList(selectEvent) { const user = document.getElementById("userSelect").value; const select = document.getElementById("eventSelect"); const events = JSON.parse(localStorage.getItem(`events_${user}`) || "[]"); select.innerHTML = events.length ? "" : "<option value=''>사건 없음</option>"; events.forEach(e => { const opt = document.createElement("option"); opt.value = e; opt.innerText = e; select.appendChild(opt); }); if(selectEvent) select.value = selectEvent; syncTitleAndLoad(); }
-
+function renderEventList(selectEvent) {
+    const user = document.getElementById("userSelect").value;
+    const select = document.getElementById("eventSelect");
+    const events = JSON.parse(localStorage.getItem(`events_${user}`) || "[]");
+    select.innerHTML = events.length ? "" : "<option value=''>사건 없음</option>";
+    events.forEach(e => {
+        const opt = document.createElement("option");
+        opt.value = e;
+        opt.innerText = e;
+        select.appendChild(opt);
+    });
+    const lastEventKey = `lastEvent_${user}`;
+    const lastEvent = localStorage.getItem(lastEventKey);
+    if (selectEvent) {
+        select.value = selectEvent;
+    } else if (lastEvent && events.includes(lastEvent)) {
+        select.value = lastEvent;
+    }
+    if (select.value) {
+        localStorage.setItem(lastEventKey, select.value);
+    }
+    syncTitleAndLoad();
+}
 function syncTitleAndLoad() { 
+    const user = document.getElementById("userSelect").value;
     const eventName = document.getElementById("eventSelect").value; 
+    if (user && eventName) {
+        localStorage.setItem(`lastEvent_${user}`, eventName);
+    }
     const key = getStorageKey(); 
     const savedTitle = localStorage.getItem(key + "_title"); 
     document.getElementById("mainTitle").value = savedTitle ? savedTitle : (eventName || ""); 
     loadContents(); 
-    
     const statusText = document.getElementById("adminStatusText");
     if (!document.getElementById("adminContent").classList.contains("show")) {
-        const user = document.getElementById("userSelect").value || "없음";
-        statusText.innerText = `⚙️ 설정 (사용자: ${user} / 사건: ${eventName || "없음"})`;
+        const u = user || "없음";
+        statusText.innerText = `⚙️ 설정 (사용자: ${u} / 사건: ${eventName || "없음"})`;
     }
 }
 
