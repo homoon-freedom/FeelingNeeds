@@ -129,6 +129,8 @@
         .btn { padding: 8px 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; }
         .btn-add { background: var(--accent-blue); color: white; }
         .btn-del { background: var(--danger-red); color: white; }
+		.btn-edit { padding: 5px 10px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; background-color: #f39c12; color: white; margin-right: 2px;
+}
         
         #mainTitle { width: calc(100% - 30px); margin: 10px 15px; padding: 12px; font-size: 18px; font-weight: 800; text-align: center; border: 2px solid var(--accent-blue); border-radius: 10px; color: var(--primary-blue); background: white; box-sizing: border-box; }
         
@@ -258,6 +260,7 @@
                     </div>
                     <div class="input-group">
                         <select id="userSelect" onchange="changeUser()"></select>
+						<button class="btn btn-edit" onclick="editEvent()" style="background-color: #f39c12; color: white;">수정</button>
                         <button class="btn btn-del" onclick="deleteUser()">삭제</button>
                     </div>
                 </div>
@@ -682,6 +685,16 @@ function renderUserList(selectName) {
 function changeUser() { localStorage.setItem("lastUser", document.getElementById("userSelect").value); renderEventList(); }
 function addEvent() { const user = document.getElementById("userSelect").value; const event = document.getElementById("newEventName").value.trim(); if(!user || !event) return; let events = JSON.parse(localStorage.getItem(`events_${user}`) || "[]"); if(!events.includes(event)) events.push(event); localStorage.setItem(`events_${user}`, JSON.stringify(events)); document.getElementById("newEventName").value = ""; renderEventList(event); }
 function deleteEvent() { const user = document.getElementById("userSelect").value; const event = document.getElementById("eventSelect").value; if(!event || !confirm("삭제할까요?")) return; let events = JSON.parse(localStorage.getItem(`events_${user}`) || "[]").filter(e => e !== event); localStorage.setItem(`events_${user}`, JSON.stringify(events)); renderEventList(); }
+function editEvent() { const eventSelect = document.getElementById('eventSelect'); const selectedOption = eventSelect.options[eventSelect.selectedIndex]; if (!selectedOption || !selectedOption.value) { alert("수정할 사건을 먼저 선택해주세요."); return;}
+    const oldName = selectedOption.text;
+    const newName = prompt("사건명을 수정하시겠습니까?", oldName);
+    if (newName && newName.trim() !== "" && newName !== oldName) {
+        selectedOption.text = newName;
+        selectedOption.value = newName;
+        syncTitleAndLoad(); 
+        alert("수정되었습니다.");
+    }
+}	
 function renderEventList(selectEvent) {
     const user = document.getElementById("userSelect").value;
     const select = document.getElementById("eventSelect");
