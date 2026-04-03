@@ -322,14 +322,23 @@
             <textarea id="step7" placeholder="예: 내가 시간에 예민했던 건 존중받고 싶어서였구나. 충분히 그럴 수 있어."></textarea>
         </div>
 
-        <div class="record-card" id="step8-container" style="border-top: 5px solid #333;">
-            <div class="record-card-title">Gemini</div>
-            <div class="record-card-desc">전체 내용을 관통하는 한 문장을 적고 복사해 보세요 (내용은 고정됩니다)</div>
-            <textarea id="step8" placeholder="예: [사건]에 대해 관찰한 결과, 나의 핵심 욕구는 [욕구]임을 알게 되었습니다."></textarea>
-            <button class="copy-btn" onclick="copyFinalText()">
-                <span>📋 내용만 합쳐서 복사하기</span>
-            </button>
+<div class="record-card" id="step8-container" style="border-top: 5px solid #333;">
+    <div class="card-title-row" onclick="toggleStep8()" style="cursor: pointer;">
+        <div class="record-card-title">
+            Gemini <span id="toggle-icon" style="font-size: 12px; margin-left: 5px;">▲</span>
         </div>
+        <div class="record-card-desc" style="margin-bottom: 0; font-size: 11px;">클릭하여 접기/펴기</div>
+    </div>
+
+    <div id="step8-content" style="display: none;">
+		<span id="toggle-icon" style="font-size: 12px; margin-left: 5px;"></span>
+        <div class="record-card-desc">전체 내용을 관통하는 한 문장을 적고 복사해 보세요</div>
+        <textarea id="step8" placeholder="예: [사건]에 대해 관찰한 결과, 나의 핵심 욕구는 [욕구]임을 알게 되었습니다."></textarea>
+        <button class="copy-btn" onclick="copyFinalText()">
+            <span>📋 내용만 합쳐서 복사하기</span>
+        </button>
+    </div>
+</div>
     </div>
 </section>
 
@@ -837,7 +846,30 @@ async function makeImage() {
 function resetShareBtn() { const b = document.getElementById("shareBtn"); b.disabled = false; b.innerText = "이미지 공유"; }
 function showFallback(canvas) { document.getElementById("previewImg").src = canvas.toDataURL("image/png"); document.getElementById("previewBox").style.display = "flex"; }
 function closePreview() { document.getElementById("previewBox").style.display = "none"; }
+// 페이지가 처음 로드될 때 실행되는 함수
+window.onload = function() {
+    const content = document.getElementById('step8-content');
+    const icon = document.getElementById('toggle-icon');
+        // 처음에는 내용을 숨기고 아이콘을 '접힘' 모양으로 설정
+    if (content && icon) {
+        content.style.display = 'none';
+        icon.innerText = '▼';
+    }
+};
 
+// 기존 토글 함수 (동일)
+function toggleStep8() {
+    const content = document.getElementById('step8-content');
+    const icon = document.getElementById('toggle-icon');
+    
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.innerText = '▲'; 
+    } else {
+        content.style.display = 'none';
+        icon.innerText = '▼'; 
+    }
+}
 window.onload = function() {
     renderGrid('emotions'); renderGrid('needs'); renderUserList();
     initScrollDetection();
