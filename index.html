@@ -97,7 +97,6 @@
         .back { transform: rotateY(180deg); background-color: white !important; overflow-y: auto; }
         .front { justify-content: center; align-items: center; text-align: center; }
         
-        /* 카드 이미지/아이콘 영역 추가 */
         .card-image {
             width: 120px; height: 120px; margin-bottom: 20px;
             background-size: contain; background-repeat: no-repeat; background-position: center;
@@ -138,7 +137,6 @@
         .btn { padding: 8px 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; }
         .btn-add { background: var(--accent-blue); color: white; }
         .btn-del { background: var(--danger-red); color: white; }
-        .btn-edit { padding: 5px 10px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; background-color: #f39c12; color: white; margin-right: 2px; }
         
         #mainTitle { width: calc(100% - 30px); margin: 10px 15px; padding: 12px; font-size: 18px; font-weight: 800; text-align: center; border: 2px solid var(--accent-blue); border-radius: 10px; color: var(--primary-blue); background: white; box-sizing: border-box; }
         
@@ -271,7 +269,6 @@
                     </div>
                     <div class="input-group">
                         <select id="eventSelect" onchange="syncTitleAndLoad()"></select>
-                        <button class="btn btn-edit" onclick="editEvent()">수정</button>
                         <button class="btn btn-del" onclick="deleteEvent()">삭제</button>
                     </div>
                 </div>
@@ -497,12 +494,10 @@ const emotionsData = [
 let sourceNeedId = null;
 
 /* --- Supabase 연동 기능 시작 --- */
-// 본인의 Supabase 프로젝트 API 정보로 교체하세요.
 const SUPABASE_URL = 'https://ocghxynajjbkpbyljxzg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jZ2h4eW5hampia3BieWxqeHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2OTg4MTksImV4cCI6MjA5MTI3NDgxOX0.weaiOCV0UMjsfSmEI_WU_0L4qJUOGRrtoWEwPKN26is';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// 클라우드 저장 함수
 async function saveToSupabase() {
     const user = document.getElementById("userSelect").value;
     const event = document.getElementById("eventSelect").value;
@@ -539,7 +534,6 @@ async function saveToSupabase() {
     }
 }
 
-// 클라우드 불러오기 함수
 async function loadFromSupabase() {
     const user = document.getElementById("userSelect").value;
     const event = document.getElementById("eventSelect").value;
@@ -564,7 +558,6 @@ async function loadFromSupabase() {
         }
 
         if(confirm("클라우드 데이터를 불러올까요?\n현재 화면의 내용이 저장된 내용으로 교체됩니다.")) {
-            // 화면에 반영
             document.getElementById("mainTitle").value = data.title || "";
             for(let i=1; i<=7; i++) {
                 const ta = document.getElementById("step" + i);
@@ -574,7 +567,6 @@ async function loadFromSupabase() {
                 }
             }
 
-            // 기존 로컬 스토리지 데이터도 함께 업데이트 (동기화)
             const key = getStorageKey();
             localStorage.setItem(key + "_title", data.title || "");
             for(let i=1; i<=7; i++) {
@@ -591,7 +583,6 @@ async function loadFromSupabase() {
 }
 /* --- Supabase 연동 기능 끝 --- */
 
-/* 토글 기능 */
 function toggleAdminPanel() {
     const content = document.getElementById("adminContent");
     const icon = document.getElementById("toggleIcon");
@@ -610,7 +601,6 @@ function toggleAdminPanel() {
     }
 }
 
-/* 탭 전환 */
 function showSection(type) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
@@ -712,7 +702,6 @@ function backToSourceNeed() {
     }, 200);
 }
 
-/* 그리드 렌더링 (이미지 삽입 로직 추가) */
 function renderGrid(type) {
     const data = type === 'needs' ? needsData : emotionsData;
     const grid = document.getElementById(type + '-grid');
@@ -739,7 +728,6 @@ function renderGrid(type) {
             if (!flipped) card.classList.add('is-flipped');
         };
 
-        // 카테고리별 이미지/아이콘 매칭
         let emoji = "✨";
         const cat = item.cat.split('-')[1];
         if(cat === 'joy') emoji = "😊";
@@ -774,7 +762,6 @@ function renderGrid(type) {
                 </button>`;
         }
 
-        // 카테고리별 상징적인 색상 배경이 있는 이모지 영역 (이미지 대용)
         const imageArea = `<div style="font-size: 80px; margin-bottom: 20px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.15))">${emoji}</div>`;
 
         card.innerHTML = `
@@ -822,16 +809,7 @@ function renderUserList(selectName) {
 function changeUser() { localStorage.setItem("lastUser", document.getElementById("userSelect").value); renderEventList(); }
 function addEvent() { const user = document.getElementById("userSelect").value; const event = document.getElementById("newEventName").value.trim(); if(!user || !event) return; let events = JSON.parse(localStorage.getItem(`events_${user}`) || "[]"); if(!events.includes(event)) events.push(event); localStorage.setItem(`events_${user}`, JSON.stringify(events)); document.getElementById("newEventName").value = ""; renderEventList(event); }
 function deleteEvent() { const user = document.getElementById("userSelect").value; const event = document.getElementById("eventSelect").value; if(!event || !confirm("삭제할까요?")) return; let events = JSON.parse(localStorage.getItem(`events_${user}`) || "[]").filter(e => e !== event); localStorage.setItem(`events_${user}`, JSON.stringify(events)); renderEventList(); }
-function editEvent() { const eventSelect = document.getElementById('eventSelect'); const selectedOption = eventSelect.options[eventSelect.selectedIndex]; if (!selectedOption || !selectedOption.value) { alert("수정할 사건을 먼저 선택해주세요."); return;}
-    const oldName = selectedOption.text;
-    const newName = prompt("사건명을 수정하시겠습니까?", oldName);
-    if (newName && newName.trim() !== "" && newName !== oldName) {
-        selectedOption.text = newName;
-        selectedOption.value = newName;
-        syncTitleAndLoad(); 
-        alert("수정되었습니다.");
-    }
-}   
+
 function renderEventList(selectEvent) {
     const user = document.getElementById("userSelect").value;
     const select = document.getElementById("eventSelect");
@@ -850,6 +828,7 @@ function renderEventList(selectEvent) {
     if (select.value) localStorage.setItem(lastEventKey, select.value);
     syncTitleAndLoad();
 }
+
 function syncTitleAndLoad() { 
     const user = document.getElementById("userSelect").value;
     const eventName = document.getElementById("eventSelect").value; 
@@ -975,7 +954,6 @@ window.onload = function() {
     renderGrid('emotions'); renderGrid('needs'); renderUserList();
     initScrollDetection();
     
-    // 초기 8번 항목 설정
     const content = document.getElementById('step8-content');
     const icon = document.getElementById('toggle-icon');
     if (content && icon) { content.style.display = 'none'; icon.innerText = '▼'; }
