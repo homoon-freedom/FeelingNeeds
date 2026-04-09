@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>통합 마음 가이드 & 기록장</title>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             /* 카드 카테고리 색상 */
@@ -26,7 +27,7 @@
         
         html, body { 
             height: 100%; margin: 0; padding: 0; overflow: hidden; 
-	        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
             background: var(--bg-gray); color: var(--text); 
             line-height: 1.5; word-break: keep-all;
         }
@@ -137,7 +138,7 @@
         .btn { padding: 8px 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; }
         .btn-add { background: var(--accent-blue); color: white; }
         .btn-del { background: var(--danger-red); color: white; }
-		.btn-edit { padding: 5px 10px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; background-color: #f39c12; color: white; margin-right: 2px; }
+        .btn-edit { padding: 5px 10px; font-size: 11px; border: none; border-radius: 4px; cursor: pointer; background-color: #f39c12; color: white; margin-right: 2px; }
         
         #mainTitle { width: calc(100% - 30px); margin: 10px 15px; padding: 12px; font-size: 18px; font-weight: 800; text-align: center; border: 2px solid var(--accent-blue); border-radius: 10px; color: var(--primary-blue); background: white; box-sizing: border-box; }
         
@@ -259,7 +260,7 @@
                     </div>
                     <div class="input-group">
                         <select id="userSelect" onchange="changeUser()"></select>
-						<button class="btn btn-del" onclick="deleteUser()">삭제</button>
+                        <button class="btn btn-del" onclick="deleteUser()">삭제</button>
                     </div>
                 </div>
                 <div class="manage-row">
@@ -270,8 +271,15 @@
                     </div>
                     <div class="input-group">
                         <select id="eventSelect" onchange="syncTitleAndLoad()"></select>
-						<button class="btn btn-edit" onclick="editEvent()">수정</button>
+                        <button class="btn btn-edit" onclick="editEvent()">수정</button>
                         <button class="btn btn-del" onclick="deleteEvent()">삭제</button>
+                    </div>
+                </div>
+                <div class="manage-row" style="border-bottom:none; margin-top: 10px;">
+                    <span class="label" style="font-size:11px; font-weight:800; color:#8E8E93">3. 클라우드 백업</span>
+                    <div class="input-group">
+                        <button class="btn" style="background:#3ecf8e; color:white; flex:1;" onclick="saveToSupabase()">저장하기</button>
+                        <button class="btn" style="background:#6c757d; color:white; flex:1;" onclick="loadFromSupabase()">불러오기</button>
                     </div>
                 </div>
             </div>
@@ -342,7 +350,7 @@
 
 <div class="fixed-bottom-bar" id="fixedBottomBar">
     <button class="btn-clear" onclick="clearInputs()">비우기</button>
-	<button class="btn-image" id="shareBtn" onclick="makeImage()">이미지 공유</button>
+    <button class="btn-image" id="shareBtn" onclick="makeImage()">이미지 공유</button>
 </div>
 
 <div class="floating-btns">
@@ -487,6 +495,101 @@ const emotionsData = [
 
 /* 공통 변수 */
 let sourceNeedId = null;
+
+/* --- Supabase 연동 기능 시작 --- */
+// 본인의 Supabase 프로젝트 API 정보로 교체하세요.
+const SUPABASE_URL = 'https://ocghxynajjbkpbyljxzg.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jZ2h4eW5hampia3BieWxqeHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2OTg4MTksImV4cCI6MjA5MTI3NDgxOX0.weaiOCV0UMjsfSmEI_WU_0L4qJUOGRrtoWEwPKN26is';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// 클라우드 저장 함수
+async function saveToSupabase() {
+    const user = document.getElementById("userSelect").value;
+    const event = document.getElementById("eventSelect").value;
+    
+    if(!user || !event) {
+        alert("사용자와 사건을 먼저 설정해주세요.");
+        return;
+    }
+
+    const saveData = {
+        user_id: user,
+        event_name: event,
+        title: document.getElementById("mainTitle").value,
+        step1: document.getElementById("step1").value,
+        step2: document.getElementById("step2").value,
+        step3: document.getElementById("step3").value,
+        step4: document.getElementById("step4").value,
+        step5: document.getElementById("step5").value,
+        step6: document.getElementById("step6").value,
+        step7: document.getElementById("step7").value,
+        updated_at: new Date()
+    };
+
+    try {
+        const { error } = await supabaseClient
+            .from('mind_records') 
+            .upsert(saveData, { onConflict: 'user_id, event_name' });
+
+        if (error) throw error;
+        alert("☁️ 클라우드 저장이 완료되었습니다!");
+    } catch (err) {
+        console.error(err);
+        alert("저장 실패: " + err.message);
+    }
+}
+
+// 클라우드 불러오기 함수
+async function loadFromSupabase() {
+    const user = document.getElementById("userSelect").value;
+    const event = document.getElementById("eventSelect").value;
+
+    if(!user || !event) {
+        alert("불러올 사용자와 사건을 선택해주세요.");
+        return;
+    }
+
+    try {
+        const { data, error } = await supabaseClient
+            .from('mind_records')
+            .select('*')
+            .eq('user_id', user)
+            .eq('event_name', event)
+            .maybeSingle();
+
+        if (error) throw error;
+        if (!data) {
+            alert("저장된 클라우드 데이터가 없습니다.");
+            return;
+        }
+
+        if(confirm("클라우드 데이터를 불러올까요?\n현재 화면의 내용이 저장된 내용으로 교체됩니다.")) {
+            // 화면에 반영
+            document.getElementById("mainTitle").value = data.title || "";
+            for(let i=1; i<=7; i++) {
+                const ta = document.getElementById("step" + i);
+                if(ta) {
+                    ta.value = data["step" + i] || "";
+                    autoResize(ta);
+                }
+            }
+
+            // 기존 로컬 스토리지 데이터도 함께 업데이트 (동기화)
+            const key = getStorageKey();
+            localStorage.setItem(key + "_title", data.title || "");
+            for(let i=1; i<=7; i++) {
+                localStorage.setItem(key + "_step" + i, data["step" + i] || "");
+            }
+            
+            updateContextDisplay(data.step1 || "");
+            alert("✅ 클라우드 데이터를 성공적으로 불러왔습니다!");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("불러오기 실패: " + err.message);
+    }
+}
+/* --- Supabase 연동 기능 끝 --- */
 
 /* 토글 기능 */
 function toggleAdminPanel() {
@@ -728,7 +831,7 @@ function editEvent() { const eventSelect = document.getElementById('eventSelect'
         syncTitleAndLoad(); 
         alert("수정되었습니다.");
     }
-}	
+}   
 function renderEventList(selectEvent) {
     const user = document.getElementById("userSelect").value;
     const select = document.getElementById("eventSelect");
