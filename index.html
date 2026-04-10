@@ -139,12 +139,16 @@
         .record-card-desc { font-size: 11px; color: #8E8E93; margin-bottom: 10px; line-height: 1.6; }
         
         /* 공통 텍스트 입력 스타일 */
-        textarea, .editable-list { 
-            width: 100%; box-sizing: border-box; min-height: 120px; border: none; outline: none; resize: none; 
-            font-size: 14px; background: var(--light-blue); padding: 12px; border-radius: 5px; 
-            line-height: 1.6; color: #2c3e50; font-family: 'Pretendard', sans-serif; 
-            white-space: pre-wrap; word-break: break-all; overflow-wrap: break-word;
-        }
+textarea, .editable-list { 
+    width: 100%; box-sizing: border-box; 
+    min-height: 80px; /* 최소 높이는 유지 */
+    height: auto;     /* 높이를 자동으로 */
+    border: none; outline: none; resize: none; 
+    font-size: 14px; background: var(--light-blue); padding: 12px; border-radius: 5px; 
+    line-height: 1.6; color: #2c3e50; font-family: 'Pretendard', sans-serif; 
+    white-space: pre-wrap; word-break: break-all; overflow-wrap: break-word;
+    overflow: hidden; /* 스크롤바가 보이지 않게 처리 */
+}
         textarea::placeholder { color: #9bbad3; font-size: 13px; }
 
         .editable-list ul { list-style: none; padding: 0; margin: 0; }
@@ -290,19 +294,19 @@
         <div class="record-card">
             <div class="record-card-title">1. 사건 인식</div>
             <div class="record-card-desc">투사나 자기비난을 내려놓고 사실만 적어보세요</div>
-            <textarea id="step1" placeholder="예: 아내가 약속 시간보다 20분 늦게 도착했다."></textarea>
+            <textarea id="step1" placeholder=""></textarea>
         </div>
 
         <div class="record-card">
             <div class="record-card-title">2. 감정 찾기</div>
             <div class="record-card-desc">카드에서 찾은 감정 단어들을 나열해 보세요.</div>
-            <textarea id="step2" placeholder="예: •답답하다 : 설명\n•서운하다 : 설명"></textarea>
+            <textarea id="step2" placeholder=""></textarea>
         </div>
 
         <div class="record-card">
             <div class="record-card-title">3. 감정을 일으킨 생각</div>
             <div class="record-card-desc">감정을 일으킨 내 안의 '판단'이나 '생각'은?</div>
-            <div id="step3" class="editable-list" contenteditable="true" data-placeholder="예: '내 시간을 소중히 여기지 않는 것 같아'라는 생각이 들었다."><ul><li></li></ul></div>
+            <div id="step3" class="editable-list" contenteditable="true" data-placeholder=""><ul><li></li></ul></div>
         </div>
 
         <div class="record-card">
@@ -314,19 +318,19 @@
         <div class="record-card">
             <div class="record-card-title">5. 욕구 강화</div>
             <div class="record-card-desc">이 욕구가 나에게 왜 그토록 소중한가요?</div>
-            <div id="step5" class="editable-list" contenteditable="true" data-placeholder="예: 나는 신뢰를 바탕으로 한 관계에서 안정감을 느끼기 때문이다."><ul><li></li></ul></div>
+            <div id="step5" class="editable-list" contenteditable="true" data-placeholder=""><ul><li></li></ul></div>
         </div>
 
         <div class="record-card">
             <div class="record-card-title">6. 구체적인 행동</div>
             <div class="record-card-desc">나와 상대의 욕구를 돕기 위한 실천 3가지</div>
-            <div id="step6" class="editable-list" contenteditable="true" data-placeholder="예: 1. 심호흡하기 / 2. 내 욕구를 부탁하기 / 3. 상황 물어보기"><ul><li></li></ul></div>
+            <div id="step6" class="editable-list" contenteditable="true" data-placeholder=""><ul><li></li></ul></div>
         </div>
 
         <div class="record-card">
             <div class="record-card-title">7. 정리 및 통합</div>
             <div class="record-card-desc">오늘의 과정을 통해 새롭게 알게 된 점이나 나에게 해주고 싶은 말</div>
-            <textarea id="step7" placeholder="예: 내가 시간에 예민했던 건 존중받고 싶어서였구나. 충분히 그럴 수 있어."></textarea>
+            <textarea id="step7" placeholder=""></textarea>
         </div>
 
         <div class="record-card" id="step8-container" style="border-top: 5px solid #333;">
@@ -338,10 +342,10 @@
             </div>
 
             <div id="step8-content" style="display: none;">
-                <div class="record-card-desc">전체 내용을 관통하는 한 문장을 적고 복사해 보세요</div>
+                <div class="record-card-desc">Gemini에게 물어보기 : 사건과 결합할 문장을 넣고 복사해서 사용하세요.</div>
                 <textarea id="step8" placeholder="예: [사건]에 대해 관찰한 결과, 나의 핵심 욕구는 [욕구]임을 알게 되었습니다."></textarea>
                 <button class="copy-btn" onclick="copyFinalText()">
-                    <span>📋 복사하기:Gemini 질문문장(사건+질문)</span>
+                    <span>📋 복사하기:Gemini 질문 문장(사건+질문)</span>
                 </button>
             </div>
         </div>
@@ -542,6 +546,13 @@ async function loadFromSupabase() {
             alert("✅ 불러오기 성공!");
         }
     } catch (err) { alert("불러오기 실패: " + err.message); }
+}
+
+// textarea 높이 자동 조절 함수
+function autoResizeTextarea(element) {
+    if (!element) return;
+    element.style.height = 'auto'; // 높이 초기화
+    element.style.height = element.scrollHeight + 'px'; // 내용 높이만큼 적용
 }
 
 /* UI 유틸리티 */
@@ -759,6 +770,7 @@ function syncTitleAndLoad() {
         else if(document.getElementById("step"+i)) document.getElementById("step"+i).value = val;
     }
     updateContextDisplay(document.getElementById('step1').value);
+    document.querySelectorAll("textarea").forEach(ta => autoResizeTextarea(ta));
 }
 
 function saveAllToLocal() {
@@ -825,18 +837,35 @@ function scrollToActiveTop() {
 
 window.onload = function() {
     renderUserList();
+    
+    // 1. 기존 textarea들에 대한 처리
+    const textareas = document.querySelectorAll("textarea");
+    textareas.forEach(ta => {
+        // 입력할 때마다 높이 조절
+        ta.addEventListener("input", (e) => {
+            autoResizeTextarea(e.target);
+            saveAllToLocal();
+            if(e.target.id === 'step1') updateContextDisplay(e.target.value);
+        });
+        // 초기 로딩 시 데이터가 있으면 높이 조절
+        setTimeout(() => autoResizeTextarea(ta), 100); 
+    });
+
+    // 2. 기존 editable-list(3, 5, 6번) 처리
     [3, 5, 6].forEach(i => {
         const el = document.getElementById("step" + i);
         el.addEventListener("input", handleListInput);
         el.addEventListener("focus", () => { if(el.innerText.trim()==="") setListContent("step"+i, ""); });
     });
+
+    // 3. 사건 변경 시 높이 재조절을 위해 syncTitleAndLoad 끝에 추가
+    // (syncTitleAndLoad 함수 마지막 줄에 아래 내용을 넣어주면 좋습니다)
+    // textareas.forEach(ta => autoResizeTextarea(ta));
+
     document.getElementById("mainTitle").addEventListener("input", saveAllToLocal);
-    document.querySelectorAll("textarea").forEach(ta => ta.addEventListener("input", (e) => {
-        saveAllToLocal();
-        if(e.target.id === 'step1') updateContextDisplay(e.target.value);
-    }));
     document.querySelectorAll('.content-section').forEach(section => { section.addEventListener('scroll', checkScroll); });
 };
+
 </script>
 </body>
 </html>
