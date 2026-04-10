@@ -184,14 +184,47 @@ textarea, .editable-list {
 
         /* 부유형 버튼 스타일 보완 */
         .floating-btns { position: fixed; bottom: 100px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 3000; }
-        .go-top-btn { 
-            width: 50px; height: 50px; background: var(--primary-blue); color: white; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; cursor: pointer; 
-            opacity: 0; visibility: hidden; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-            font-size: 20px;
-        }
-        .go-top-btn.show { opacity: 1; visibility: visible; }
-        .go-top-btn:hover { background: var(--accent-blue); transform: translateY(-3px); }
+.go-top-btn { 
+    /* 크기 조절: 글자가 들어갈 수 있도록 가로를 조금 넓힙니다 */
+    width: 65px; 
+    height: 40px; 
+    
+    background: var(--primary-blue); 
+    color: white; 
+    
+    /* 원형(50%)에서 사각 라운드(8px)로 변경 */
+    border-radius: 8px; 
+    
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    cursor: pointer; 
+    
+    /* 애니메이션 효과 */
+    opacity: 0; 
+    visibility: hidden; 
+    transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+    
+    /* 글씨 스타일 조절 */
+    font-size: 13px;
+    font-weight: 800;
+    z-index: 3000;
+}
+
+/* 아래 show와 hover 클래스는 기존 스타일 유지 또는 활용 */
+.go-top-btn.show { 
+    opacity: 1; 
+    visibility: visible; 
+    transform: translateY(0); 
+}
+
+.go-top-btn:hover { 
+    background: var(--accent-blue); 
+    transform: translateY(-5px); 
+}
         
         #previewBox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; flex-direction: column; z-index: 4000; padding: 20px; }
         #previewImg { max-width: 100%; max-height: 70%; border-radius: 10px; object-fit: contain; }
@@ -223,9 +256,6 @@ textarea, .editable-list {
 </nav>
 
 <section id="emotions-section" class="content-section">
-    <header>
-        <p class="subtitle">지금 느껴지는 감정을 몸으로 먼저 느껴보세요. 그리고 용기를 가지고 자신의 내면의 소리에 집중해보세요.</p>
-    </header>
     <div class="context-guide">
         <span class="context-label">지금 관찰 중인 사건</span>
         <div id="context-display-emotions" class="context-text-display">기록장에서 사건을 먼저 입력해 보세요.</div>
@@ -235,9 +265,6 @@ textarea, .editable-list {
 </section>
 
 <section id="needs-section" class="content-section">
-    <header>
-        <p class="subtitle">감정 아래 숨겨진 당신의 소중한 욕구를 찾아보세요. 어떤 욕구로 인해 이런 감정이 들었는지 깊이 내면을 들여다보세요.</p>
-    </header>
     <div class="context-guide">
         <span class="context-label">지금 관찰 중인 사건</span>
         <div id="context-display-needs" class="context-text-display">기록장에서 사건을 먼저 입력해 보세요.</div>
@@ -248,10 +275,6 @@ textarea, .editable-list {
 
 <section id="record-section" class="content-section active">
     <div id="capture">
-        <header>
-            <p class="subtitle"><strong>관찰, 감정, 그리고 그 감정을 일으킨 생각과 욕구를 찾아 내면의 목소리에 귀를 기울이는 시간입니다</strong></p>
-        </header>
-
         <div class="admin-section" id="adminPanel">
             <button class="admin-toggle-btn" onclick="toggleAdminPanel()">
                 <span id="adminStatusText">⚙️ 사용자 및 사건 설정</span>
@@ -353,12 +376,12 @@ textarea, .editable-list {
 </section>
 
 <div class="fixed-bottom-bar" id="fixedBottomBar">
-    <button class="btn-save-cloud" onclick="saveToSupabase()">☁️ 클라우드에 저장</button>
-    <button class="btn-image" id="shareBtn" onclick="makeImage()">이미지 공유</button>
+    <button class="btn-save-cloud" onclick="saveToSupabase()">☁️ 클라우드에 저장 ☁️</button>
+    <button class="btn-image" id="shareBtn" onclick="makeImage()">❤️ 이미지 공유 ❤️</button>
 </div>
 
 <div class="floating-btns">
-    <div class="go-top-btn" id="goTop" onclick="scrollToActiveTop()">▲</div>
+    <div class="go-top-btn" id="goTop" onclick="scrollToActiveTop()">맨위로</div>
 </div>
 
 <div id="previewBox">
@@ -640,8 +663,19 @@ function renderGrid(type) {
         index.appendChild(link);
         const card = document.createElement('div');
         card.className = `card ${item.cat}`; card.id = `${type}-card-${item.name}`;
-        card.onclick = () => { card.classList.toggle('is-flipped'); };
-        let emoji = "✨";
+	card.onclick = () => {
+            // 1. 현재 클릭한 카드 외에 'is-flipped' 클래스가 있는 모든 카드를 찾아 클래스 제거
+            document.querySelectorAll('.card.is-flipped').forEach(flippedCard => {
+                if (flippedCard !== card) {
+                    flippedCard.classList.remove('is-flipped');
+                }
+            });
+            
+            // 2. 현재 클릭한 카드 토글
+            card.classList.toggle('is-flipped');
+        };
+        
+	let emoji = "✨";
         const cat = item.cat.split('-')[1];
         const emojis = {joy:"😊", love:"❤️", peace:"🌿", anx:"😰", ang:"🔥", sad:"💧", auto:"🦋", conn:"🤝", well:"🍎", meaning:"💎"};
         emoji = emojis[cat] || "✨";
@@ -653,7 +687,7 @@ function renderGrid(type) {
              <span class="section-label">몸의 상태</span><div class="body-status">${item.body}</div>
              <span class="section-label">확언</span><div class="affirmation-box">"${item.aff}"</div>`;
         card.innerHTML = `<div class="card-inner"><div class="front"><div style="font-size:80px; margin-bottom:20px;">${emoji}</div><div class="title">${item.name}</div><div class="desc">${item.desc}</div></div>
-                          <div class="back"><div class="title">${item.name}</div>${backContent}<button class="add-to-record-btn" onclick="event.stopPropagation(); addToRecord('${type}', '${item.name}', this)">＋ 기록장 추가</button></div></div>`;
+                          <div class="back"><div class="title">${item.name}</div>${backContent}<button class="add-to-record-btn" onclick="event.stopPropagation(); addToRecord('${type}', '${item.name}', this)">＋ 기록장에 추가</button></div></div>`;
         grid.appendChild(card);
     });
 }
