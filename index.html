@@ -8,21 +8,30 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            /* 카드 카테고리 색상 */
+            /* 감정,욕구 카드의 카테고리 색상 */
             --meaning-core: #ffcc80; --connection-core: #f48fb1; --autonomy-core: #90cead;
             --wellbeing-core: #81d4fa; --peace-core: #b39ddb;
             --joy-core: #fff176; --love-core: #f06292; --sadness-core: #64b5f6;
             --anxiety-core: #ba68c8; --anger-core: #ef5350;
-
-            --meaning-bg: rgba(255, 204, 128, 0.7); --connection-bg: rgba(244, 143, 177, 0.8); --autonomy-bg: rgba(144, 206, 173, 0.7);
-            --wellbeing-bg: rgba(129, 212, 250, 0.7); --peace-bg: rgba(179, 157, 219, 0.8);
-            --joy-bg: rgba(255, 241, 118, 0.7); --love-bg: rgba(240, 98, 146, 0.8); --sadness-bg: rgba(100, 181, 246, 0.8);
-            --anxiety-bg: rgba(186, 104, 200, 0.8); --anger-bg: rgba(239, 83, 80, 0.8);
+            --meaning-bg: rgba(255, 204, 128, 0.7); 
+			--connection-bg: rgba(244, 143, 177, 0.8); 
+			--autonomy-bg: rgba(144, 206, 173, 0.7);
+            --wellbeing-bg: rgba(129, 212, 250, 0.7); 
+			--peace-bg: rgba(179, 157, 219, 0.8);
+            --joy-bg: rgba(255, 241, 118, 0.7); 
+			--love-bg: rgba(240, 98, 146, 0.8); 
+			--sadness-bg: rgba(100, 181, 246, 0.8);
+            --anxiety-bg: rgba(186, 104, 200, 0.8); 
+			--anger-bg: rgba(239, 83, 80, 0.8);
             
             /* 기록장 색상 */
-            --primary-blue: #003366; --accent-blue: #007AFF; --light-blue: #EBF4FF;
-            --danger-red: #FF3B30; --bg-gray: #F2F5F8;
-            --text: #333; --bg: #f8f9fa;
+            --primary-blue: #003366; 
+			--accent-blue: #007AFF; 
+			--light-blue: #EBF4FF;
+            --danger-red: #FF3B30; 
+			--bg-gray: #F2F5F8;
+            --text: #333; 
+			--bg: #f8f9fa;
         }
         
         html, body { 
@@ -141,40 +150,40 @@
         .record-card-desc { font-size: 11px; color: #8E8E93; margin-bottom: 10px; line-height: 1.6; }
         
         /* 공통 텍스트 입력 스타일 */
-textarea, .editable-list { 
-    width: 100%; box-sizing: border-box; 
-    min-height: 100px; /* 최소 높이는 유지 */
-    height: auto;     /* 높이를 자동으로 */
-    border: none; outline: none; resize: none; 
-    font-size: 14px; background: var(--light-blue); padding: 12px; border-radius: 5px; 
-    line-height: 1.6; color: #2c3e50; font-family: 'Pretendard', sans-serif; 
-    white-space: pre-wrap; word-break: break-all; overflow-wrap: break-word;
-    overflow: hidden; /* 스크롤바가 보이지 않게 처리 */
-}
+	textarea, .editable-list { 
+    	width: 100%; box-sizing: border-box; 
+    	min-height: 100px; /* 최소 높이는 유지 */
+    	height: auto;     /* 높이를 자동으로 */
+    	border: none; outline: none; resize: none; 
+    	font-size: 14px; background: var(--light-blue); padding: 12px; border-radius: 5px; 
+    	line-height: 1.6; color: #2c3e50; font-family: 'Pretendard', sans-serif; 
+    	white-space: pre-wrap; word-break: break-all; overflow-wrap: break-word;
+    	overflow: hidden; /* 스크롤바가 보이지 않게 처리 */
+	}
         textarea::placeholder { color: #9bbad3; font-size: 13px; }
 
         .editable-list ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+        list-style: none;
+	    padding: 0;
+	    margin: 0;
 }
 
-/* 2. 글자가 있는 li에만 불렛 표시 */
-.editable-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 4px;
-    line-height: 1.6;
-    min-height: 1.5em; /* 빈 줄일 때 높이 유지 */
-}
-
-/* 3. li 내부에 텍스트가 있을 때만 가짜 요소를 통해 불렛 생성 */
-.editable-list li:not(:empty)::before {
-    content: "•";
-    color: #000;
-    font-weight: bold;
-    flex-shrink: 0;
-}
+	/* 2. 글자가 있는 li에만 불렛 표시 */
+	.editable-list li {
+	    display: flex;
+	    align-items: flex-start;
+	    gap: 4px; /* 블렛과 글자 사이의 여백 */
+	    line-height: 1.6;
+	    min-height: 1.5em; /* 빈 줄일 때 높이 유지 */
+	}
+	
+	/* 3. li 내부에 텍스트가 있을 때만 가짜 요소를 통해 불렛 생성 */
+	.editable-list li:not(:empty)::before {
+	    content: "•";
+	    color: #000;
+	    font-weight: bold;
+	    flex-shrink: 0;
+	}
         .copy-btn {
             margin-top: 10px; padding: 12px; width: 100%; background: #333; color: white;
             border: none; border-radius: 10px; font-weight: 800; font-size: 0.9rem;
@@ -336,7 +345,7 @@ textarea, .editable-list {
 
         <div class="record-card">
             <div class="record-card-title">2. 감정 찾기</div>
-            <div class="record-card-desc">카드에서 찾은 감정 단어들을 나열해 보세요.</div>
+            <div class="record-card-desc">카드에서 찾은 감정 단어들을 추가해 보세요.</div>
             <textarea id="step2" placeholder=""></textarea>
         </div>
 
@@ -348,7 +357,7 @@ textarea, .editable-list {
 
         <div class="record-card">
             <div class="record-card-title">4. 핵심 욕구</div>
-            <div class="record-card-desc">이 상황에서 내가 정말로 원했던 욕구는?</div>
+            <div class="record-card-desc">카드에서 찾은 욕구 단어들을 추가해 보세요.</div>
             <textarea id="step4" placeholder=""></textarea>
         </div>
 
@@ -360,7 +369,7 @@ textarea, .editable-list {
 
         <div class="record-card">
             <div class="record-card-title">6. 구체적인 행동</div>
-            <div class="record-card-desc">나와 상대의 욕구를 돕기 위한 실천 3가지</div>
+            <div class="record-card-desc">나와 상대의 욕구를 강화하기 위한 실천 3가지</div>
             <div id="step6" class="editable-list" contenteditable="true" data-placeholder=""><ul><li></li></ul></div>
         </div>
 
