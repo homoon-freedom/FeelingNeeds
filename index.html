@@ -344,17 +344,17 @@
             <textarea id="step7" placeholder=""></textarea>
         </div>
 
-        <div class="record-card" id="step8-container" style="border-top: 5px solid #333;">
-            <div class="card-title-row" onclick="toggleStep8()" style="cursor: pointer;">
+        <div class="record-card" id="step9-container" style="border-top: 5px solid #333;">
+            <div class="card-title-row" onclick="togglestep9()" style="cursor: pointer;">
                 <div class="record-card-title">
                     Gemini <span id="toggle-icon" style="font-size: 12px; margin-left: 5px;">▲</span>
                 </div>
                 <div class="record-card-desc" style="margin-bottom: 0; font-size: 11px;">클릭하여 접기/펴기</div>
             </div>
 
-            <div id="step8-content" style="display: none;">
+            <div id="step9-content" style="display: none;">
                 <div class="record-card-desc">Gemini에게 물어보기 : 사건과 결합할 문장을 넣고 복사해서 사용하세요.</div>
-                <textarea id="step8" placeholder="예: [사건]에 대해 관찰한 결과, 나의 핵심 욕구는 [욕구]임을 알게 되었습니다."></textarea>
+                <textarea id="step9" placeholder="예: [사건]에 대해 관찰한 결과, 나의 핵심 욕구는 [욕구]임을 알게 되었습니다."></textarea>
                 <button class="copy-btn" onclick="copyFinalText()">
                     <span>📋 복사하기:Gemini 질문 문장(사건+질문)</span>
                 </button>
@@ -803,7 +803,7 @@ async function makeImage() {
             scale: 2, useCORS: true, backgroundColor: "#F2F5F8",
             onclone: (clonedDoc) => {
                 clonedDoc.getElementById('adminPanel').style.display = 'none';
-                clonedDoc.getElementById('step8-container').style.display = 'none';
+                clonedDoc.getElementById('step9-container').style.display = 'none';
                 const title = clonedDoc.getElementById('mainTitle');
                 const div = clonedDoc.createElement('div');
                 div.innerText = title.value || "나의 마음 탐구";
@@ -857,7 +857,7 @@ async function makeImage() {
                             d.appendChild(lineWrapper);
                         });
                     } else {
-                        // 기타 (step8 등)
+                        // 기타 (step9 등)
                         d.innerText = textContent;
                         d.style.cssText = "background:#EBF4FF; padding:15px; border-radius:12px; font-size:16px; min-height:60px; white-space:pre-wrap; word-break:break-all; line-height: 1.6;";
                     }
@@ -880,10 +880,10 @@ async function makeImage() {
     }
 }
 
-function toggleStep8() { const c = document.getElementById('step8-content'); c.style.display = c.style.display === 'none' ? 'block' : 'none'; }
+function togglestep9() { const c = document.getElementById('step9-content'); c.style.display = c.style.display === 'none' ? 'block' : 'none'; }
 function closePreview() { document.getElementById("previewBox").style.display = "none"; }
 function copyFinalText() {
-    const text = document.getElementById('step1').value + "\n\n" + document.getElementById('step8').value;
+    const text = document.getElementById('step1').value + "\n\n" + document.getElementById('step9').value;
     navigator.clipboard.writeText(text).then(() => alert("복사 완료!"));
 }
 
