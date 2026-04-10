@@ -702,7 +702,12 @@ function renderUserList(sN) {
     changeUser(); 
 }
 
-function changeUser() { renderEventList(); }
+// 사용자 변경 시 마지막 사용자 이름 저장
+function changeUser() { 
+    const currentUser = document.getElementById("userSelect").value;
+    localStorage.setItem("lastSelectedUser", currentUser); // 추가
+    renderEventList(); 
+}
 
 function addEvent() { 
     const u = document.getElementById("userSelect").value; 
@@ -731,6 +736,7 @@ function deleteEvent() {
     }
 }
 
+// 사건 변경 시 마지막 사건 이름 저장
 function renderEventList(sE) { 
     const u = document.getElementById("userSelect").value; 
     const s = document.getElementById("eventSelect"); 
@@ -744,14 +750,26 @@ function renderEventList(sE) {
         s.innerHTML = "<option>사건 없음</option>";
     } else {
         s.innerHTML = evs.map(x => `<option value="${x}">${x}</option>`).join(''); 
-        if(sE) s.value = sE; 
+        
+        // sE(매개변수)가 없으면 로컬 스토리지에서 마지막 사건을 가져옴
+        const lastEvent = localStorage.getItem(`lastSelectedEvent_${u}`);
+        if(sE) {
+            s.value = sE;
+        } else if (lastEvent && evs.includes(lastEvent)) {
+            s.value = lastEvent;
+        }
     }
+    
+    // 현재 선택된 사건 저장
+    localStorage.setItem(`lastSelectedEvent_${u}`, s.value); 
     syncTitleAndLoad(); 
 }
 
 function syncTitleAndLoad() { 
     const u = document.getElementById("userSelect").value;
     const e = document.getElementById("eventSelect").value;
+    if(u && u !== "사용자 없음") localStorage.setItem("lastSelectedUser", u);
+    if(e && e !== "사건 없음") localStorage.setItem(`lastSelectedEvent_${u}`, e);
     if (!u || u === "사용자 없음" || !e || e === "사건 없음") {
         document.getElementById("mainTitle").value = "";
         for(let i=1; i<=7; i++) {
@@ -837,7 +855,10 @@ function scrollToActiveTop() {
 
 window.onload = function() {
     renderUserList();
-    
+    // 마지막으로 선택했던 사용자 불러오기
+    const lastUser = localStorage.getItem("lastSelectedUser");
+    renderUserList(lastUser);
+
     // 1. 기존 textarea들에 대한 처리
     const textareas = document.querySelectorAll("textarea");
     textareas.forEach(ta => {
