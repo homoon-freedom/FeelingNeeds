@@ -122,7 +122,10 @@
             font-size: 13px; font-weight: 800; color: var(--primary-blue); cursor: pointer;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .admin-content { padding: 15px; display: none; }
+.admin-content { 
+    padding: 15px 15px px 15px; /* 위, 우, 아래, 좌 순서 - 하단을 5px로 축소 */
+    display: none; 
+}
         .admin-content.show { display: block; }
         
         .manage-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed #DDD; }
@@ -151,17 +154,28 @@ textarea, .editable-list {
 }
         textarea::placeholder { color: #9bbad3; font-size: 13px; }
 
-        .editable-list ul { list-style: none; padding: 0; margin: 0; }
-        .editable-list li {
-            display: flex; align-items: flex-start; gap: 8px; line-height: 1.6;
-        }
-        .editable-list li::before {
-            content: "•";
-            display: inline-block; 
-            color: #000000; 
-            font-weight: bold;
-            flex-shrink: 0;
-        }
+        .editable-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* 2. 글자가 있는 li에만 불렛 표시 */
+.editable-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.6;
+    min-height: 1.5em; /* 빈 줄일 때 높이 유지 */
+}
+
+/* 3. li 내부에 텍스트가 있을 때만 가짜 요소를 통해 불렛 생성 */
+.editable-list li:not(:empty)::before {
+    content: "•";
+    color: #000;
+    font-weight: bold;
+    flex-shrink: 0;
+}
         .copy-btn {
             margin-top: 10px; padding: 12px; width: 100%; background: #333; color: white;
             border: none; border-radius: 10px; font-weight: 800; font-size: 0.9rem;
@@ -265,6 +279,7 @@ textarea, .editable-list {
 </section>
 
 <section id="needs-section" class="content-section">
+
     <div class="context-guide">
         <span class="context-label">지금 관찰 중인 사건</span>
         <div id="context-display-needs" class="context-text-display">기록장에서 사건을 먼저 입력해 보세요.</div>
@@ -282,7 +297,7 @@ textarea, .editable-list {
             </button>
             <div class="admin-content" id="adminContent">
                 <div class="manage-row">
-                    <span class="label" style="font-size:11px; font-weight:800; color:#8E8E93">1. 사용자</span>
+                    <span class="label" style="font-size:12px; font-weight:400; color:#8E8E93">1. 사용자</span>
                     <div class="input-group">
                         <input type="text" id="newUserName" placeholder="이름">
                         <button class="btn btn-add" onclick="addUser()">등록</button>
@@ -293,7 +308,7 @@ textarea, .editable-list {
                     </div>
                 </div>
                 <div class="manage-row">
-                    <span class="label" style="font-size:11px; font-weight:800; color:#8E8E93">2. 사건</span>
+                    <span class="label" style="font-size:12px; font-weight:400; color:#8E8E93">2. 사건</span>
                     <div class="input-group">
                         <input type="text" id="newEventName" placeholder="사건명">
                         <button class="btn btn-add" onclick="addEvent()">추가</button>
@@ -303,10 +318,10 @@ textarea, .editable-list {
                         <button class="btn btn-del" onclick="deleteEvent()">삭제</button>
                     </div>
                 </div>
-                <div class="manage-row" style="border-bottom:none; margin-top: 10px;">
-                    <span class="label" style="font-size:11px; font-weight:800; color:#8E8E93">3. 클라우드에서 불러오기</span>
+		<div class="manage-row" style="border-bottom:none; margin-top: 5px; margin-bottom: 0; padding-bottom: 0;">
+                    <span class="label" style="font-size:12px; font-weight:400; color:#8E8E93">3. 클라우드에서 불러오기</span>
                     <div class="input-group">
-                        <button class="btn" style="background:#6c757d; color:white; flex:1; transform: scale(1.1);" onclick="loadFromSupabase()">불러오기(다른 기기에서 저장한 내용 불러오기)</button>
+                        <button class="btn" style="background:#6c757d; color:white; flex:1; transform: scale(1.0);" onclick="loadFromSupabase()">불러오기(다른 기기에서 저장한 내용 불러오기)</button>
                     </div>
                 </div>
             </div>
@@ -581,10 +596,19 @@ function autoResizeTextarea(element) {
 /* UI 유틸리티 */
 function setListContent(id, text) {
     const el = document.getElementById(id);
-    if (!text || text.trim() === "") { el.innerHTML = "<ul><li></li></ul>"; return; }
+    
+    // 저장된 텍스트가 없으면 빈 리스트 생성 (불렛 안 보임)
+    if (!text || text.trim() === "") { 
+        el.innerHTML = "<ul><li></li></ul>"; 
+        return; 
+    }
+    
+    // 저장된 텍스트가 있으면 줄바꿈 기준으로 li 생성
     const items = text.split('\n').filter(t => t.trim() !== "");
     let html = "<ul>";
-    items.forEach(item => { html += `<li>${item}</li>`; });
+    items.forEach(item => { 
+        html += `<li>${item.trim()}</li>`; 
+    });
     html += "</ul>";
     el.innerHTML = html;
 }
@@ -592,12 +616,18 @@ function setListContent(id, text) {
 function handleListInput(e) {
     const id = e.currentTarget.id;
     const key = getStorageKey();
-    localStorage.setItem(key + "_" + id, e.currentTarget.innerText);
-    if (e.currentTarget.innerHTML === "" || e.currentTarget.innerHTML === "<br>") {
+    // 내부의 불필요한 공백 제거 후 텍스트만 추출
+    const text = e.currentTarget.innerText.trim();
+    
+    localStorage.setItem(key + "_" + id, text);
+
+    // [중요] 만약 사용자가 글자를 다 지웠다면 
+    // 최소한의 구조 <ul><li></li></ul>를 유지하여 
+    // 다음 입력을 준비하고 불렛을 숨깁니다.
+    if (e.currentTarget.innerText.trim() === "") {
         e.currentTarget.innerHTML = "<ul><li></li></ul>";
     }
 }
-
 function toggleAdminPanel() {
     const content = document.getElementById("adminContent");
     const icon = document.getElementById("toggleIcon");
