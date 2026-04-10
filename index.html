@@ -97,12 +97,6 @@
         .back { transform: rotateY(180deg); background-color: white !important; overflow-y: auto; }
         .front { justify-content: center; align-items: center; text-align: center; }
         
-        .card-image {
-            width: 120px; height: 120px; margin-bottom: 20px;
-            background-size: contain; background-repeat: no-repeat; background-position: center;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
-        }
-
         .front .title { font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; color: #222; }
         .front .desc { font-size: 0.95rem; font-weight: 600; color: #444; }
         .back .title { font-size: 2.1rem; font-weight: 950; margin-bottom: 15px; color: #222; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; width: 100%; text-align: center; }
@@ -143,13 +137,27 @@
         .record-card { background: white; border-radius: 10px; padding: 18px; margin: 0 15px 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border-top: 5px solid var(--accent-blue); }
         .record-card-title { font-size: 15px; font-weight: 700; color: var(--primary-blue); margin-bottom: 4px; }
         .record-card-desc { font-size: 11px; color: #8E8E93; margin-bottom: 10px; line-height: 1.6; }
-        textarea { 
+        
+        /* 공통 텍스트 입력 스타일 */
+        textarea, .editable-list { 
             width: 100%; box-sizing: border-box; min-height: 120px; border: none; outline: none; resize: none; 
             font-size: 14px; background: var(--light-blue); padding: 12px; border-radius: 5px; 
-            line-height: 1.6; color: #2c3e50; font-family: 'Noto Sans KR', sans-serif; 
+            line-height: 1.6; color: #2c3e50; font-family: 'Pretendard', sans-serif; 
+            white-space: pre-wrap; word-break: break-all; overflow-wrap: break-word;
         }
-        textarea::placeholder { color: #9bbad3; font-size: 13px; font-style: normal; font-family: 'Noto Sans KR', sans-serif; }
+        textarea::placeholder { color: #9bbad3; font-size: 13px; }
 
+        .editable-list ul { list-style: none; padding: 0; margin: 0; }
+        .editable-list li {
+            display: flex; align-items: flex-start; gap: 8px; line-height: 1.6;
+        }
+        .editable-list li::before {
+            content: "•";
+            display: inline-block; 
+            color: #000000; 
+            font-weight: bold;
+            flex-shrink: 0;
+        }
         .copy-btn {
             margin-top: 10px; padding: 12px; width: 100%; background: #333; color: white;
             border: none; border-radius: 10px; font-weight: 800; font-size: 0.9rem;
@@ -160,37 +168,32 @@
             position: fixed; bottom: 0; left: 0; width: 100%;
             display: flex; gap: 10px; padding: 15px 15px calc(30px + env(safe-area-inset-bottom));
             background: rgba(242, 245, 248, 0.95);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid #eee;
-            box-sizing: border-box; z-index: 2500;
-            align-items: center;
+            backdrop-filter: blur(10px); border-top: 1px solid #eee;
+            box-sizing: border-box; z-index: 2500; align-items: center;
         }
         .fixed-bottom-bar button { 
-            border-radius: 10px; border: none; 
-            font-weight: 700; cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: 0.2s;
+            border-radius: 10px; border: none; font-weight: 700; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s;
         }
-        /* 저장 버튼 스타일 수정 */
         .btn-save-cloud { background: #3ecf8e; color: white; flex: 1.0; padding: 12px; font-size: 15px; }
         .btn-image { background: var(--primary-blue); color: white; flex: 1.0; padding: 12px; font-size: 15px; }
 
-        /* 부유형 버튼들 */
-        .floating-btns { position: fixed; bottom: 90px; right: 15px; display: flex; flex-direction: column; gap: 10px; z-index: 3000; }
-        .go-top-btn { width: 45px; height: 45px; background: var(--accent-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; visibility: hidden; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .go-top-btn.show { opacity: 1; visibility: visible; }
-        
-        #returnToNeedBtn {
-            padding: 10px 18px; background: #333; color: white; border-radius: 30px; 
-            font-size: 13px; font-weight: 800; border: none; cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: none; align-items: center; gap: 6px;
+        /* 부유형 버튼 스타일 보완 */
+        .floating-btns { position: fixed; bottom: 100px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 3000; }
+        .go-top-btn { 
+            width: 50px; height: 50px; background: var(--primary-blue); color: white; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer; 
+            opacity: 0; visibility: hidden; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            font-size: 20px;
         }
-
+        .go-top-btn.show { opacity: 1; visibility: visible; }
+        .go-top-btn:hover { background: var(--accent-blue); transform: translateY(-3px); }
+        
         #previewBox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; flex-direction: column; z-index: 4000; padding: 20px; }
         #previewImg { max-width: 100%; max-height: 70%; border-radius: 10px; object-fit: contain; }
         #closeBtn { margin-top: 15px; padding: 10px 30px; background: white; border-radius: 20px; font-weight: 600; border: none; cursor: pointer; }
 
-        /* 카테고리 색상 */
+        /* 카테고리별 색상 */
         .cat-meaning .front, .cat-meaning .back { border-color: var(--meaning-core); background-color: rgba(255, 204, 128, 0.8); }
         .cat-conn .front, .cat-conn .back { border-color: var(--connection-core); background-color: rgba(244, 143, 177, 0.8); }
         .cat-auto .front, .cat-auto .back { border-color: var(--autonomy-core); background-color: rgba(144, 206, 173, 0.8); }
@@ -293,31 +296,31 @@
         <div class="record-card">
             <div class="record-card-title">2. 감정 찾기</div>
             <div class="record-card-desc">카드에서 찾은 감정 단어들을 나열해 보세요.</div>
-            <textarea id="step2" placeholder="예: 답답하다, 서운하다, 짜증나다..."></textarea>
+            <textarea id="step2" placeholder="예: •답답하다 : 설명\n•서운하다 : 설명"></textarea>
         </div>
 
         <div class="record-card">
             <div class="record-card-title">3. 감정을 일으킨 생각</div>
             <div class="record-card-desc">감정을 일으킨 내 안의 '판단'이나 '생각'은?</div>
-            <textarea id="step3" placeholder="예: '내 시간을 소중히 여기지 않는 것 같아'라는 생각이 들었다."></textarea>
+            <div id="step3" class="editable-list" contenteditable="true" data-placeholder="예: '내 시간을 소중히 여기지 않는 것 같아'라는 생각이 들었다."><ul><li></li></ul></div>
         </div>
 
         <div class="record-card">
             <div class="record-card-title">4. 핵심 욕구</div>
             <div class="record-card-desc">이 상황에서 내가 정말로 원했던 욕구는?</div>
-            <textarea id="step4" placeholder="예: 존중, 예측 가능성, 시간의 효율성..."></textarea>
+            <textarea id="step4" placeholder="예: •존중 : 설명\n•예측 가능성 : 설명"></textarea>
         </div>
 
         <div class="record-card">
             <div class="record-card-title">5. 욕구 강화</div>
             <div class="record-card-desc">이 욕구가 나에게 왜 그토록 소중한가요?</div>
-            <textarea id="step5" placeholder="예: 나는 신뢰를 바탕으로 한 관계에서 안정감을 느끼기 때문이다."></textarea>
+            <div id="step5" class="editable-list" contenteditable="true" data-placeholder="예: 나는 신뢰를 바탕으로 한 관계에서 안정감을 느끼기 때문이다."><ul><li></li></ul></div>
         </div>
 
         <div class="record-card">
             <div class="record-card-title">6. 구체적인 행동</div>
             <div class="record-card-desc">나와 상대의 욕구를 돕기 위한 실천 3가지</div>
-            <textarea id="step6" placeholder="예: 1. 심호흡하기 / 2. 내 욕구를 부탁하기 / 3. 상황 물어보기"></textarea>
+            <div id="step6" class="editable-list" contenteditable="true" data-placeholder="예: 1. 심호흡하기 / 2. 내 욕구를 부탁하기 / 3. 상황 물어보기"><ul><li></li></ul></div>
         </div>
 
         <div class="record-card">
@@ -351,7 +354,6 @@
 </div>
 
 <div class="floating-btns">
-    <button id="returnToNeedBtn" onclick="backToSourceNeed()">↩ 욕구로 돌아가기</button>
     <div class="go-top-btn" id="goTop" onclick="scrollToActiveTop()">▲</div>
 </div>
 
@@ -361,7 +363,7 @@
 </div>
 
 <script>
-/* 데이터 (기존 데이터 유지) */
+/* 데이터 및 기존 로직 유지 */
 const needsData = [
     { name: "자유•자율성", cat: "cat-auto", desc: "자신의 가치와 꿈에 따라 스스로 선택하고 행동하고 싶은 마음", sat: ["행복하다", "만족하다", "신나다"], unsat: ["답답하다", "억울하다", "막막하다"], action: "오늘 하루 중 단 30분이라도 타인의 간섭 없이 내가 원하는 일만 하는 '나만의 시간'을 확보해 보세요." },
     { name: "선택", cat: "cat-auto", desc: "타의가 아닌 나의 의지로 방향을 정하고 결정하고 싶은 마음", sat: ["자랑스럽다", "기쁘다", "만족하다"], unsat: ["답답하다", "억울하다", "당황하다"], action: "주변의 조언을 잠시 멈추고, 아주 사소한 결정부터 오직 나의 직관에 따라 결정해 보세요." },
@@ -380,11 +382,11 @@ const needsData = [
     { name: "공감", cat: "cat-conn", desc: "상대의 마음을 내 것처럼 느끼거나 내 마음이 전달되기를 바라는 욕구", sat: ["감동하다", "따뜻하다", "편안하다"], unsat: ["서운하다", "외롭다", "속상하다"], action: "조언 대신 공감의 한 마디만 먼저 건네보세요." },
     { name: "마음알아주기", cat: "cat-conn", desc: "판단 없이 나의 내면 상태를 있는 그대로 수용받고 싶은 욕구", sat: ["감동하다", "든든하다", "따뜻하다", "편안하다"], unsat: ["억울하다", "서럽다", "답답하다"], action: "거울을 보며 현재 내 감정의 이름을 불러주세요." },
     { name: "소속감", cat: "cat-conn", desc: "특정 집단의 일원으로서 안정감을 느끼고 뿌리 내리고 싶은 마음", sat: ["든든하다", "편안하다", "행복하다"], unsat: ["외롭다", "불안하다", "부끄럽다"], action: "팀에서 내가 기여할 수 있는 작은 역할을 자원해 보세요." },
-    { name: "도움•지지", cat: "cat-conn", desc: "어려울 때 기댈 수 있는 어깨와 격려가 필요한 마음", sat: ["든든하다", "감사하다", "편안하다"], unsat: ["막막하다", "서럽다", "외롭다"], action: "신뢰하는 person에게 도움이 필요하다고 명확히 말하세요." },
+    { name: "도움•지지", cat: "cat-conn", desc: "어려울 때 기댈 수 있는 어깨와 격려가 필요한 마음", sat: ["든든하다", "감사하다", "편안하다"], unsat: ["막막하다", "서럽다", "외롭다"], action: "신뢰하는 사람에게 도움이 필요하다고 명확히 말하세요." },
     { name: "나눔", cat: "cat-conn", desc: "내가 가진 것을 대가 없이 전달하며 기쁨을 얻고 싶은 마음", sat: ["행복하다", "뿌듯하다", "감동하다", "따뜻하다"], unsat: ["속상하다", "허탈하다", "슬프다"], action: "주변 사람에게 작은 깜짝 선물을 해보세요." },
     { name: "배려", cat: "cat-conn", desc: "타인의 형편을 살피고 마음을 써주고 싶은 따뜻한 성품", sat: ["뿌듯하다", "따뜻하다", "감사하다"], unsat: ["속상하다", "서운하다", "불편하다"], action: "주변의 필요를 살피는 여유를 가져보세요." },
     { name: "보살핌", cat: "cat-conn", desc: "누군가를 돌보거나 나 자신이 돌봄 받기를 바라는 생존 본능", sat: ["사랑스럽다", "든든하다", "행복하다", "따뜻하다"], unsat: ["외롭다", "불안하다", "무기력하다"], action: "나 자신을 극진히 돌보는 행동을 하세요." },
-    { name: "사랑", cat: "cat-conn", desc: "생명 그 자체를 아끼고 소중히 여기는 가장 큰 에너지", sat: ["사랑스럽다", "행복하다", "감동하다", "따뜻하다"], unsat: ["슬프다", "서럽다", "외롭다"], action: "사랑하는 person에게 진심 어린 '사랑해'를 전하세요." },
+    { name: "사랑", cat: "cat-conn", desc: "생명 그 자체를 아끼고 소중히 여기는 가장 큰 에너지", sat: ["사랑스럽다", "행복하다", "감동하다", "따뜻하다"], unsat: ["슬프다", "서럽다", "외롭다"], action: "사랑하는 사람에게 진심 어린 '사랑해'를 전하세요." },
     { name: "공기", cat: "cat-well", desc: "생명을 유지하기 위한 가장 기본적이고 필수적인 에너지", sat: ["편안하다", "만족하다"], unsat: ["답답하다", "괴롭다"], action: "환기를 하거나 야외로 나가 심호흡을 하세요." },
     { name: "음식•주거", cat: "cat-well", desc: "몸을 보호하고 에너지를 얻을 수 있는 안전한 기반", sat: ["든든하다", "편안하다", "만족하다"], unsat: ["불안하다", "걱정하다", "괴롭다"], action: "건강한 한 끼를 차려 먹거나 주변 공간을 정리하세요." },
     { name: "건강", cat: "cat-well", desc: "몸과 마음이 조화를 이루어 활기차게 기능하기를 바라는 상태", sat: ["행복하다", "만족하다", "신나다"], unsat: ["우울하다", "걱정하다", "피곤하다"], action: "일찍 잠자리에 들거나 물 한 잔을 마셔보세요." },
@@ -440,7 +442,7 @@ const emotionsData = [
     { name: "당당하다", cat: "cat-joy", desc: "가치와 신념에 확신을 가져 곧고 떳떳한 상태", sit: "진실을 말하거나 원칙에 따라 행동할 때", body: "발바닥이 지면에 단단히 닿은 느낌과 목소리에 힘이 실림", aff: "나는 나의 존재와 선택에 확신이 있습니다." },
     { name: "평온하다", cat: "cat-joy", desc: "내면의 질서가 잡혀 깊은 안식을 누리는 상태", sit: "갈등 해결 후 고요한 시간을 가질 때", body: "얼굴 근육이 완전히 풀리고 호흡의 주기가 일정해짐", aff: "내 마음은 잔잔한 호수처럼 고요합니다." },
     { name: "사랑스럽다", cat: "cat-love", desc: "대상이 소중하여 아껴주고 싶은 애정", sit: "잠든 아기나 반려동물을 볼 때", body: "심장 부위가 간질거리고 온몸의 감각이 부드러워짐", aff: "내 마음의 사랑이 주변을 따뜻하게 비춥니다." },
-    { name: "설레다", cat: "cat-love", desc: "새로운 가능성에 대한 기대감으로 생기가 도는 기분", sit: "좋아하는 사람을 만나기 전", body: "가슴이 두근거리고 아랫배가 화해지는 묘한 떨림", aff: "기분 좋은 떨림이 삶을 새롭게 깨웁니다." },
+    { name: "설레다", cat: "cat-love", desc: "새로운 가능성에 대한 기대감으로 생기가 도는 기분", sit: "좋아하는 person을 만나기 전", body: "가슴이 두근거리고 아랫배가 화해지는 묘한 떨림", aff: "기분 좋은 떨림이 삶을 새롭게 깨웁니다." },
     { name: "미안하다", cat: "cat-love", desc: "행동의 실수를 인지하고 회복을 원하는 마음", sit: "약속에 늦었거나 상처를 주었을 때", body: "가슴이 답답하고 고개가 숙여지며 눈치를 보게 됨", aff: "나의 진심 어린 사과가 관계를 회복시킵니다." },
     { name: "따뜻하다", cat: "cat-love", desc: "친절을 경험하며 경계가 녹아내리는 상태", sit: "위로를 받거나 깊은 교감을 나눌 때", body: "몸의 온도가 올라가는 듯한 느낌과 함께 표정이 온화해짐", aff: "내 마음은 사랑의 온기로 가득합니다." },
     { name: "안도하다", cat: "cat-peace", desc: "걱정이 해결되거나 위험이 사라진 상태", sit: "어려운 고비를 무사히 넘겼을 때", body: "참았던 숨을 깊게 내뱉으며(한숨) 온몸의 힘이 쭉 빠짐", aff: "폭풍이 지나갔습니다. 이제는 안전합니다." },
@@ -490,10 +492,7 @@ const emotionsData = [
     { name: "허탈하다", cat: "cat-sad", desc: "결과가 무너져 에너지가 빠져나간 허전함", sit: "노력이 수포로 돌아갔을 때", body: "팔다리에 힘이 하나도 없고 가슴 속이 텅 빈 구멍 같음", aff: "비워진 마음을 인정하며 새로운 에너지를 기다립니다." }
 ];
 
-/* 공통 변수 */
-let sourceNeedId = null;
-
-/* --- Supabase 연동 기능 시작 --- */
+/* --- Supabase 연동 --- */
 const SUPABASE_URL = 'https://ocghxynajjbkpbyljxzg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jZ2h4eW5hampia3BieWxqeHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2OTg4MTksImV4cCI6MjA5MTI3NDgxOX0.weaiOCV0UMjsfSmEI_WU_0L4qJUOGRrtoWEwPKN26is';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -501,87 +500,69 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 async function saveToSupabase() {
     const user = document.getElementById("userSelect").value;
     const event = document.getElementById("eventSelect").value;
-    
-    if(!user || !event) {
-        alert("사용자와 사건을 먼저 설정해주세요.");
-        return;
-    }
-
+    if(!user || !event) { alert("사용자와 사건을 먼저 설정해주세요."); return; }
     const saveData = {
-        user_id: user,
-        event_name: event,
+        user_id: user, event_name: event,
         title: document.getElementById("mainTitle").value,
         step1: document.getElementById("step1").value,
         step2: document.getElementById("step2").value,
-        step3: document.getElementById("step3").value,
+        step3: document.getElementById("step3").innerText,
         step4: document.getElementById("step4").value,
-        step5: document.getElementById("step5").value,
-        step6: document.getElementById("step6").value,
+        step5: document.getElementById("step5").innerText,
+        step6: document.getElementById("step6").innerText,
         step7: document.getElementById("step7").value,
         updated_at: new Date()
     };
-
     try {
-        const { error } = await supabaseClient
-            .from('mind_records') 
-            .upsert(saveData, { onConflict: 'user_id, event_name' });
-
+        const { error } = await supabaseClient.from('mind_records').upsert(saveData, { onConflict: 'user_id, event_name' });
         if (error) throw error;
         alert("☁️ 클라우드 저장이 완료되었습니다!");
-    } catch (err) {
-        console.error(err);
-        alert("저장 실패: " + err.message);
-    }
+    } catch (err) { alert("저장 실패: " + err.message); }
 }
 
 async function loadFromSupabase() {
     const user = document.getElementById("userSelect").value;
     const event = document.getElementById("eventSelect").value;
-
-    if(!user || !event) {
-        alert("불러올 사용자와 사건을 선택해주세요.");
-        return;
-    }
-
+    if(!user || !event) { alert("불러올 사용자와 사건을 선택해주세요."); return; }
     try {
-        const { data, error } = await supabaseClient
-            .from('mind_records')
-            .select('*')
-            .eq('user_id', user)
-            .eq('event_name', event)
-            .maybeSingle();
-
+        const { data, error } = await supabaseClient.from('mind_records').select('*').eq('user_id', user).eq('event_name', event).maybeSingle();
         if (error) throw error;
-        if (!data) {
-            alert("저장된 클라우드 데이터가 없습니다.(먼저 작성한 곳에서 저장을 먼저하세요.)");
-            return;
-        }
-
-        if(confirm("클라우드 데이터를 불러올까요?\n현재 화면의 내용이 저장된 내용으로 교체됩니다.")) {
+        if (!data) { alert("저장된 데이터가 없습니다."); return; }
+        if(confirm("클라우드 데이터를 불러올까요?")) {
             document.getElementById("mainTitle").value = data.title || "";
-            for(let i=1; i<=7; i++) {
-                const ta = document.getElementById("step" + i);
-                if(ta) {
-                    ta.value = data["step" + i] || "";
-                    autoResize(ta);
-                }
-            }
-
-            const key = getStorageKey();
-            localStorage.setItem(key + "_title", data.title || "");
-            for(let i=1; i<=7; i++) {
-                localStorage.setItem(key + "_step" + i, data["step" + i] || "");
-            }
-            
+            document.getElementById("step1").value = data.step1 || "";
+            document.getElementById("step2").value = data.step2 || "";
+            setListContent("step3", data.step3);
+            document.getElementById("step4").value = data.step4 || "";
+            setListContent("step5", data.step5);
+            setListContent("step6", data.step6);
+            document.getElementById("step7").value = data.step7 || "";
+            saveAllToLocal();
             updateContextDisplay(data.step1 || "");
-            alert("✅ 클라우드 데이터를 성공적으로 불러왔습니다!");
+            alert("✅ 불러오기 성공!");
         }
-    } catch (err) {
-        console.error(err);
-        alert("불러오기 실패: " + err.message);
+    } catch (err) { alert("불러오기 실패: " + err.message); }
+}
+
+/* UI 유틸리티 */
+function setListContent(id, text) {
+    const el = document.getElementById(id);
+    if (!text || text.trim() === "") { el.innerHTML = "<ul><li></li></ul>"; return; }
+    const items = text.split('\n').filter(t => t.trim() !== "");
+    let html = "<ul>";
+    items.forEach(item => { html += `<li>${item}</li>`; });
+    html += "</ul>";
+    el.innerHTML = html;
+}
+
+function handleListInput(e) {
+    const id = e.currentTarget.id;
+    const key = getStorageKey();
+    localStorage.setItem(key + "_" + id, e.currentTarget.innerText);
+    if (e.currentTarget.innerHTML === "" || e.currentTarget.innerHTML === "<br>") {
+        e.currentTarget.innerHTML = "<ul><li></li></ul>";
     }
 }
-/* --- Supabase 연동 기능 끝 --- */
 
 function toggleAdminPanel() {
     const content = document.getElementById("adminContent");
@@ -589,14 +570,11 @@ function toggleAdminPanel() {
     const statusText = document.getElementById("adminStatusText");
     const user = document.getElementById("userSelect").value || "없음";
     const event = document.getElementById("eventSelect").value || "없음";
-
     if (content.classList.contains("show")) {
-        content.classList.remove("show");
-        icon.innerText = "▼";
+        content.classList.remove("show"); icon.innerText = "▼";
         statusText.innerText = `⚙️ 설정 (사용자: ${user} / 사건: ${event})`;
     } else {
-        content.classList.add("show");
-        icon.innerText = "▲";
+        content.classList.add("show"); icon.innerText = "▲";
         statusText.innerText = "⚙️ 사용자 및 사건 설정";
     }
 }
@@ -604,34 +582,14 @@ function toggleAdminPanel() {
 function showSection(type) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.card.is-flipped').forEach(c => c.classList.remove('is-flipped'));
-    
     document.getElementById('btn-' + (type==='record'?'record':type)).classList.add('active');
-    const targetSection = document.getElementById(type + '-section');
-    targetSection.classList.add('active');
-
-    const bottomBar = document.getElementById('fixedBottomBar');
-    bottomBar.style.display = (type === 'record') ? 'flex' : 'none';
-
+    document.getElementById(type + '-section').classList.add('active');
+    document.getElementById('fixedBottomBar').style.display = (type === 'record') ? 'flex' : 'none';
     if(type !== 'record') renderGrid(type);
-    if(type !== 'emotions') document.getElementById('returnToNeedBtn').style.display = 'none';
-    
     updateContextDisplay(document.getElementById('step1').value);
-}
-
-function scrollToActiveTop() {
-    const activeSection = document.querySelector('.content-section.active');
-    if (activeSection) activeSection.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function initScrollDetection() {
-    document.querySelectorAll('.content-section').forEach(section => {
-        section.addEventListener('scroll', function() {
-            const btn = document.getElementById('goTop');
-            if (this.scrollTop > 300) btn.classList.add('show');
-            else btn.classList.remove('show');
-        });
-    });
+    
+    // 섹션 전환 시 스크롤 버튼 상태 초기화
+    checkScroll();
 }
 
 function updateContextDisplay(val) {
@@ -642,64 +600,22 @@ function updateContextDisplay(val) {
 
 function addToRecord(type, name, btnElement) {
     const stepId = (type === 'emotions') ? 'step2' : 'step4';
-    const targetTextArea = document.getElementById(stepId);
-    const key = getStorageKey();
+    const target = document.getElementById(stepId);
+    const sourceData = (type === 'emotions') ? emotionsData : needsData;
+    const item = sourceData.find(d => d.name === name);
+    const description = item ? item.desc : "";
+    const entryText = `• ${name} : ${description}`;
+    
+    let currentValue = target.value || target.innerText;
+    if (currentValue.includes(name)) { alert("이미 기록장에 추가된 항목입니다."); return; }
 
-    if (targetTextArea) {
-        let currentValue = targetTextArea.value.trim();
-        if (currentValue.includes(name)) {
-            btnElement.innerText = "이미 추가됨";
-            setTimeout(() => { btnElement.innerHTML = `＋ 기록장(${stepId === 'step2' ? '2.감정' : '4.욕구'})에 추가`; }, 1000);
-            return;
-        }
-        const newValue = currentValue ? `${currentValue}, ${name}` : name;
-        targetTextArea.value = newValue;
-        localStorage.setItem(key + "_" + stepId, newValue);
-        autoResize(targetTextArea);
-
-        btnElement.innerText = "✓ 기록장에 추가됨";
-        setTimeout(() => {
-            btnElement.innerHTML = `＋ 기록장(${stepId === 'step2' ? '2.감정' : '4.욕구'})에 추가`;
-        }, 1000);
-    }
-}
-
-function jumpToEmotion(emotionName, needName) {
-    sourceNeedId = `needs-card-${needName}`;
-    showSection('emotions');
-    const returnBtn = document.getElementById('returnToNeedBtn');
-    returnBtn.style.display = 'flex';
-    returnBtn.innerHTML = `↩ '${needName}'(으)로 돌아가기`;
-
-    setTimeout(() => {
-        const section = document.getElementById('emotions-section');
-        const target = document.getElementById(`emotions-card-${emotionName}`);
-        if(target) {
-            section.scrollTo({top: target.offsetTop - 150, behavior: 'smooth'});
-            target.classList.remove('is-flipped'); 
-            target.style.transition = "0.3s";
-            target.style.boxShadow = "0 0 20px var(--accent-blue)";
-            setTimeout(() => { target.style.boxShadow = ""; }, 1500);
-        }
-    }, 200);
-}
-
-function backToSourceNeed() {
-    if(!sourceNeedId) return;
-    showSection('needs');
-    document.getElementById('returnToNeedBtn').style.display = 'none';
-    setTimeout(() => {
-        const section = document.getElementById('needs-section');
-        const target = document.getElementById(sourceNeedId);
-        if(target) {
-            section.scrollTo({top: target.offsetTop - 150, behavior: 'smooth'});
-            target.classList.remove('is-flipped');
-            target.style.transition = "0.3s";
-            target.style.boxShadow = "0 0 20px var(--accent-blue)";
-            setTimeout(() => { target.style.boxShadow = ""; }, 1500);
-        }
-        sourceNeedId = null;
-    }, 200);
+    const newValue = currentValue.trim() ? `${currentValue.trim()}\n${entryText}` : entryText;
+    if (target.tagName === "TEXTAREA") target.value = newValue;
+    else setListContent(stepId, newValue);
+    
+    localStorage.setItem(getStorageKey() + "_" + stepId, newValue);
+    btnElement.innerText = "✓ 추가됨";
+    setTimeout(() => { btnElement.innerHTML = `＋ 기록장 추가`; }, 1000);
 }
 
 function renderGrid(type) {
@@ -707,192 +623,57 @@ function renderGrid(type) {
     const grid = document.getElementById(type + '-grid');
     const index = document.getElementById(type + '-index');
     if(grid.children.length > 0) return;
-
     data.forEach(item => {
         const link = document.createElement('div');
         link.className = `item-link link-${item.cat.split('-')[1]}`;
         link.innerText = item.name;
-        link.onclick = () => {
-            const section = document.getElementById(type + '-section');
-            const target = document.getElementById(`${type}-card-${item.name}`);
-            section.scrollTo({top: target.offsetTop - 100, behavior: 'smooth'});
-        };
+        link.onclick = () => { document.getElementById(type + '-section').scrollTo({top: document.getElementById(`${type}-card-${item.name}`).offsetTop - 100, behavior: 'smooth'}); };
         index.appendChild(link);
-        
         const card = document.createElement('div');
-        card.className = `card ${item.cat}`;
-        card.id = `${type}-card-${item.name}`;
-        card.onclick = () => {
-            const flipped = card.classList.contains('is-flipped');
-            document.querySelectorAll('.card.is-flipped').forEach(f => f.classList.remove('is-flipped'));
-            if (!flipped) card.classList.add('is-flipped');
-        };
-
+        card.className = `card ${item.cat}`; card.id = `${type}-card-${item.name}`;
+        card.onclick = () => { card.classList.toggle('is-flipped'); };
         let emoji = "✨";
         const cat = item.cat.split('-')[1];
-        if(cat === 'joy') emoji = "😊";
-        else if(cat === 'love') emoji = "❤️";
-        else if(cat === 'peace') emoji = "🌿";
-        else if(cat === 'anx') emoji = "😰";
-        else if(cat === 'ang') emoji = "🔥";
-        else if(cat === 'sad') emoji = "💧";
-        else if(cat === 'auto') emoji = "🦋";
-        else if(cat === 'conn') emoji = "🤝";
-        else if(cat === 'well') emoji = "🍎";
-        else if(cat === 'meaning') emoji = "💎";
-
-        let backContent = '';
-        if(type === 'needs') {
-            const satTags = item.sat.map(s => `<span class="emotion-tag tag-sat" onclick="event.stopPropagation(); jumpToEmotion('${s}', '${item.name}')">${s}</span>`).join('');
-            const unsatTags = item.unsat.map(s => `<span class="emotion-tag tag-unsat" onclick="event.stopPropagation(); jumpToEmotion('${s}', '${item.name}')">${s}</span>`).join('');
-            backContent = `
-                <span class="section-label">충족 시</span><div>${satTags}</div>
-                <span class="section-label">미충족 시</span><div>${unsatTags}</div>
-                <div class="action-box">${item.action}</div>
-                <button class="add-to-record-btn" onclick="event.stopPropagation(); addToRecord('needs', '${item.name}', this)">
-                    ＋ 기록장(4.핵심 욕구)에 추가
-                </button>`;
-        } else {
-            backContent = `
-                <span class="section-label">상황</span><div class="content-text">${item.sit}</div>
-                <span class="section-label">몸의 상태</span><div class="body-status">${item.body}</div>
-                <span class="section-label">확언</span><div class="affirmation-box">"${item.aff}"</div>
-                <button class="add-to-record-btn" onclick="event.stopPropagation(); addToRecord('emotions', '${item.name}', this)">
-                    ＋ 기록장(2.감정 찾기)에 추가
-                </button>`;
-        }
-
-        const imageArea = `<div style="font-size: 80px; margin-bottom: 20px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.15))">${emoji}</div>`;
-
-        card.innerHTML = `
-            <div class="card-inner">
-                <div class="front">
-                    ${imageArea}
-                    <div class="title">${item.name}</div>
-                    <div class="desc">${item.desc}</div>
-                </div>
-                <div class="back">
-                    <div class="title">${item.name}</div>
-                    ${backContent}
-                </div>
-            </div>`;
+        const emojis = {joy:"😊", love:"❤️", peace:"🌿", anx:"😰", ang:"🔥", sad:"💧", auto:"🦋", conn:"🤝", well:"🍎", meaning:"💎"};
+        emoji = emojis[cat] || "✨";
+        let backContent = type === 'needs' ? 
+            `<span class="section-label">충족 시</span><div>${item.sat.map(s => `<span class="emotion-tag tag-sat">${s}</span>`).join('')}</div>
+             <span class="section-label">미충족 시</span><div>${item.unsat.map(s => `<span class="emotion-tag tag-unsat">${s}</span>`).join('')}</div>
+             <div class="action-box">${item.action}</div>` :
+            `<span class="section-label">상황</span><div class="content-text">${item.sit}</div>
+             <span class="section-label">몸의 상태</span><div class="body-status">${item.body}</div>
+             <span class="section-label">확언</span><div class="affirmation-box">"${item.aff}"</div>`;
+        card.innerHTML = `<div class="card-inner"><div class="front"><div style="font-size:80px; margin-bottom:20px;">${emoji}</div><div class="title">${item.name}</div><div class="desc">${item.desc}</div></div>
+                          <div class="back"><div class="title">${item.name}</div>${backContent}<button class="add-to-record-btn" onclick="event.stopPropagation(); addToRecord('${type}', '${item.name}', this)">＋ 기록장 추가</button></div></div>`;
         grid.appendChild(card);
     });
 }
 
-const GLOBAL_STEP8_KEY = "mindApp_global_step8";
-
-function getStorageKey() { 
-    const u = document.getElementById("userSelect").value || "guest"; 
-    const e = document.getElementById("eventSelect").value || "default"; 
-    return `mindApp_${u}_${e}`; 
-}
-
-function addUser() { const name = document.getElementById("newUserName").value.trim(); if(!name) return; let users = JSON.parse(localStorage.getItem("mindUsers") || "[]"); if(!users.includes(name)) users.push(name); localStorage.setItem("mindUsers", JSON.stringify(users)); renderUserList(name); document.getElementById("newUserName").value=""; }
-function deleteUser() { const name = document.getElementById("userSelect").value; if(!name || !confirm("사용자를 삭제할까요?")) return; let users = JSON.parse(localStorage.getItem("mindUsers") || "[]").filter(u => u !== name); localStorage.setItem("mindUsers", JSON.stringify(users)); renderUserList(); }
-function renderUserList(selectName) {
-    const select = document.getElementById("userSelect");
-    const users = JSON.parse(localStorage.getItem("mindUsers") || "[]");
-    select.innerHTML = users.length ? "" : "<option value=''>사용자 없음</option>";
-    
-    users.forEach(u => {
-        const opt = document.createElement("option");
-        opt.value = u;
-        opt.innerText = u;
-        select.appendChild(opt);
-    });
-    const lastUser = localStorage.getItem("lastUser");
-    if (selectName) select.value = selectName;
-    else if (lastUser && users.includes(lastUser)) select.value = lastUser;
-    changeUser();
-}
-function changeUser() { localStorage.setItem("lastUser", document.getElementById("userSelect").value); renderEventList(); }
-function addEvent() { const user = document.getElementById("userSelect").value; const event = document.getElementById("newEventName").value.trim(); if(!user || !event) return; let events = JSON.parse(localStorage.getItem(`events_${user}`) || "[]"); if(!events.includes(event)) events.push(event); localStorage.setItem(`events_${user}`, JSON.stringify(events)); document.getElementById("newEventName").value = ""; renderEventList(event); }
-function deleteEvent() { const user = document.getElementById("userSelect").value; const event = document.getElementById("eventSelect").value; if(!event || !confirm("삭제할까요?")) return; let events = JSON.parse(localStorage.getItem(`events_${user}`) || "[]").filter(e => e !== event); localStorage.setItem(`events_${user}`, JSON.stringify(events)); renderEventList(); }
-
-function renderEventList(selectEvent) {
-    const user = document.getElementById("userSelect").value;
-    const select = document.getElementById("eventSelect");
-    const events = JSON.parse(localStorage.getItem(`events_${user}`) || "[]");
-    select.innerHTML = events.length ? "" : "<option value=''>사건 없음</option>";
-    events.forEach(e => {
-        const opt = document.createElement("option");
-        opt.value = e;
-        opt.innerText = e;
-        select.appendChild(opt);
-    });
-    const lastEventKey = `lastEvent_${user}`;
-    const lastEvent = localStorage.getItem(lastEventKey);
-    if (selectEvent) select.value = selectEvent;
-    else if (lastEvent && events.includes(lastEvent)) select.value = lastEvent;
-    if (select.value) localStorage.setItem(lastEventKey, select.value);
-    syncTitleAndLoad();
-}
+/* 데이터 관리 */
+function getStorageKey() { return `mindApp_${document.getElementById("userSelect").value || "guest"}_${document.getElementById("eventSelect").value || "default"}`; }
+function addUser() { const n = document.getElementById("newUserName").value.trim(); if(!n) return; let u = JSON.parse(localStorage.getItem("mindUsers") || "[]"); if(!u.includes(n)) u.push(n); localStorage.setItem("mindUsers", JSON.stringify(u)); renderUserList(n); }
+function renderUserList(sN) { const s = document.getElementById("userSelect"); const u = JSON.parse(localStorage.getItem("mindUsers") || "[]"); s.innerHTML = u.map(x => `<option value="${x}">${x}</option>`).join('') || "<option>사용자 없음</option>"; if(sN) s.value = sN; changeUser(); }
+function changeUser() { renderEventList(); }
+function addEvent() { const u = document.getElementById("userSelect").value; const e = document.getElementById("newEventName").value.trim(); if(!u || !e) return; let evs = JSON.parse(localStorage.getItem(`events_${u}`) || "[]"); if(!evs.includes(e)) evs.push(e); localStorage.setItem(`events_${u}`, JSON.stringify(evs)); renderEventList(e); }
+function renderEventList(sE) { const u = document.getElementById("userSelect").value; const s = document.getElementById("eventSelect"); const evs = JSON.parse(localStorage.getItem(`events_${u}`) || "[]"); s.innerHTML = evs.map(x => `<option value="${x}">${x}</option>`).join('') || "<option>사건 없음</option>"; if(sE) s.value = sE; syncTitleAndLoad(); }
 
 function syncTitleAndLoad() { 
-    const user = document.getElementById("userSelect").value;
-    const eventName = document.getElementById("eventSelect").value; 
-    if (user && eventName) localStorage.setItem(`lastEvent_${user}`, eventName);
     const key = getStorageKey(); 
-    const savedTitle = localStorage.getItem(key + "_title"); 
-    document.getElementById("mainTitle").value = savedTitle ? savedTitle : (eventName || ""); 
-    loadContents(); 
-    const statusText = document.getElementById("adminStatusText");
-    if (!document.getElementById("adminContent").classList.contains("show")) {
-        const u = user || "없음";
-        statusText.innerText = `⚙️ 설정 (사용자: ${u} / 사건: ${eventName || "없음"})`;
-    }
-}
-
-function loadContents() { 
-    const key = getStorageKey(); 
+    document.getElementById("mainTitle").value = localStorage.getItem(key + "_title") || document.getElementById("eventSelect").value || "";
     for(let i=1; i<=7; i++) {
-        const ta = document.getElementById("step" + i); 
-        if(ta) {
-            ta.value = localStorage.getItem(key + "_step" + i) || ""; 
-            autoResize(ta); 
-        }
+        const val = localStorage.getItem(key + "_step" + i) || "";
+        if([3,5,6].includes(i)) setListContent("step" + i, val);
+        else if(document.getElementById("step"+i)) document.getElementById("step"+i).value = val;
     }
-    const step8 = document.getElementById("step8");
-    if(step8) {
-        step8.value = localStorage.getItem(GLOBAL_STEP8_KEY) || "";
-        autoResize(step8);
-    }
-    updateContextDisplay(document.getElementById('step1').value); 
 }
 
-function autoResize(el) { el.style.height = 'auto'; el.style.height = (el.scrollHeight) + 'px'; }
-
-/* 비우기 기능 함수 (하단바에서 제거되었으나 기능 유지) */
-function clearInputs() { 
-    if(confirm("작성 중인 1~7번 내용을 모두 비울까요?\n(8번 Gemini 통합 내용은 유지됩니다)")) { 
-        const key = getStorageKey();
-        for(let i=1; i<=7; i++) { 
-            const ta = document.getElementById("step"+i); 
-            if(ta) {
-                ta.value = ""; 
-                autoResize(ta); 
-                localStorage.removeItem(key + "_step" + i);
-            }
-        } 
-        updateContextDisplay(""); 
-    } 
-}
-
-function copyFinalText() {
-    const step1 = document.getElementById('step1');
-    const step8 = document.getElementById('step8');
-    const val1 = step1 ? step1.value.trim() : "";
-    const val8 = step8 ? step8.value.trim() : "";
-    if (!val1 && !val8) { alert("복사할 내용이 없습니다."); return; }
-    const combinedText = val1 + "\n\n" + val8;
-    navigator.clipboard.writeText(combinedText).then(() => {
-        const btn = document.querySelector('.copy-btn');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = "✅ 내용 복사 완료!";
-        btn.style.background = "#28a745";
-        setTimeout(() => { btn.innerHTML = originalText; btn.style.background = "#333"; }, 2000);
-    }).catch(err => { alert("복사에 실패했습니다."); });
+function saveAllToLocal() {
+    const key = getStorageKey();
+    localStorage.setItem(key + "_title", document.getElementById("mainTitle").value);
+    for(let i=1; i<=7; i++) {
+        const el = document.getElementById("step"+i);
+        localStorage.setItem(key + "_step" + i, el.value || el.innerText);
+    }
 }
 
 async function makeImage() {
@@ -904,81 +685,68 @@ async function makeImage() {
             scale: 2, useCORS: true, backgroundColor: "#F2F5F8",
             onclone: (clonedDoc) => {
                 clonedDoc.getElementById('adminPanel').style.display = 'none';
-                const step8Card = clonedDoc.getElementById('step8-container');
-                if(step8Card) step8Card.style.display = 'none';
-                const copyBtn = clonedDoc.querySelector('.copy-btn');
-                if(copyBtn) copyBtn.style.display = 'none';
-
-                const titleInput = clonedDoc.getElementById('mainTitle');
-                if(titleInput) { 
-                    const div = clonedDoc.createElement('div'); 
-                    div.innerText = titleInput.value || "나의 마음 탐구"; 
-                    div.style.cssText = "font-size:24px; font-weight:800; color:#003366; text-align:center; margin:20px 0; padding: 0 15px;"; 
-                    titleInput.parentNode.replaceChild(div, titleInput); 
-                }
-
-                clonedDoc.querySelectorAll('textarea').forEach(ta => { 
-                    const d = clonedDoc.createElement('div'); 
-                    d.innerText = ta.value || "(비어 있음)"; 
-                    d.style.cssText = "background:#EBF4FF; padding:15px; border-radius:12px; font-size:16px; line-height:1.6; white-space:pre-wrap; color:#333; min-height:60px;"; 
-                    ta.parentNode.replaceChild(d, ta); 
+                clonedDoc.getElementById('step8-container').style.display = 'none';
+                const title = clonedDoc.getElementById('mainTitle');
+                const div = clonedDoc.createElement('div');
+                div.innerText = title.value || "나의 마음 탐구";
+                div.style.cssText = "font-size:24px; font-weight:800; color:#003366; text-align:center; margin:20px 0;";
+                title.replaceWith(div);
+                clonedDoc.querySelectorAll('textarea, .editable-list').forEach(ta => {
+                    const d = clonedDoc.createElement('div');
+                    d.innerHTML = ta.tagName === "TEXTAREA" ? ta.value : ta.innerHTML;
+                    d.style.cssText = "background:#EBF4FF; padding:15px; border-radius:12px; font-size:16px; min-height:60px; white-space:pre-wrap; word-break:break-all;";
+                    ta.replaceWith(d);
                 });
             }
         });
-        canvas.toBlob(async (blob) => { 
-            if (!blob) return resetShareBtn(); 
-            const file = new File([blob], "mind_diary.png", { type: "image/png" }); 
-            if (navigator.canShare && navigator.canShare({ files: [file] })) { 
-                try { await navigator.share({ files: [file] }); } catch (err) { if (err.name !== 'AbortError') showFallback(canvas); } finally { resetShareBtn(); } 
-            } else { showFallback(canvas); resetShareBtn(); } 
-        }, "image/png");
-    } catch (e) { resetShareBtn(); }
+        canvas.toBlob(async (blob) => {
+            const file = new File([blob], "mind_diary.png", { type: "image/png" });
+            if (navigator.share) await navigator.share({ files: [file] });
+            else { document.getElementById("previewImg").src = canvas.toDataURL(); document.getElementById("previewBox").style.display = "flex"; }
+            shareBtn.disabled = false; shareBtn.innerText = "이미지 공유";
+        });
+    } catch (e) { shareBtn.disabled = false; shareBtn.innerText = "이미지 공유"; }
 }
 
-function resetShareBtn() { const b = document.getElementById("shareBtn"); b.disabled = false; b.innerText = "이미지 공유"; }
-function showFallback(canvas) { document.getElementById("previewImg").src = canvas.toDataURL("image/png"); document.getElementById("previewBox").style.display = "flex"; }
+function toggleStep8() { const c = document.getElementById('step8-content'); c.style.display = c.style.display === 'none' ? 'block' : 'none'; }
 function closePreview() { document.getElementById("previewBox").style.display = "none"; }
+function copyFinalText() {
+    const text = document.getElementById('step1').value + "\n\n" + document.getElementById('step8').value;
+    navigator.clipboard.writeText(text).then(() => alert("복사 완료!"));
+}
 
-function toggleStep8() {
-    const content = document.getElementById('step8-content');
-    const icon = document.getElementById('toggle-icon');
-    if (content.style.display === 'none') {
-        content.style.display = 'block';
-        icon.innerText = '▲'; 
+/* 스크롤 버튼 기능 통합 */
+function checkScroll() {
+    const activeSection = document.querySelector('.content-section.active');
+    const goTopBtn = document.getElementById('goTop');
+    if (activeSection && activeSection.scrollTop > 300) {
+        goTopBtn.classList.add('show');
     } else {
-        content.style.display = 'none';
-        icon.innerText = '▼'; 
+        goTopBtn.classList.remove('show');
+    }
+}
+
+function scrollToActiveTop() {
+    const activeSection = document.querySelector('.content-section.active');
+    if (activeSection) {
+        activeSection.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
 
 window.onload = function() {
-    renderGrid('emotions'); renderGrid('needs'); renderUserList();
-    initScrollDetection();
-    
-    const content = document.getElementById('step8-content');
-    const icon = document.getElementById('toggle-icon');
-    if (content && icon) { content.style.display = 'none'; icon.innerText = '▼'; }
+    renderUserList();
+    [3, 5, 6].forEach(i => {
+        const el = document.getElementById("step" + i);
+        el.addEventListener("input", handleListInput);
+        el.addEventListener("focus", () => { if(el.innerText.trim()==="") setListContent("step"+i, ""); });
+    });
+    document.getElementById("mainTitle").addEventListener("input", saveAllToLocal);
+    document.querySelectorAll("textarea").forEach(ta => ta.addEventListener("input", saveAllToLocal));
 
-    document.getElementById("mainTitle").addEventListener("input", function() { localStorage.setItem(getStorageKey() + "_title", this.value); });
-    
-    for(let i=1; i<=7; i++) {
-        const ta = document.getElementById("step" + i); 
-        if(ta) {
-            ta.addEventListener("input", function() { 
-                localStorage.setItem(getStorageKey() + "_step" + i, this.value); 
-                autoResize(this); 
-                if(i === 1) updateContextDisplay(this.value);
-            }); 
-        }
-    }
-    
-    const step8 = document.getElementById("step8");
-    if(step8) {
-        step8.addEventListener("input", function() {
-            localStorage.setItem(GLOBAL_STEP8_KEY, this.value);
-            autoResize(step8);
-        });
-    }
+    // 개별 섹션 스크롤 감지 이벤트 리스너 등록
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.addEventListener('scroll', checkScroll);
+    });
 };
 </script>
 </body>
