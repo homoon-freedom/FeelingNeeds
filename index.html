@@ -343,6 +343,11 @@
             <div class="record-card-desc">오늘의 과정을 통해 새롭게 알게 된 점이나 나에게 해주고 싶은 말</div>
             <textarea id="step7" placeholder=""></textarea>
         </div>
+<div class="record-card" style="border-top: 5px solid var(--connection-core);">
+    <div class="record-card-title">8. 상대의 욕구 인식 (추측)</div>
+    <div class="record-card-desc">그 사람에게는 지금 어떤 욕구가 중요했을까요?</div>
+    <textarea id="step8" placeholder="상대의 입장에서 중요했을 가치나 욕구를 적어보세요"></textarea>
+</div>
 
         <div class="record-card" id="step9-container" style="border-top: 5px solid #333;">
             <div class="card-title-row" onclick="togglestep9()" style="cursor: pointer;">
@@ -525,6 +530,8 @@ async function saveToSupabase() {
         step5: document.getElementById("step5").innerText,
         step6: document.getElementById("step6").innerText,
         step7: document.getElementById("step7").value,
+        step8:
+document.getElementById("step8").value,
         updated_at: new Date()
     };
     try {
@@ -551,6 +558,8 @@ async function loadFromSupabase() {
             document.getElementById("step5").innerText = data.step5 || "";
             document.getElementById("step6").innerText = data.step6 || "";
             document.getElementById("step7").value = data.step7 || "";
+
+document.getElementById("step8").value = data.step8 || "";
             saveAllToLocal();
             updateContextDisplay(data.step1 || "");
             alert("✅ 불러오기 성공!");
@@ -762,7 +771,7 @@ function syncTitleAndLoad() {
     if(e && e !== "사건 없음") localStorage.setItem(`lastSelectedEvent_${u}`, e);
     if (!u || u === "사용자 없음" || !e || e === "사건 없음") {
         document.getElementById("mainTitle").value = "";
-        for(let i=1; i<=7; i++) {
+        for(let i=1; i<=8; i++) {
             const el = document.getElementById("step"+i);
             if(el.tagName === "TEXTAREA") el.value = "";
             else el.innerText = "";
@@ -772,7 +781,7 @@ function syncTitleAndLoad() {
     }
     const key = getStorageKey(); 
     document.getElementById("mainTitle").value = localStorage.getItem(key + "_title") || e || "";
-    for(let i=1; i<=7; i++) {
+    for(let i=1; i<=8; i++) {
         const val = localStorage.getItem(key + "_step" + i) || "";
         const el = document.getElementById("step"+i);
         if(el.tagName === "TEXTAREA") el.value = val;
@@ -816,9 +825,9 @@ async function makeImage() {
                     const d = clonedDoc.createElement('div');
                     
                     // 불렛 및 들여쓰기 처리가 필요한 항목들 (2, 4번 제외한 모든 입력 항목)
-                    const listIds = ['step1', 'step2', 'step3', 'step4', 'step5', 'step6', 'step7'];
+                    const listIds = ['step1', 'step2', 'step3', 'step4', 'step5', 'step6', 'step7', 'step8'];
                     // 2번(감정), 4번(욕구)은 이미 • 표시를 포함해 들어오는 경우가 많으므로 강제 불렛 항목에서 제외
-                    const bulletRequiredIds = ['step1', 'step3', 'step5', 'step6', 'step7'];
+                    const bulletRequiredIds = ['step1', 'step3', 'step5', 'step6', 'step7', 'step8'];
 
                     if (listIds.includes(id)) {
                         const lines = textContent.split('\n').filter(line => line.trim() !== '');
@@ -912,7 +921,7 @@ window.onload = function() {
         setTimeout(() => autoResizeTextarea(ta), 100); 
     });
 
-    [3, 5, 6].forEach(i => {
+    [3, 5, 6, 8].forEach(i => {
         const el = document.getElementById("step" + i);
         el.addEventListener("input", saveAllToLocal);
     });
