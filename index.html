@@ -94,7 +94,7 @@
         }
         .item-link { 
             height: 42px; display: flex; align-items: center; justify-content: center; 
-            border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-weight: 700; 
+            border-radius: 8px; cursor: pointer; font-size: 1.0rem; font-weight: 700; 
             border: 1px solid rgba(0,0,0,0.03); text-align: center; transition: 0.2s; padding: 0 4px;
         }
 
@@ -608,6 +608,7 @@ function updateContextDisplay(val) {
 function addToRecord(type, name, btnElement) {
     const stepId = (type === 'emotions') ? 'step2' : 'step4';
     const target = document.getElementById(stepId);
+
     const sourceData = (type === 'emotions') ? emotionsData : needsData;
     const item = sourceData.find(d => d.name === name);
     const description = item ? item.desc : "";
@@ -616,12 +617,17 @@ function addToRecord(type, name, btnElement) {
     let currentValue = target.value || target.innerText;
     if (currentValue.includes(name)) { alert("이미 기록장에 추가된 항목입니다."); return; }
 
-    const newValue = currentValue.trim() ? `${currentValue.trim()}\n${entryText}` : entryText;
-    if (target.tagName === "TEXTAREA") target.value = newValue;
-    else target.innerText = newValue;
+	    const newValue = currentValue.trim() ? `${currentValue.trim()}\n${entryText}` : entryText;
+    if (target.tagName === "TEXTAREA") {
+        target.value = newValue;
+        // 핵심: 텍스트가 들어간 직후 높이 조절 함수 호출
+        autoResizeTextarea(target); 
+    } else {
+        target.innerText = newValue;
+    }
     
     localStorage.setItem(getStorageKey() + "_" + stepId, newValue);
-    btnElement.innerText = "✓ 추가됨";
+
     setTimeout(() => { btnElement.innerHTML = `＋ 기록장 추가`; }, 1000);
 }
 
@@ -781,11 +787,17 @@ function syncTitleAndLoad() {
     }
     const key = getStorageKey(); 
     document.getElementById("mainTitle").value = localStorage.getItem(key + "_title") || e || "";
+    
     for(let i=1; i<=8; i++) {
         const val = localStorage.getItem(key + "_step" + i) || "";
         const el = document.getElementById("step"+i);
-        if(el.tagName === "TEXTAREA") el.value = val;
-        else el.innerText = val;
+        if(el.tagName === "TEXTAREA") {
+            el.value = val;
+            // 불러오자마자 각 textarea의 높이를 조절
+            autoResizeTextarea(el); 
+        } else {
+            el.innerText = val;
+        }
     }
     updateContextDisplay(document.getElementById('step1').value);
     document.querySelectorAll("textarea").forEach(ta => autoResizeTextarea(ta));
@@ -911,6 +923,19 @@ window.onload = function() {
     renderUserList();
     const lastUser = localStorage.getItem("lastSelectedUser");
     renderUserList(lastUser);
+
+// 기존 코드 유지
+
+// 감정 카드와 욕구 카드의 높이를 줄이는 스타일 추가
+const cardStyle = document.createElement('style');
+cardStyle.innerHTML = `
+    .card {
+        height: 400px; /* 원하는 높이로 조절 */
+    }
+`;
+document.head.appendChild(cardStyle);
+
+// 나머지 기존 코드 유지
 
     document.querySelectorAll("textarea").forEach(ta => {
         ta.addEventListener("input", (e) => {
