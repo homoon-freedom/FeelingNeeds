@@ -825,7 +825,7 @@ async function makeImage() {
             scale: 1, // 가로폭을 직접 지정하므로 scale은 1로 설정
             useCORS: true, 
             backgroundColor: "#F2F5F8",
-            width: 1400, // 이미지 가로폭 1400px 고정
+            width: 1600, // 이미지 가로폭 1400px 고정
             onclone: (clonedDoc) => {
                 // 1. 불필요한 UI 제거
                 clonedDoc.getElementById('adminPanel').style.display = 'none';
@@ -833,9 +833,9 @@ async function makeImage() {
                 
                 // 2. 캡처 영역 가로 너비 강제 설정
                 const clonedCapture = clonedDoc.getElementById('capture');
-                clonedCapture.style.width = '1400px';
+                clonedCapture.style.width = '1600px';
                 clonedCapture.style.margin = '0';
-                clonedCapture.style.padding = '20px';
+                clonedCapture.style.padding = '10px';
 
                 // 3. 메인 타이틀 스타일 변경
                 const title = clonedDoc.getElementById('mainTitle');
@@ -851,7 +851,7 @@ async function makeImage() {
                     const d = clonedDoc.createElement('div');
                     
                     // 요청하신 글씨 크기 30px 적용
-                    d.style.cssText = "background:#EBF4FF; padding:25px; border-radius:15px; font-size:30px; font-weight:500; min-height:80px; display: flex; flex-direction: column; gap: 12px; line-height:1.5; color:#2c3e50;";
+                    d.style.cssText = "background:#EBF4FF; padding:25px; border-radius:15px; font-size:70px; font-weight:500; min-height:80px; display: flex; flex-direction: column; gap: 12px; line-height:1.5; color:#2c3e50;";
                     
                     const listIds = ['step1', 'step2', 'step3', 'step4', 'step5', 'step6', 'step7', 'step8'];
                     const bulletRequiredIds = ['step1', 'step3', 'step5', 'step6', 'step7', 'step8'];
