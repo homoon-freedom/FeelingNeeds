@@ -825,7 +825,7 @@ async function makeImage() {
             scale: 1, // 가로폭을 직접 지정하므로 scale은 1로 설정
             useCORS: true, 
             backgroundColor: "#F2F5F8",
-            width: 1600, // 이미지 가로폭 1400px 고정
+            width: 1800, // 이미지 가로폭 1400px 고정
             onclone: (clonedDoc) => {
                 // 1. 불필요한 UI 제거
                 clonedDoc.getElementById('adminPanel').style.display = 'none';
@@ -833,7 +833,7 @@ async function makeImage() {
                 
                 // 2. 캡처 영역 가로 너비 강제 설정
                 const clonedCapture = clonedDoc.getElementById('capture');
-                clonedCapture.style.width = '1600px';
+                clonedCapture.style.width = '1800px';
                 clonedCapture.style.margin = '0';
                 clonedCapture.style.padding = '10px';
 
@@ -841,7 +841,7 @@ async function makeImage() {
                 const title = clonedDoc.getElementById('mainTitle');
                 const div = clonedDoc.createElement('div');
                 div.innerText = title.value || "나의 마음 탐구";
-                div.style.cssText = "font-size:60px; font-weight:900; color:#003366; text-align:center; margin:30px 0; border-bottom:3px solid #003366; padding-bottom:10px;";
+                div.style.cssText = "font-size:50px; font-weight:900; color:#003366; text-align:center; margin:30px 0; border-bottom:3px solid #003366; padding-bottom:10px;";
                 title.replaceWith(div);
                 
                 // 4. 입력창(textarea, editable-list) 텍스트 크기 및 스타일 변경
