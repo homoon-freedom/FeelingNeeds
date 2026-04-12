@@ -819,48 +819,59 @@ async function makeImage() {
     const captureArea = document.getElementById("capture");
     const shareBtn = document.getElementById("shareBtn");
     shareBtn.disabled = true; shareBtn.innerText = "생성 중...";
+
     try {
         const canvas = await html2canvas(captureArea, {
-            scale: 2, useCORS: true, backgroundColor: "#F2F5F8",
+            scale: 1, // 가로폭을 직접 지정하므로 scale은 1로 설정
+            useCORS: true, 
+            backgroundColor: "#F2F5F8",
+            width: 1400, // 이미지 가로폭 1400px 고정
             onclone: (clonedDoc) => {
+                // 1. 불필요한 UI 제거
                 clonedDoc.getElementById('adminPanel').style.display = 'none';
                 clonedDoc.getElementById('step9-container').style.display = 'none';
+                
+                // 2. 캡처 영역 가로 너비 강제 설정
+                const clonedCapture = clonedDoc.getElementById('capture');
+                clonedCapture.style.width = '1400px';
+                clonedCapture.style.margin = '0';
+                clonedCapture.style.padding = '20px';
+
+                // 3. 메인 타이틀 스타일 변경
                 const title = clonedDoc.getElementById('mainTitle');
                 const div = clonedDoc.createElement('div');
                 div.innerText = title.value || "나의 마음 탐구";
-                div.style.cssText = "font-size:24px; font-weight:800; color:#003366; text-align:center; margin:20px 0;";
+                div.style.cssText = "font-size:40px; font-weight:900; color:#003366; text-align:center; margin:30px 0; border-bottom:3px solid #003366; padding-bottom:10px;";
                 title.replaceWith(div);
                 
+                // 4. 입력창(textarea, editable-list) 텍스트 크기 및 스타일 변경
                 clonedDoc.querySelectorAll('textarea, .editable-list').forEach(ta => {
                     const id = ta.id;
                     const textContent = (ta.tagName === "TEXTAREA" ? ta.value : ta.innerText).trim();
                     const d = clonedDoc.createElement('div');
                     
-                    // 불렛 및 들여쓰기 처리가 필요한 항목들 (2, 4번 제외한 모든 입력 항목)
+                    // 요청하신 글씨 크기 30px 적용
+                    d.style.cssText = "background:#EBF4FF; padding:25px; border-radius:15px; font-size:30px; font-weight:500; min-height:80px; display: flex; flex-direction: column; gap: 12px; line-height:1.5; color:#2c3e50;";
+                    
                     const listIds = ['step1', 'step2', 'step3', 'step4', 'step5', 'step6', 'step7', 'step8'];
-                    // 2번(감정), 4번(욕구)은 이미 • 표시를 포함해 들어오는 경우가 많으므로 강제 불렛 항목에서 제외
                     const bulletRequiredIds = ['step1', 'step3', 'step5', 'step6', 'step7', 'step8'];
 
-                    if (listIds.includes(id)) {
+                    if (listIds.includes(id) && textContent) {
                         const lines = textContent.split('\n').filter(line => line.trim() !== '');
-                        d.style.cssText = "background:#EBF4FF; padding:15px; border-radius:12px; font-size:16px; min-height:60px; display: flex; flex-direction: column; gap: 8px;";
-                        
                         lines.forEach((line, index) => {
                             const lineWrapper = clonedDoc.createElement('div');
-                            lineWrapper.style.cssText = "display: flex; white-space:pre-wrap; word-break:break-all; line-height: 1.6;";
+                            lineWrapper.style.cssText = "display: flex; white-space:pre-wrap; word-break:break-all;";
                             
                             const trimmedLine = line.trim();
                             const hasOriginalBullet = trimmedLine.startsWith('•');
                             const isBulletRequired = bulletRequiredIds.includes(id);
 
-                            // 불렛 생성 조건: 원래 불렛이 있거나, 불렛이 강제되는 항목일 때
                             if (hasOriginalBullet || isBulletRequired) {
                                 const bullet = clonedDoc.createElement('span');
                                 bullet.innerText = "•";
-                                bullet.style.cssText = "flex-shrink: 0; width: 15px; font-weight: 800;";
+                                bullet.style.cssText = "flex-shrink: 0; width: 35px; font-weight: 800; color:#007AFF;";
                                 
                                 const content = clonedDoc.createElement('span');
-                                // 기존 불렛 중복 방지
                                 content.innerText = hasOriginalBullet ? trimmedLine.substring(1).trim() : trimmedLine;
                                 content.style.cssText = "flex: 1;";
                                 
@@ -870,36 +881,50 @@ async function makeImage() {
                                 lineWrapper.innerText = line;
                             }
                             
-                            // 구분선 (마지막 줄 제외)
                             if (index < lines.length - 1) {
-                                lineWrapper.style.paddingBottom = "3px";
-                                lineWrapper.style.borderBottom = "1px dashed rgba(0,0,0,0.5)";
+                                lineWrapper.style.paddingBottom = "8px";
+                                lineWrapper.style.borderBottom = "1px dashed rgba(0,0,0,0.15)";
                             }
                             d.appendChild(lineWrapper);
                         });
                     } else {
-                        // 기타 (step9 등)
-                        d.innerText = textContent;
-                        d.style.cssText = "background:#EBF4FF; padding:15px; border-radius:12px; font-size:16px; min-height:60px; white-space:pre-wrap; word-break:break-all; line-height: 1.6;";
+                        d.innerText = textContent || "기록된 내용이 없습니다.";
                     }
                     ta.replaceWith(d);
                 });
+
+                // 5. 카드 제목(Label) 크기도 조화롭게 키우기
+                clonedDoc.querySelectorAll('.record-card-title').forEach(title => {
+                    title.style.fontSize = '32px';
+                    title.style.marginBottom = '10px';
+                });
+                clonedDoc.querySelectorAll('.record-card-desc').forEach(desc => {
+                    desc.style.fontSize = '18px';
+                    desc.style.marginBottom = '15px';
+                });
             }
         });
+
+        // 결과물 확인 및 공유
         canvas.toBlob(async (blob) => {
-            const file = new File([blob], "mind_diary.png", { type: "image/png" });
-            if (navigator.share) await navigator.share({ files: [file] });
-            else { 
+            const file = new File([blob], "mind_diary_1400.png", { type: "image/png" });
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file] });
+            } else { 
                 document.getElementById("previewImg").src = canvas.toDataURL(); 
                 document.getElementById("previewBox").style.display = "flex"; 
             }
-            shareBtn.disabled = false; shareBtn.innerText = "이미지 공유";
+            shareBtn.disabled = false; shareBtn.innerText = "❤️ 이미지 공유 ❤️";
         });
     } catch (e) { 
+        console.error(e);
         shareBtn.disabled = false; 
-        shareBtn.innerText = "이미지 공유"; 
+        shareBtn.innerText = "이미지 공유 실패"; 
     }
 }
+
+
+
 
 function togglestep9() { const c = document.getElementById('step9-content'); c.style.display = c.style.display === 'none' ? 'block' : 'none'; }
 function closePreview() { document.getElementById("previewBox").style.display = "none"; }
