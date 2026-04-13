@@ -146,8 +146,8 @@
         #mainTitle { width: calc(100% - 30px); margin: 10px 15px; padding: 12px; font-size: 18px; font-weight: 800; text-align: center; border: 2px solid var(--accent-blue); border-radius: 10px; color: var(--primary-blue); background: white; box-sizing: border-box; }
         
         .record-card { background: white; border-radius: 10px; padding: 18px; margin: 0 15px 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border-top: 5px solid var(--accent-blue); }
-        .record-card-title { font-size: 30px; font-weight: 700; color: var(--primary-blue); margin-bottom: 4px; }
-        .record-card-desc { font-size: 30px; color: #8E8E93; margin-bottom: 10px; line-height: 1.6; }
+        .record-card-title { font-size: 15px; font-weight: 700; color: var(--primary-blue); margin-bottom: 4px; }
+        .record-card-desc { font-size: 11px; color: #8E8E93; margin-bottom: 10px; line-height: 1.6; }
         
         /* 공통 텍스트 입력 스타일 */
 	textarea, .editable-list { 
@@ -895,11 +895,11 @@ async function makeImage() {
 
                 // 5. 카드 제목(Label) 크기도 조화롭게 키우기
                 clonedDoc.querySelectorAll('.record-card-title').forEach(title => {
-                    title.style.fontSize = '32px';
+                    title.style.fontSize = '50px';
                     title.style.marginBottom = '10px';
                 });
                 clonedDoc.querySelectorAll('.record-card-desc').forEach(desc => {
-                    desc.style.fontSize = '18px';
+                    desc.style.fontSize = '40px';
                     desc.style.marginBottom = '15px';
                 });
             }
