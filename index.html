@@ -224,7 +224,7 @@
         .cat-auto .front, .cat-auto .back { border-color: var(--autonomy-core); background-color: rgba(144, 206, 173, 0.8); }
         .cat-well .front, .cat-well .back { border-color: var(--wellbeing-core); background-color: rgba(129, 212, 250, 0.8); }
         .cat-peace .front, .cat-peace .back { border-color: var(--peace-core); background-color: rgba(179, 157, 219, 0.8); }
-        .cat-joy .front, .cat-joy .back { border-color: var(--joy-core); background-color: rgba(255, 241, 118, 0.8); }
+        .cat-joy .front, .cat-joy .back { border-color: var(--joy-core); background-color: rgba(255, 241, 118, 0.7); }
         .cat-love .front, .cat-love .back { border-color: var(--love-core); background-color: rgba(240, 98, 146, 0.8); }
         .cat-sad .front, .cat-sad .back { border-color: var(--sadness-core); background-color: rgba(100, 181, 246, 0.8); }
         .cat-anx .front, .cat-anx .back { border-color: var(--anxiety-core); background-color: rgba(186, 104, 200, 0.8); }
@@ -470,7 +470,7 @@ const emotionsData = [
     { name: "혼란스럽다", cat: "cat-anx", desc: "상충하는 욕구가 엉켜 질서가 흔들리는 상태", sit: "중요한 갈림길에서 판단이 서지 않을 때", body: "머릿속이 멍해지거나 눈동자가 자주 흔들리며 어지러움", aff: "생각이 걷히면 곧 명확한 답이 보일 것입니다." },
     { name: "긴장하다", cat: "cat-anx", desc: "중요한 일을 앞두고 마음이 조마조마함", sit: "면접을 앞두고 너무 긴장해서 손에 땀이 났다.", body: "손바닥에 땀이 나고 어깨가 귀 쪽으로 바짝 올라감", aff: "이 긴장은 준비되었다는 증거입니다." },
     { name: "놀라다", cat: "cat-anx", desc: "갑작스러운 변화에 반응하는 몸의 반동", sit: "예상치 못한 소식이나 큰 소리가 날 때", body: "눈이 커지고 숨이 턱 막히며 몸이 순간적으로 굳음", aff: "차분하게 안정을 되찾고 상황을 봅니다." },
-    { name: "당황하다", cat: "cat-anx", desc: "예상치 못한 상황에 대처가 일시 마비된 상태", sit: "실수를 하거나 갑작스러운 질문을 받을 때", body: "얼굴이 화끈거리고 머릿속이 하얘지며 손동작이 꼬임", aff: "당황해도 괜찮습니다. 지혜를 찾을 것입니다." },
+    { name: "당황하다", cat: "cat-anx", desc: "예상치 못한 상황에 대처가 일시 마비된 상태", sit: "실수를 하거나 갑작스러운 질문을 받을 때", body: "얼굴이 화끈거림을 느끼고 머릿속이 하얘지며 손동작이 꼬임", aff: "당황해도 괜찮습니다. 지혜를 찾을 것입니다." },
     { name: "두렵다", cat: "cat-anx", desc: "위협을 느껴 저항하고 싶은 원초적 감정", sit: "압박을 주는 상대나 공포를 마주할 때", body: "몸이 떨리고 입술이 마르며 뒤로 물러나고 싶어짐", aff: "내 안의 용기를 믿으며 나를 지킵니다." },
     { name: "무섭다", cat: "cat-anx", desc: "공포 대상 앞에서 자기 보호 기제가 작동함", sit: "천둥번개나 위험 요소를 발견할 때", body: "소름이 돋고식은땀이 흐르며 근육이 경직됨", aff: "나는 안전한 곳에 있습니다. 곧 지나갑니다." },
     { name: "초조하다", cat: "cat-anx", desc: "결과에 쫓겨 빨리 마무리되기를 갈망함", sit: "순서를 기다리거나 기한이 임박할 때", body: "다리를 떨거나 손톱을 만지작거리며 자꾸 시계를 봄", aff: "모든 것은 제때 이루어집니다. 나를 믿습니다." },
@@ -530,8 +530,7 @@ async function saveToSupabase() {
         step5: document.getElementById("step5").innerText,
         step6: document.getElementById("step6").innerText,
         step7: document.getElementById("step7").value,
-        step8:
-document.getElementById("step8").value,
+        step8: document.getElementById("step8").value,
         updated_at: new Date()
     };
     try {
@@ -558,8 +557,7 @@ async function loadFromSupabase() {
             document.getElementById("step5").innerText = data.step5 || "";
             document.getElementById("step6").innerText = data.step6 || "";
             document.getElementById("step7").value = data.step7 || "";
-
-document.getElementById("step8").value = data.step8 || "";
+            document.getElementById("step8").value = data.step8 || "";
             saveAllToLocal();
             updateContextDisplay(data.step1 || "");
             alert("✅ 불러오기 성공!");
@@ -617,16 +615,15 @@ function addToRecord(type, name, btnElement) {
     let currentValue = target.value || target.innerText;
     if (currentValue.includes(name)) { alert("이미 기록장에 추가된 항목입니다."); return; }
 
-	    const newValue = currentValue.trim() ? `${currentValue.trim()}\n${entryText}` : entryText;
+    const newValue = currentValue.trim() ? `${currentValue.trim()}\n${entryText}` : entryText;
     if (target.tagName === "TEXTAREA") {
         target.value = newValue;
-        // 핵심: 텍스트가 들어간 직후 높이 조절 함수 호출
         autoResizeTextarea(target); 
     } else {
         target.innerText = newValue;
     }
     
-    localStorage.setItem(getStorageKey() + "_" + stepId, newValue);
+    saveAllToLocal();
 
     setTimeout(() => { btnElement.innerHTML = `＋ 기록장 추가`; }, 1000);
 }
@@ -740,7 +737,7 @@ function deleteEvent() {
         localStorage.setItem(`events_${u}`, JSON.stringify(evs));
         const keyPrefix = `mindApp_${u}_${eventName}`;
         localStorage.removeItem(`${keyPrefix}_title`);
-        for (let i = 1; i <= 7; i++) localStorage.removeItem(`${keyPrefix}_step${i}`);
+        for (let i = 1; i <= 8; i++) localStorage.removeItem(`${keyPrefix}_step${i}`);
         alert("사건이 삭제되었습니다.");
         renderEventList();
     }
@@ -770,7 +767,6 @@ function renderEventList(sE) {
     syncTitleAndLoad(); 
 }
 
-/* --- 2. 불러오기 및 높이 조절 최적화 --- */
 function syncTitleAndLoad() { 
     const u = document.getElementById("userSelect").value;
     const e = document.getElementById("eventSelect").value;
@@ -798,7 +794,7 @@ function syncTitleAndLoad() {
         
         if(el.tagName === "TEXTAREA") {
             el.value = val;
-            autoResizeTextarea(el); // 값 설정 후 즉시 높이 조절
+            autoResizeTextarea(el);
         } else {
             el.innerText = val;
         }
@@ -806,7 +802,6 @@ function syncTitleAndLoad() {
     updateContextDisplay(document.getElementById('step1').value);
 }
 
-/* --- 1. 저장 로직 수정 (Step 8 추가) --- */
 function saveAllToLocal() {
     const u = document.getElementById("userSelect").value;
     const e = document.getElementById("eventSelect").value;
@@ -815,7 +810,6 @@ function saveAllToLocal() {
     const key = getStorageKey();
     localStorage.setItem(key + "_title", document.getElementById("mainTitle").value);
     
-    // 1단계부터 8단계까지 루프 돌며 저장
     for(let i=1; i<=8; i++) {
         const el = document.getElementById("step"+i);
         if(!el) continue;
@@ -824,7 +818,6 @@ function saveAllToLocal() {
     }
 }
 
-/* --- 이미지 생성 로직 (수정본) --- */
 async function makeImage() {
     const captureArea = document.getElementById("capture");
     const shareBtn = document.getElementById("shareBtn");
@@ -837,11 +830,9 @@ async function makeImage() {
             backgroundColor: "#F2F5F8",
             width: 1800, 
             onclone: (clonedDoc) => {
-                // 1. 불필요한 UI 제거
                 clonedDoc.getElementById('adminPanel').style.display = 'none';
                 clonedDoc.getElementById('step9-container').style.display = 'none';
                 
-                // 2. record-card-desc(설명 문구) 제거 (요청하신 부분)
                 clonedDoc.querySelectorAll('.record-card-desc').forEach(el => {
                     el.style.display = 'none';
                 });
@@ -850,21 +841,31 @@ async function makeImage() {
                 clonedCapture.style.width = '1800px';
                 clonedCapture.style.padding = '0px'; 
 
-                // 3. 타이틀 스타일 변환
                 const title = clonedDoc.getElementById('mainTitle');
                 const titleDiv = clonedDoc.createElement('div');
                 titleDiv.innerText = title.value || "나의 마음 탐구 기록";
                 titleDiv.style.cssText = "font-size:70px; font-weight:900; color:#003366; text-align:center; margin-bottom:50px; padding:20px; border-bottom:5px solid #003366;";
                 title.replaceWith(titleDiv);
                 
-                // 4. 입력 필드를 일반 div로 변환 (가독성)
                 clonedDoc.querySelectorAll('textarea, .editable-list').forEach(ta => {
-                    const textContent = (ta.tagName === "TEXTAREA" ? ta.value : ta.innerText).trim();
+                    const originalTextContent = (ta.tagName === "TEXTAREA" ? ta.value : ta.innerText).trim();
                     const d = clonedDoc.createElement('div');
                     d.style.cssText = "background:white; border:1px solid #dce4ee; padding:30px; border-radius:15px; font-size:45px; line-height:1.6; color:#2c3e50; white-space:pre-wrap; margin-top:10px;";
                     
-                    if (textContent) {
-                        d.innerText = textContent;
+                    if (originalTextContent) {
+                        // 각 줄을 분리하여 불렛 포인트(•) 추가 (기능 추가 부분)
+                        const lines = originalTextContent.split('\n');
+                        const bulletedText = lines.map(line => {
+                            const trimmed = line.trim();
+                            if (!trimmed) return ""; // 빈 줄 유지
+                            // 이미 불렛이나 하이픈이 있는 경우는 중복 추가 방지
+                            if (trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.startsWith('*')) {
+                                return line;
+                            }
+                            return `• ${line}`;
+                        }).join('\n');
+                        
+                        d.innerText = bulletedText;
                     } else {
                         d.innerText = "기록된 내용이 없습니다.";
                         d.style.color = "#ccc";
@@ -872,7 +873,6 @@ async function makeImage() {
                     ta.replaceWith(d);
                 });
 
-                // 5. 단계 제목 크기 키우기
                 clonedDoc.querySelectorAll('.record-card-title').forEach(el => {
                     el.style.fontSize = '40px';
                     el.style.marginBottom = '10px';
@@ -895,8 +895,6 @@ async function makeImage() {
         shareBtn.disabled = false; shareBtn.innerText = "공유 실패"; 
     }
 }
-
-
 
 function togglestep9() { const c = document.getElementById('step9-content'); c.style.display = c.style.display === 'none' ? 'block' : 'none'; }
 function closePreview() { document.getElementById("previewBox").style.display = "none"; }
@@ -921,18 +919,9 @@ window.onload = function() {
     const lastUser = localStorage.getItem("lastSelectedUser");
     renderUserList(lastUser);
 
-// 기존 코드 유지
-
-// 감정 카드와 욕구 카드의 높이를 줄이는 스타일 추가
-const cardStyle = document.createElement('style');
-cardStyle.innerHTML = `
-    .card {
-        height: 400px; /* 원하는 높이로 조절 */
-    }
-`;
-document.head.appendChild(cardStyle);
-
-// 나머지 기존 코드 유지
+    const cardStyle = document.createElement('style');
+    cardStyle.innerHTML = `.card { height: 400px; }`;
+    document.head.appendChild(cardStyle);
 
     document.querySelectorAll("textarea").forEach(ta => {
         ta.addEventListener("input", (e) => {
