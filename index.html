@@ -383,6 +383,7 @@
 </div>
 
 <script>
+// 데이터 배열들은 기존 코드와 동일 (내용 생략 방지 위해 전체 유지)
 const needsData = [
     { name: "자유•자율성", cat: "cat-auto", desc: "자신의 가치와 꿈에 따라 스스로 선택하고 행동하고 싶은 마음", sat: ["행복하다", "만족하다", "신나다"], unsat: ["답답하다", "억울하다", "막막하다"], action: "오늘 하루 중 단 30분이라도 타인의 간섭 없이 내가 원하는 일만 하는 '나만의 시간'을 확보해 보세요." },
     { name: "선택", cat: "cat-auto", desc: "타의가 아닌 나의 의지로 방향을 정하고 결정하고 싶은 마음", sat: ["자랑스럽다", "기쁘다", "만족하다"], unsat: ["답답하다", "억울하다", "당황하다"], action: "주변의 조언을 잠시 멈추고, 아주 사소한 결정부터 오직 나의 직관에 따라 결정해 보세요." },
@@ -503,7 +504,7 @@ const emotionsData = [
     { name: "지루하다", cat: "cat-sad", desc: "의미를 발견하지 못해 시간이 정체된 상태", sit: "단조로운 일상이 반복될 때", body: "하품이 나오고 턱을 괴거나 몸을 비틀게 됨", aff: "지루함 속에 영감의 씨앗이 있습니다." },
     { name: "피곤하다", cat: "cat-sad", desc: "쉼을 강력하게 요청하는 고갈 신호", sit: "쉼 없이 달려와 모든 의욕이 사라질 때", body: "머리가 무겁고 눈이 따가우며 뒷목이 뻣뻣함", aff: "고생한 나에게 깊은 휴식을 선물합니다." },
     { name: "부럽다", cat: "cat-sad", desc: "타인의 처지로 결핍이 자극되는 시기", sit: "친구의 성공 소식을 보았을 때", body: "시선이 자꾸 아래로 향하고 가슴 한구석이 쿡쿡 쑤심", aff: "나에게는 나만의 고유한 행복이 이미 있습니다." },
-    { name: "괴롭다", cat: "cat-sad", desc: "고통이 극심하여 벗어나고 싶은 간절함", sit: "상처가 떠오르거나 현실이 힘들 때", body: "온몸의 근육이 뒤틀리는 듯하고 가슴이 찢어지는 통증", aff: "고통을 따뜻하게 안아주며 치유합니다." },
+    { name: "괴롭다", cat: "cat-sad", desc: "고통이 극심하여 벗어나고 싶은 간절함", sit: "상처가 떠오르거나 현실이 힘들 때", body: "온몸의 근욕이 뒤틀리는 듯하고 가슴이 찢어지는 통증", aff: "고통을 따뜻하게 안아주며 치유합니다." },
     { name: "그리워하다", cat: "cat-sad", desc: "부재하는 대상과 연결되고 싶은 상태", sit: "이별한 이의 유품이나 흔적을 볼 때", body: "가슴 부근이 아련하게 저리고 목소리가 떨림", aff: "그리움은 내가 사랑했다는 증거입니다." },
     { name: "실망하다", cat: "cat-sad", desc: "기대가 무너져 허탈하고 신뢰가 흔들림", sit: "믿었던 이의 무심한 모습을 보았을 때", body: "몸에서 기운이 빠져나가며 입안이 마르는 느낌", aff: "실망은 환상이 걷힌 자리에 진실을 세우는 일입니다." },
     { name: "서럽다", cat: "cat-sad", desc: "억울함과 슬픔이 북받쳐 오르는 아픈 마음", sit: "혼자 아프거나 오해받을 때", body: "어깨를 떨며 흐느끼게 되고 가슴이 요동침", aff: "내 마음의 울음을 충분히 들어주겠습니다." },
@@ -774,6 +775,7 @@ function syncTitleAndLoad() {
     if(u && u !== "사용자 없음") localStorage.setItem("lastSelectedUser", u);
     if(e && e !== "사건 없음") localStorage.setItem(`lastSelectedEvent_${u}`, e);
     
+    // step9은 공용 키를 사용하므로 여기서 초기화하지 않음
     if (!u || u === "사용자 없음" || !e || e === "사건 없음") {
         document.getElementById("mainTitle").value = "";
         for(let i=1; i<=8; i++) {
@@ -781,6 +783,7 @@ function syncTitleAndLoad() {
             if(el) el.tagName === "TEXTAREA" ? el.value = "" : el.innerText = "";
         }
         updateContextDisplay("");
+        loadStep9Global(); // 공용 step9 로드
         return;
     }
 
@@ -800,18 +803,34 @@ function syncTitleAndLoad() {
         }
     }
     updateContextDisplay(document.getElementById('step1').value);
+    loadStep9Global(); // 공용 step9 로드
+}
+
+// Step 9 전역 로드 함수
+function loadStep9Global() {
+    const globalStep9 = localStorage.getItem("mindApp_global_step9") || "";
+    const el = document.getElementById("step9");
+    if (el) {
+        el.value = globalStep9;
+        autoResizeTextarea(el);
+    }
 }
 
 function saveAllToLocal() {
     const u = document.getElementById("userSelect").value;
     const e = document.getElementById("eventSelect").value;
+    
+    // Step 9은 사건/사용자 관계없이 항상 저장
+    const step9Val = document.getElementById("step9").value;
+    localStorage.setItem("mindApp_global_step9", step9Val);
+
     if (!u || u === "사용자 없음" || !e || e === "사건 없음") return;
     
     const key = getStorageKey();
     localStorage.setItem(key + "_title", document.getElementById("mainTitle").value);
     
     for(let i=1; i<=8; i++) {
-        const el = document.getElementById("step"+i);
+        const el = document.getElementById("step" + i);
         if(!el) continue;
         const val = el.tagName === "TEXTAREA" ? el.value : el.innerText;
         localStorage.setItem(key + "_step" + i, val);
@@ -915,9 +934,6 @@ async function makeImage() {
 }
 
 
-
-
-
 function togglestep9() { const c = document.getElementById('step9-content'); c.style.display = c.style.display === 'none' ? 'block' : 'none'; }
 function closePreview() { document.getElementById("previewBox").style.display = "none"; }
 function copyFinalText() {
@@ -954,13 +970,16 @@ window.onload = function() {
         setTimeout(() => autoResizeTextarea(ta), 100); 
     });
 
-    [3, 5, 6, 8].forEach(i => {
+    [3, 5, 6, 8, 9].forEach(i => {
         const el = document.getElementById("step" + i);
         el.addEventListener("input", saveAllToLocal);
     });
 
     document.getElementById("mainTitle").addEventListener("input", saveAllToLocal);
     document.querySelectorAll('.content-section').forEach(section => { section.addEventListener('scroll', checkScroll); });
+    
+    // 페이지 로드 시 step9 로드
+    loadStep9Global();
 };
 </script>
 </body>
