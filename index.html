@@ -63,7 +63,7 @@
         /* 메인 콘텐츠 영역 */
         .content-section { 
             display: none; flex: 1; overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; padding-bottom: 150px; 
+            -webkit-overflow-scrolling: touch; padding-bottom: 100px; 
         }
         .content-section.active { display: block; }
 
@@ -627,28 +627,6 @@ function addToRecord(type, name, btnElement) {
 
     setTimeout(() => { btnElement.innerHTML = `＋ 기록장 추가`; }, 1000);
 }
-// 수정된 부분: 카드의 하단이 화면의 하단 바(Fixed Bar) 바로 위에 오도록 더 아래로 스크롤
-function scrollToCardBottom(type, itemName) {
-    const container = document.getElementById(type + '-section');
-    const card = document.getElementById(`${type}-card-${itemName}`);
-    const fixedBarHeight = document.getElementById('fixedBottomBar').offsetHeight || 100; // 하단 바 높이 감안
-    const viewHeight = window.innerHeight;
-
-    if (card && container) {
-        // 카드의 하단 절대 위치
-        const cardBottom = card.offsetTop + card.offsetHeight;
-        
-        // 화면 하단 바 바로 위에 카드의 하단이 닿도록 설정
-        // 스크롤 위치 = 카드 하단 위치 - 화면 전체 높이 + 하단 바 높이 + 여백(10px)
-        const scrollPos = cardBottom - viewHeight + fixedBarHeight -40;
-        
-        container.scrollTo({
-            top: scrollPos,
-            behavior: 'smooth'
-        });
-    }
-}
-
 
 function renderGrid(type) {
     const data = type === 'needs' ? needsData : emotionsData;
@@ -659,8 +637,7 @@ function renderGrid(type) {
         const link = document.createElement('div');
         link.className = `item-link link-${item.cat.split('-')[1]}`;
         link.innerText = item.name;
-        // 수정된 스크롤 함수 적용
-        link.onclick = () => { scrollToCardBottom(type, item.name); };
+        link.onclick = () => { document.getElementById(type + '-section').scrollTo({top: document.getElementById(`${type}-card-${item.name}`).offsetTop - 100, behavior: 'smooth'}); };
         index.appendChild(link);
         const card = document.createElement('div');
         card.className = `card ${item.cat}`; card.id = `${type}-card-${item.name}`;
@@ -797,14 +774,6 @@ function syncTitleAndLoad() {
     if(u && u !== "사용자 없음") localStorage.setItem("lastSelectedUser", u);
     if(e && e !== "사건 없음") localStorage.setItem(`lastSelectedEvent_${u}`, e);
     
-    // Step 9 전역 불러오기 (마지막 입력값)
-    const globalStep9 = localStorage.getItem("mindApp_global_step9") || "";
-    const step9El = document.getElementById("step9");
-    if(step9El) {
-        step9El.value = globalStep9;
-        autoResizeTextarea(step9El);
-    }
-
     if (!u || u === "사용자 없음" || !e || e === "사건 없음") {
         document.getElementById("mainTitle").value = "";
         for(let i=1; i<=8; i++) {
@@ -834,10 +803,6 @@ function syncTitleAndLoad() {
 }
 
 function saveAllToLocal() {
-    // 1. Step 9 개별 저장 (사건과 무관하게 전역 저장)
-    const step9Val = document.getElementById("step9").value;
-    localStorage.setItem("mindApp_global_step9", step9Val);
-
     const u = document.getElementById("userSelect").value;
     const e = document.getElementById("eventSelect").value;
     if (!u || u === "사용자 없음" || !e || e === "사건 없음") return;
@@ -867,8 +832,8 @@ async function makeImage() {
             width: 1800, 
             onclone: (clonedDoc) => {
                 // 1. 불필요한 요소 숨기기
-                if (clonedDoc.getElementById('adminPanel')) clonedDoc.getElementById('adminPanel').style.display = 'none';
-                if (clonedDoc.getElementById('step9-container')) clonedDoc.getElementById('step9-container').style.display = 'none';
+                clonedDoc.getElementById('adminPanel').style.display = 'none';
+                clonedDoc.getElementById('step9-container').style.display = 'none';
                 
                 clonedDoc.querySelectorAll('.record-card-desc').forEach(el => {
                     el.style.display = 'none';
@@ -879,80 +844,65 @@ async function makeImage() {
                 clonedCapture.style.width = '1800px';
                 clonedCapture.style.padding = '0px'; 
 
-                // 3. 제목 변환
+                // 3. 제목 변환 (Input -> Div)
                 const title = clonedDoc.getElementById('mainTitle');
-                if (title) {
-                    const titleDiv = clonedDoc.createElement('div');
-                    titleDiv.innerText = title.value || "나의 마음 탐구 기록";
-                    titleDiv.style.cssText = "font-size:70px; font-weight:900; color:#003366; text-align:center; margin-bottom:50px; padding:20px; border-bottom:5px solid #003366;";
-                    title.replaceWith(titleDiv);
-                }
+                const titleDiv = clonedDoc.createElement('div');
+                titleDiv.innerText = title.value || "나의 마음 탐구 기록";
+                titleDiv.style.cssText = "font-size:70px; font-weight:900; color:#003366; text-align:center; margin-bottom:50px; padding:20px; border-bottom:5px solid #003366;";
+                title.replaceWith(titleDiv);
                 
-                // 4. 입력 내용 변환 (엔터 기준 줄바꿈 시에만 점선 추가)
+                // 4. 입력 내용 변환 및 내어쓰기 + 줄바꿈 점선 적용
                 clonedDoc.querySelectorAll('textarea, .editable-list').forEach(ta => {
                     const originalTextContent = (ta.tagName === "TEXTAREA" ? ta.value : ta.innerText).trim();
                     const d = clonedDoc.createElement('div');
                     
-                    d.style.cssText = "background:white; border:1px solid #dce4ee; padding:30px; border-radius:15px; font-size:45px; line-height:1.6; color:#2c3e50; margin-top:10px;";
+                    // 기본 카드 스타일 (컨테이너)
+                    d.style.cssText = "background:white; border:1px solid #dce4ee; padding:30px; border-radius:15px; font-size:45px; line-height:1.6; color:#2c3e50; white-space:pre-wrap; margin-top:10px;";
                     
                     if (originalTextContent) {
-                        const lines = originalTextContent.split('\n').filter(line => line.trim() !== '');
-                        
+                        const lines = originalTextContent.split('\n');
                         const bulletedHTML = lines.map((line, index) => {
                             const trimmed = line.trim();
-                            let content = trimmed;
+                            if (!trimmed) return '<div style="height: 1em;"></div>'; // 빈 줄 처리
                             
+                            let content = trimmed;
+                            // 불렛 기호 자동 추가
                             if (!trimmed.startsWith('•') && !trimmed.startsWith('-') && !trimmed.startsWith('*')) {
                                 content = `• ${trimmed}`;
                             }
 
-                            const isLast = index === lines.length - 1;
-                            const lineBorderStyle = isLast 
-                                ? "" 
-                                : "border-bottom: 2px dashed #dce4ee; padding-bottom: 20px; margin-bottom: 20px;";
+                            // 마지막 줄이 아닐 경우에만 하단에 점선 추가
+                            const isLastLine = index === lines.length - 1;
+                            const borderStyle = isLastLine ? "" : "border-bottom: 2px dashed #8ea4bc; padding-bottom: 15px; margin-bottom: 15px;";
 
-                            return `
-                                <div style="padding-left: 1.2em; text-indent: -0.6em; word-break: break-all; white-space: pre-wrap; ${lineBorderStyle}">
-                                    ${content}
-                                </div>`;
+                            // 내어쓰기(text-indent)와 점선 스타일 결합
+                            return `<div style="padding-left: 1.2em; text-indent: -0.6em; word-break: break-all; ${borderStyle}">${content}</div>`;
                         }).join('');
                         
                         d.innerHTML = bulletedHTML;
                     } else {
                         d.innerText = "기록된 내용이 없습니다.";
                         d.style.color = "#ccc";
-                        d.style.textAlign = "center";
                     }
                     ta.replaceWith(d);
                 });
 
-                // 5. 카드 제목 스타일
+                // 5. 카드 제목 스타일 조정
                 clonedDoc.querySelectorAll('.record-card-title').forEach(el => {
                     el.style.fontSize = '40px';
                     el.style.marginBottom = '10px';
-                    el.style.fontWeight = 'bold';
                 });
             }
         });
 
-        // 6. 결과 처리
+        // 6. 결과 처리 (공유 또는 미리보기)
         canvas.toBlob(async (blob) => {
-            if (!blob) return;
             const file = new File([blob], "mind_diary.png", { type: "image/png" });
-            
             if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({ files: [file] });
-                } catch (err) {
-                    console.log("공유 취소", err);
-                }
+                await navigator.share({ files: [file] });
             } else { 
-                const previewImg = document.getElementById("previewImg");
-                const previewBox = document.getElementById("previewBox");
-                if (previewImg && previewBox) {
-                    previewImg.src = canvas.toDataURL(); 
-                    previewBox.style.display = "flex"; 
-                }
+                document.getElementById("previewImg").src = canvas.toDataURL(); 
+                document.getElementById("previewBox").style.display = "flex"; 
             }
             shareBtn.disabled = false; 
             shareBtn.innerText = "❤️ 이미지 공유 ❤️";
@@ -963,6 +913,10 @@ async function makeImage() {
         shareBtn.innerText = "공유 실패"; 
     }
 }
+
+
+
+
 
 function togglestep9() { const c = document.getElementById('step9-content'); c.style.display = c.style.display === 'none' ? 'block' : 'none'; }
 function closePreview() { document.getElementById("previewBox").style.display = "none"; }
