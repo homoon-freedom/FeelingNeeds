@@ -164,9 +164,13 @@
 
         .copy-btn {
             margin-top: 10px; padding: 12px; width: 100%; background: #333; color: white;
-            border: none; border-radius: 10px; font-weight: 800; font-size: 0.9rem;
+            border: none; border-radius: 10px; font-weight: 800; font-size: 0.85rem;
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: 0.2s;
         }
+        .copy-btn:active { transform: scale(0.98); background: #000; }
+        .btn-q1 { background: #007AFF; } /* 파란색 */
+        .btn-q2 { background: #5856D6; } /* 보라색 */
 
         .fixed-bottom-bar {
             position: fixed; bottom: 0; left: 0; width: 100%;
@@ -334,11 +338,18 @@
         <div class="record-card" id="step9-container" style="border-top: 5px solid #333;">
             <div class="card-title-row" onclick="togglestep9()" style="cursor: pointer;">
                 <div class="record-card-title">Gemini <span id="toggle-icon">▲</span></div>
-				<div class="record-card-desc">사건과 질문을 복사하여 Gemini에게 물어보기</div>
+				<div class="record-card-desc">기록 내용과 질문들을 합쳐서 Gemini에게 물어보기</div>
             </div>
             <div id="step9-content" style="display: none; padding-top:10px;">
-                <textarea id="step9" placeholder="질문 템플릿..."></textarea>
-                <button class="copy-btn" onclick="copyFinalText()">📋 복사: Gemini 질문</button>
+                <span class="section-label">사건  + 질문(Gemini 도움받기)</span>
+                <textarea id="step9" placeholder="예: 위의 사건과 감정을 바탕으로 나에게 필요한 공감과 위로를 해줘."></textarea>
+                <button class="copy-btn btn-q1" onclick="copyQ1()">📋 복사: 사건 + 질문</button>
+
+                <div style="height: 15px; border-bottom: 1px solid #eee; margin-bottom: 15px;"></div>
+
+                <span class="section-label">전체내용 + 질문 (상대에게 요청하기)</span>
+                <textarea id="step9_extra" placeholder="예: 1~6번 내용을 바탕으로 나의 욕구와 상대의 욕구를 조화시킬 대화법을 제안해줘."></textarea>
+                <button class="copy-btn btn-q2" onclick="copyQ2()">📋 복사: 1~6번 + 질문</button>
             </div>
         </div>
     </div>
@@ -359,7 +370,7 @@
 </div>
 
 <script>
-// 데이터 배열 (유지)
+// 데이터 배열 (감정/욕구 데이터 생략 없이 그대로 유지)
 const needsData = [
     { name: "자유•자율성", cat: "cat-auto", desc: "자신의 가치와 꿈에 따라 스스로 선택하고 행동하고 싶은 마음", sat: ["행복하다", "만족하다"], unsat: ["답답하다", "억울하다"], action: "나만의 시간을 확보하세요." },
     { name: "선택", cat: "cat-auto", desc: "나의 의지로 방향을 정하고 결정하고 싶은 마음", sat: ["자랑스럽다", "기쁘다"], unsat: ["답답하다", "억울하다"], action: "사소한 결정부터 직관에 따라 결정해 보세요." },
@@ -401,7 +412,7 @@ const needsData = [
     { name: "감사", cat: "cat-peace", desc: "소중함을 표현하고 싶은 욕구", sat: ["행복하다", "따뜻하다"], unsat: ["속상하다", "허탈하다"], action: "3가지를 기록하세요." },
     { name: "평등", cat: "cat-peace", desc: "공정한 대우를 받기를 바라는 마음", sat: ["편안하다", "만족하다"], unsat: ["분하다", "억울하다"], action: "의견을 정중히 밝히세요." },
     { name: "평화", cat: "cat-peace", desc: "고요하고 조화로운 상태", sat: ["편안하다", "행복하다"], unsat: ["불안하다", "짜증나다"], action: "명상을 해보세요." },
-    { name: "안전", cat: "cat-peace", desc: "위협으로부터 보호받고 싶은 욕구", sat: ["편안하다", "든든하다"], unsat: ["두렵다", "무섭다"], action: "안전한 person을 떠올리세요." },
+    { name: "안전", cat: "cat-peace", desc: "위협으로부터 보호받고 싶은 욕구", sat: ["편안하다", "든든하다"], unsat: ["두렵다", "무섭다"], action: "안전한 사람을 떠올리세요." },
     { name: "보호", cat: "cat-peace", desc: "지키고 싶은 마음", sat: ["든든하다", "뿌듯하다"], unsat: ["걱정하다", "무섭다"], action: "식물을 돌보세요." },
     { name: "희망", cat: "cat-peace", desc: "더 나은 내일에 대한 긍정적 믿음", sat: ["기대하다", "설레다"], unsat: ["좌절하다", "우울하다"], action: "작은 변화에 집중하세요." },
     { name: "애도", cat: "cat-peace", desc: "상실을 슬퍼하고 정리하는 과정", sat: ["평온하다", "안도하다"], unsat: ["서럽다", "슬프다"], action: "편지를 써보세요." },
@@ -427,7 +438,7 @@ const emotionsData = [
     { name: "행복하다", cat: "cat-joy", desc: "만족을 느끼며 내면이 훈훈하게 가득 찬 상태", sit: "사랑하는 이들과 함께하는 순간", body: "온몸에 따뜻한 에너지가 퍼지고 호흡이 깊고 편안해짐", aff: "나는 지금 이 순간 행복할 자격이 있습니다." },
     { name: "감동하다", cat: "cat-joy", desc: "타인의 진심을 마주하여 가슴이 뭉클해지는 떨림", sit: "명장면이나 희생을 보았을 때", body: "콧날이 시큰해지거나 가슴 중앙이 조여오는 듯한 뭉클함", aff: "내 마음을 적시는 따뜻한 떨림을 소중히 여깁니다." },
     { name: "만족하다", cat: "cat-joy", desc: "마음이 넉넉해져 있는 그대로를 긍정하는 여유", sit: "몰두한 일을 마친 뒤 쉴 때", body: "몸의 모든 근육이 이완되고 미각이나 후각이 예민해짐", aff: "나는 이미 충분하며 지금 이대로 만족합니다." },
-    { name: "든든하다", cat: "cat-joy", desc: "믿을 수 있는 지지가 있음을 확인한 강인함", sit: "나를 믿어주는 person의 격려를 받았을 때", body: "척추가 곧게 펴지는 느낌과 함께 아랫배에 힘이 들어감", aff: "소중한 존재들이 나를 지켜줍니다." },
+    { name: "든든하다", cat: "cat-joy", desc: "믿을 수 있는 지지가 있음을 확인한 강인함", sit: "나를 믿어주는 사람의 격려를 받았을 때", body: "척추가 곧게 펴지는 느낌과 함께 아랫배에 힘이 들어감", aff: "소중한 존재들이 나를 지켜줍니다." },
     { name: "자랑스럽다", cat: "cat-joy", desc: "이뤄낸 성취를 대견하게 여기는 마음", sit: "어려운 도전을 끝내거나 성장을 볼 때", body: "어깨가 펴지고 고개가 들리며 심장이 힘차게 뜀", aff: "나는 나의 노력을 진심으로 자랑스러워합니다." },
     { name: "편안하다", cat: "cat-joy", desc: "긴장이 풀리고 안정을 되찾은 상태", sit: "따뜻한 차를 마시며 쉴 때", body: "눈꺼풀이 가벼워지고 손끝과 발끝까지 이완됨", aff: "나는 모든 긴장을 내려놓고 평온에 머뭅니다." },
     { name: "뿌듯하다", cat: "cat-joy", desc: "노력이 결실을 맺어 내면이 꽉 찬 성취감", sit: "하루의 할 일을 성실히 마친 순간", body: "가슴 상부가 넓게 확장되는 느낌과 가벼운 고양감", aff: "성실하게 채워온 나의 시간이 자랑스럽습니다." },
@@ -438,9 +449,9 @@ const emotionsData = [
     { name: "당당하다", cat: "cat-joy", desc: "가치와 신념에 확신을 가져 곧고 떳떳한 상태", sit: "진실을 말하거나 원칙에 따라 행동할 때", body: "발바닥이 지면에 단단히 닿은 느낌과 목소리에 힘이 실림", aff: "나는 나의 존재와 선택에 확신이 있습니다." },
     { name: "평온하다", cat: "cat-joy", desc: "내면의 질서가 잡혀 깊은 안식을 누리는 상태", sit: "갈등 해결 후 고요한 시간을 가질 때", body: "얼굴 근육이 완전히 풀리고 호흡의 주기가 일정해짐", aff: "내 마음은 잔잔한 호수처럼 고요합니다." },
     { name: "사랑스럽다", cat: "cat-love", desc: "대상이 소중하여 아껴주고 싶은 애정", sit: "잠든 아기나 반려동물을 볼 때", body: "심장 부위가 간질거리고 온몸의 감각이 부드러워짐", aff: "내 마음의 사랑이 주변을 따뜻하게 비춥니다." },
-    { name: "설레다", cat: "cat-love", desc: "새로운 가능성에 대한 기대감으로 생기가 도는 기분", sit: "좋아하는 person을 만나기 전", body: "가슴이 두근거리고 아랫배가 화해지는 묘한 떨림", aff: "기분 좋은 떨림이 삶을 새롭게 깨웁니다." },
+    { name: "설레다", cat: "cat-love", desc: "새로운 가능성에 대한 기대감으로 생기가 도는 기분", sit: "좋아하는 사람을 만나기 전", body: "가슴이 두근거리고 아랫배가 화해지는 묘한 떨림", aff: "기분 좋은 떨림이 삶을 새롭게 깨웁니다." },
     { name: "미안하다", cat: "cat-love", desc: "행동의 실수를 인지하고 회복을 원하는 마음", sit: "약속에 늦었거나 상처를 주었을 때", body: "가슴이 답답하고 고개가 숙여지며 눈치를 보게 됨", aff: "나의 진심 어린 사과가 관계를 회복시킵니다." },
-    { name: "따뜻하다", cat: "cat-love", desc: "친절을 경험하며 경계가 녹아내리는 상태", sit: "위로를 받거나 깊은 교감을 나눌 때", body: "몸의 온도가 올라가는 듯한 느낌과 함께 표정이 온화해짐", aff: "내 마음은 사랑의 온기로 가득합니다." },
+    { name: "따뜻하다", cat: "cat-love", desc: "친절을 경험하며 경계가 녹아내리는 상태", sit: "위로를 받거나 깊은 교감을 나낼 때", body: "몸의 온도가 올라가는 듯한 느낌과 함께 표정이 온화해짐", aff: "내 마음은 사랑의 온기로 가득합니다." },
     { name: "안도하다", cat: "cat-peace", desc: "걱정이 해결되거나 위험이 사라진 상태", sit: "어려운 고비를 무사히 넘겼을 때", body: "참았던 숨을 깊게 내뱉으며(한숨) 온몸의 힘이 쭉 빠짐", aff: "폭풍이 지나갔습니다. 이제는 안전합니다." },
     { name: "불안하다", cat: "cat-anx", desc: "보호를 위해 감각이 예민하게 깨어있는 긴장", sit: "결과를 기다리거나 불확실한 미래 앞에서", body: "심장이 빠르게 뛰고 손발이 차가워지며 호흡이 얕아짐", aff: "불안은 나를 지키려는 신호일 뿐입니다." },
     { name: "걱정하다", cat: "cat-anx", desc: "부정적 가능성에 에너지가 쏠려 있는 상태", sit: "연락이 늦거나 해결 안 된 일이 있을 때", body: "미간에 주름이 잡히고 머리 뒷부분이 팽팽하게 당김", aff: "걱정 대신 지금 할 수 있는 행동에 집중합니다." },
@@ -463,7 +474,7 @@ const emotionsData = [
     { name: "원망스럽다", cat: "cat-ang", desc: "고통의 책임을 상대에게 돌리는 아픈 마음", sit: "결정적 순간에 곁에 없었던 이에 대한 서운함", body: "가슴 깊은 곳이 쓰리고 명치 부근이 딱딱해짐", aff: "기대를 내려놓고 스스로를 돕습니다." },
     { name: "얄밉다", cat: "cat-ang", desc: "타인의 행동이 공정함에 어긋나 보이는 거부감", sit: "책임을 회피하며 이득만 챙기는 이를 볼 때", body: "코웃음이 나거나 눈매가 가늘어지며 혀를 차게 됨", aff: "타인에게 휘둘리지 않고 품위를 유지합니다." },
     { name: "질투하다", cat: "cat-ang", desc: "남의 것을 보고 나의 결핍이 자극되는 시기", sit: "타인의 성과를 축하하기 힘들 때", body: "속이 뒤틀리는 느낌과 함께 가슴이 서늘해짐", aff: "타인의 성취는 나의 가능성을 보여주는 거울입니다." },
-    { name: "불편하다", cat: "cat-ang", desc: "평온이 깨져 대상을 피하고 싶은 방어 상태", sit: "가치관이 맞지 않는 person과 있을 때", body: "몸이 뻣뻣해지고 자꾸 자세를 바꾸게 되며 시선을 피함", aff: "나의 경계를 지키며 지혜롭게 지나갑니다." },
+    { name: "불편하다", cat: "cat-ang", desc: "평온이 깨져 대상을 피하고 싶은 방어 상태", sit: "가치관이 맞지 않는 사람과 있을 때", body: "몸이 뻣뻣해지고 자꾸 자세를 바꾸게 되며 시선을 피함", aff: "나의 경계를 지키며 지혜롭게 지나갑니다." },
     { name: "어색하다", cat: "cat-ang", desc: "분위기 속에서 행동이 부자연스러운 상태", sit: "서먹한 이와 단둘이 남겨졌을 때", body: "손을 어디에 둘지 모르겠고 미소가 부자연스러움", aff: "어색함조차 과정입니다. 가벼운 미소를 지어봅니다." },
     { name: "황당하다", cat: "cat-ang", desc: "비논리적 일로 어처구니가 없는 상태", sit: "터무니없는 거짓말을 들었을 때", body: "입이 벌어지고 헛웃음이 나오며 힘이 탁 풀림", aff: "황당한 일에 소중한 감정을 쏟지 않습니다." },
     { name: "속상하다", cat: "cat-ang", desc: "슬픔과 화가 미묘하게 섞인 상태", sit: "가까운 이가 나의 배려를 무시할 때", body: "코끝이 찡해지고 가슴 중앙이 아릿하게 저려옴", aff: "나는 존중받을 자격이 있습니다." },
@@ -488,7 +499,7 @@ const emotionsData = [
     { name: "허탈하다", cat: "cat-sad", desc: "결과가 무너져 에너지가 빠져나간 허전함", sit: "노력이 수포로 돌아갔을 때", body: "팔다리에 힘이 하나도 없고 가슴 속이 텅 빈 구멍 같음", aff: "비워진 마음을 인정하며 새로운 에너지를 기다립니다." }
 ];
 
-/* --- Supabase 연동 (유지) --- */
+/* --- Supabase 연동 --- */
 const SUPABASE_URL = 'https://ocghxynajjbkpbyljxzg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jZ2h4eW5hampia3BieWxqeHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2OTg4MTksImV4cCI6MjA5MTI3NDgxOX0.weaiOCV0UMjsfSmEI_WU_0L4qJUOGRrtoWEwPKN26is';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -542,6 +553,7 @@ async function loadFromSupabase() {
     } catch (err) { alert("불러오기 실패: " + err.message); }
 }
 
+/* --- 공통 유틸리티 --- */
 function autoResizeTextarea(element) {
     if (!element) return;
     element.style.height = 'auto'; 
@@ -610,7 +622,6 @@ function renderGrid(type) {
         link.innerText = item.name;
         link.onclick = () => { 
             const targetCard = document.getElementById(`${type}-card-${item.name}`);
-            // 하단 정렬 로직 수정
             targetCard.scrollIntoView({ behavior: 'smooth', block: 'end' });
         };
         index.appendChild(link);
@@ -637,6 +648,7 @@ function renderGrid(type) {
     });
 }
 
+/* --- 데이터 로컬 저장 로직 --- */
 function getStorageKey() { 
     const u = document.getElementById("userSelect").value;
     const e = document.getElementById("eventSelect").value;
@@ -748,15 +760,24 @@ function syncTitleAndLoad() {
 }
 
 function loadStep9Global() {
-    const globalStep9 = localStorage.getItem("mindApp_global_step9") || "";
-    const el = document.getElementById("step9");
-    if (el) { el.value = globalStep9; autoResizeTextarea(el); }
+    const q1 = localStorage.getItem("mindApp_global_step9") || "";
+    const q2 = localStorage.getItem("mindApp_global_step9_extra") || "";
+    
+    const el1 = document.getElementById("step9");
+    const el2 = document.getElementById("step9_extra");
+    
+    if (el1) { el1.value = q1; autoResizeTextarea(el1); }
+    if (el2) { el2.value = q2; autoResizeTextarea(el2); }
 }
 
 function saveAllToLocal() {
     const u = document.getElementById("userSelect").value;
     const e = document.getElementById("eventSelect").value;
+    
+    // 글로벌 질문 저장
     localStorage.setItem("mindApp_global_step9", document.getElementById("step9").value);
+    localStorage.setItem("mindApp_global_step9_extra", document.getElementById("step9_extra").value);
+    
     if (!u || u === "사용자 없음" || !e || e === "사건 없음") return;
     const key = getStorageKey();
     localStorage.setItem(key + "_title", document.getElementById("mainTitle").value);
@@ -768,6 +789,7 @@ function saveAllToLocal() {
     }
 }
 
+/* --- 이미지 및 기능 제어 --- */
 async function makeImage() {
     const captureArea = document.getElementById("capture");
     const shareBtn = document.getElementById("shareBtn");
@@ -823,11 +845,58 @@ async function makeImage() {
     } catch (e) { shareBtn.disabled = false; shareBtn.innerText = "실패"; }
 }
 
-function togglestep9() { const c = document.getElementById('step9-content'); c.style.display = c.style.display === 'none' ? 'block' : 'none'; }
+function togglestep9() { 
+    const c = document.getElementById('step9-content'); 
+    const icon = document.getElementById('toggle-icon');
+    if (c.style.display === 'none') {
+        c.style.display = 'block';
+        icon.innerText = '▼';
+    } else {
+        c.style.display = 'none';
+        icon.innerText = '▲';
+    }
+}
 function closePreview() { document.getElementById("previewBox").style.display = "none"; }
-function copyFinalText() {
-    const text = document.getElementById('step1').value + "\n\n" + document.getElementById('step9').value;
-    navigator.clipboard.writeText(text).then(() => alert("복사 완료!"));
+
+/* --- 질문 복사 기능 분리 --- */
+function copyQ1() {
+    const s1 = document.getElementById('step1').value;
+    const q1 = document.getElementById('step9').value;
+
+    const combinedText = `[나의 마음 관찰 기록 - 공감 모드]
+1. 사건: ${s1}
+
+[Gemini에게 보내는 질문]
+${q1}`;
+
+    navigator.clipboard.writeText(combinedText).then(() => {
+        alert("사건과 질문1이 복사되었습니다!");
+    }).catch(err => { alert("복사 실패"); });
+}
+
+function copyQ2() {
+    const s1 = document.getElementById('step1').value;
+    const s2 = document.getElementById('step2').value;
+    const s3 = document.getElementById('step3').innerText;
+    const s4 = document.getElementById('step4').value;
+    const s5 = document.getElementById('step5').innerText;
+    const s6 = document.getElementById('step6').innerText;
+    const q2 = document.getElementById('step9_extra').value;
+
+    const combinedText = `[나의 마음 관찰 기록 - 성찰 모드]
+1. 사건: ${s1}
+2. 감정: ${s2}
+3. 생각(판단): ${s3}
+4. 핵심 욕구: ${s4}
+5. 욕구 이유: ${s5}
+6. 행동 실천: ${s6}
+
+[Gemini에게 보내는 질문]
+${q2}`;
+
+    navigator.clipboard.writeText(combinedText).then(() => {
+        alert("1~6번 전체 기록과 질문2가 복사되었습니다!");
+    }).catch(err => { alert("복사 실패"); });
 }
 
 function checkScroll() {
@@ -845,16 +914,28 @@ window.onload = function() {
     renderUserList();
     const lastUser = localStorage.getItem("lastSelectedUser");
     renderUserList(lastUser);
+    
     document.querySelectorAll("textarea").forEach(ta => {
         ta.addEventListener("input", (e) => {
-            autoResizeTextarea(e.target); saveAllToLocal();
+            autoResizeTextarea(e.target); 
+            saveAllToLocal();
             if(e.target.id === 'step1') updateContextDisplay(e.target.value);
         });
-        setTimeout(() => autoResizeTextarea(ta), 100); 
+        setTimeout(() => autoResizeTextarea(ta), 200); 
     });
-    [3, 5, 6, 8, 9].forEach(i => document.getElementById("step" + i).addEventListener("input", saveAllToLocal));
+
+    [3, 5, 6].forEach(i => {
+        const el = document.getElementById("step" + i);
+        if(el) el.addEventListener("input", saveAllToLocal);
+    });
+    
+    document.getElementById("step7").addEventListener("input", saveAllToLocal);
+    document.getElementById("step8").addEventListener("input", saveAllToLocal);
+    document.getElementById("step9_extra").addEventListener("input", saveAllToLocal);
     document.getElementById("mainTitle").addEventListener("input", saveAllToLocal);
+
     document.querySelectorAll('.content-section').forEach(section => section.addEventListener('scroll', checkScroll));
+    
     loadStep9Global();
 };
 </script>
