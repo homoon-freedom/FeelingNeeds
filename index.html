@@ -652,7 +652,7 @@ function addToRecord(type, name, btnElement) {
         target.innerText = newValue;
     }
     saveAllToLocal();
-    setTimeout(() => { btnElement.innerHTML = `✅`; }, 1000);
+    setTimeout(() => { btnElement.innerHTML = `＋ 기록장 추가`; }, 1000);
 }
 
 function renderGrid(type) {
@@ -660,60 +660,25 @@ function renderGrid(type) {
     const grid = document.getElementById(type + '-grid');
     const index = document.getElementById(type + '-index');
     if(grid.children.length > 0) return;
-
     data.forEach(item => {
-        // --- 인덱스(상단 바로가기) 생성 ---
-        const linkWrapper = document.createElement('div');
-        linkWrapper.className = `item-link link-${item.cat.split('-')[1]}`;
-        linkWrapper.style.display = "flex";
-        linkWrapper.style.justifyContent = "space-between";
-        linkWrapper.style.padding = "0 8px";
-
-        // 1. 이름 영역 (클릭 시 해당 카드로 이동)
-        const nameSpan = document.createElement('span');
-        nameSpan.innerText = item.name;
-        nameSpan.style.flex = "1";
-        nameSpan.style.textAlign = "center";
-        nameSpan.onclick = () => { 
+        const link = document.createElement('div');
+        link.className = `item-link link-${item.cat.split('-')[1]}`;
+        link.innerText = item.name;
+        link.onclick = () => { 
             const targetCard = document.getElementById(`${type}-card-${item.name}`);
-            targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            targetCard.scrollIntoView({ behavior: 'smooth', block: 'end' });
         };
-
-        // 2. 추가 버튼 영역 (클릭 시 기록장에 바로 추가)
-        const addBtn = document.createElement('span');
-        addBtn.innerHTML = "＋";
-        addBtn.style.paddingLeft = "8px";
-        addBtn.style.borderLeft = "1px solid rgba(0,0,0,0.1)";
-        addBtn.style.fontWeight = "900";
-        addBtn.style.fontSize = "1.2rem";
-        addBtn.style.cursor = "pointer";
-        addBtn.onclick = (e) => {
-            e.stopPropagation(); // 카드 이동 방지
-            addToRecord(type, item.name, addBtn);
-            // 시각적 피드백
-            const originalColor = addBtn.style.color;
-            addBtn.style.color = "#FF3B30"; 
-            setTimeout(() => { addBtn.style.color = originalColor; }, 500);
-        };
-
-        linkWrapper.appendChild(nameSpan);
-        linkWrapper.appendChild(addBtn);
-        index.appendChild(linkWrapper);
-
-        // --- 카드(본문) 생성 (기존 로직 유지) ---
+        index.appendChild(link);
         const card = document.createElement('div');
-        card.className = `card ${item.cat}`; 
-        card.id = `${type}-card-${item.name}`;
+        card.className = `card ${item.cat}`; card.id = `${type}-card-${item.name}`;
         card.onclick = () => {
             document.querySelectorAll('.card.is-flipped').forEach(flippedCard => {
                 if (flippedCard !== card) flippedCard.classList.remove('is-flipped');
             });
             card.classList.toggle('is-flipped');
         };
-
         const emojis = {joy:"😊", love:"❤️", peace:"🌿", anx:"😰", ang:"🔥", sad:"💧", auto:"🦋", conn:"🤝", well:"🍎", meaning:"💎"};
         const emoji = emojis[item.cat.split('-')[1]] || "✨";
-        
         let backContent = type === 'needs' ? 
             `<span class="section-label">충족 시</span><div>${item.sat.map(s => `<span class="emotion-tag tag-sat">${s}</span>`).join('')}</div>
              <span class="section-label">미충족 시</span><div>${item.unsat.map(s => `<span class="emotion-tag tag-unsat">${s}</span>`).join('')}</div>
@@ -721,24 +686,11 @@ function renderGrid(type) {
             `<span class="section-label">상황</span><div class="content-text">${item.sit}</div>
              <span class="section-label">몸의 상태</span><div class="body-status">${item.body}</div>
              <span class="section-label">확언</span><div class="affirmation-box">"${item.aff}"</div>`;
-
-        card.innerHTML = `
-            <div class="card-inner">
-                <div class="front">
-                    <div style="font-size:80px; margin-bottom:20px;">${emoji}</div>
-                    <div class="title">${item.name}</div>
-                    <div class="desc">${item.desc}</div>
-                </div>
-                <div class="back">
-                    <div class="title">${item.name}</div>
-                    ${backContent}
-                    <button class="add-to-record-btn" onclick="event.stopPropagation(); addToRecord('${type}', '${item.name}', this)">+ 기록창에 추가</button>
-                </div>
-            </div>`;
+        card.innerHTML = `<div class="card-inner"><div class="front"><div style="font-size:80px; margin-bottom:20px;">${emoji}</div><div class="title">${item.name}</div><div class="desc">${item.desc}</div></div>
+                          <div class="back"><div class="title">${item.name}</div>${backContent}<button class="add-to-record-btn" onclick="event.stopPropagation(); addToRecord('${type}', '${item.name}', this)">＋ 기록장에 추가</button></div></div>`;
         grid.appendChild(card);
     });
 }
-
 
 /* --- 데이터 로컬 저장 로직 --- */
 function getStorageKey() { 
