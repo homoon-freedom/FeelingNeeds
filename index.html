@@ -707,17 +707,18 @@ function addToRecord(type, name, btnElement) {
     
     let currentValue = target.value || target.innerText;
 
-    // --- 수정된 중복 체크 로직 ---
-    // 줄바꿈으로 나누고, 각 줄의 시작 부분이 "• 이름 :" 형태인지 정확히 검사합니다.
+    // 1. 정확한 중복 체크 (줄 단위 검사)
     const lines = currentValue.split('\n');
     const isDuplicate = lines.some(line => line.trim().startsWith(`• ${name} :`));
 
     if (isDuplicate) { 
-        alert("이미 기록장에 추가된 항목입니다."); 
+        alert("이미 기록장에 추가된 항목입니다.");
+        // 중복이어도 일단 모달은 닫아주는 것이 사용자 경험상 자연스럽습니다.
+        closeModal(); 
         return; 
     }
-    // ---------------------------
 
+    // 2. 내용 추가
     const newValue = currentValue.trim() ? `${currentValue.trim()}\n${entryText}` : entryText;
     
     if (target.tagName === "TEXTAREA") {
@@ -728,13 +729,17 @@ function addToRecord(type, name, btnElement) {
     }
     
     saveAllToLocal();
-    
-    // 시각적 피드백 (버튼 텍스트 변경 등 필요 시)
+
+    // 3. 피드백 및 모달 닫기 (핵심)
     const originalText = btnElement.innerHTML;
     btnElement.innerHTML = `✅ 추가됨`;
-    setTimeout(() => { btnElement.innerHTML = originalText; }, 1000);
+    
+    // 버튼 피드백을 아주 짧게 보여준 후 모달을 닫습니다.
+    setTimeout(() => {
+        btnElement.innerHTML = originalText;
+        closeModal(); // 여기서 확실하게 모달을 닫아줍니다.
+    }, 400); 
 }
-
 // 2. 모달 열기 및 내용 생성 함수
 function openModal(type, name) {
     const data = type === 'needs' ? needsData : emotionsData;
