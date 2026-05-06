@@ -704,22 +704,35 @@ function addToRecord(type, name, btnElement) {
     const item = sourceData.find(d => d.name === name);
     const description = item ? item.desc : "";
     const entryText = `• ${name} : ${description}`;
+    
     let currentValue = target.value || target.innerText;
-    if (currentValue.includes(name)) { alert("이미 기록장에 추가된 항목입니다."); return; }
+
+    // --- 수정된 중복 체크 로직 ---
+    // 줄바꿈으로 나누고, 각 줄의 시작 부분이 "• 이름 :" 형태인지 정확히 검사합니다.
+    const lines = currentValue.split('\n');
+    const isDuplicate = lines.some(line => line.trim().startsWith(`• ${name} :`));
+
+    if (isDuplicate) { 
+        alert("이미 기록장에 추가된 항목입니다."); 
+        return; 
+    }
+    // ---------------------------
+
     const newValue = currentValue.trim() ? `${currentValue.trim()}\n${entryText}` : entryText;
+    
     if (target.tagName === "TEXTAREA") {
-        target.value = newValue; autoResizeTextarea(target); 
+        target.value = newValue; 
+        autoResizeTextarea(target); 
     } else {
         target.innerText = newValue;
     }
+    
     saveAllToLocal();
-    setTimeout(() => { btnElement.innerHTML = `＋ 기록장 추가`; }, 1000);
-}
-
-// 1. 모달 닫기 함수
-function closeModal() {
-    document.getElementById('cardModal').style.display = 'none';
-    document.body.style.overflow = 'auto'; // 스크롤 복구
+    
+    // 시각적 피드백 (버튼 텍스트 변경 등 필요 시)
+    const originalText = btnElement.innerHTML;
+    btnElement.innerHTML = `✅ 추가됨`;
+    setTimeout(() => { btnElement.innerHTML = originalText; }, 1000);
 }
 
 // 2. 모달 열기 및 내용 생성 함수
