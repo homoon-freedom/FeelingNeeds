@@ -713,8 +713,7 @@ function addToRecord(type, name, btnElement) {
 
     if (isDuplicate) { 
         alert("이미 기록장에 추가된 항목입니다.");
-        // 중복이어도 일단 모달은 닫아주는 것이 사용자 경험상 자연스럽습니다.
-        closeModal(); 
+        closeModal(); // 중복일 때도 닫아줍니다.
         return; 
     }
 
@@ -730,15 +729,15 @@ function addToRecord(type, name, btnElement) {
     
     saveAllToLocal();
 
-    // 3. 피드백 및 모달 닫기 (핵심)
+    // 3. 버튼 피드백 및 모달 닫기
     const originalText = btnElement.innerHTML;
     btnElement.innerHTML = `✅ 추가됨`;
     
-    // 버튼 피드백을 아주 짧게 보여준 후 모달을 닫습니다.
+    // 사용자가 추가된 것을 인지할 수 있게 0.3초 정도만 기다렸다가 닫습니다.
     setTimeout(() => {
         btnElement.innerHTML = originalText;
-        closeModal(); // 여기서 확실하게 모달을 닫아줍니다.
-    }, 400); 
+        closeModal(); 
+    }, 300);
 }
 // 2. 모달 열기 및 내용 생성 함수
 function openModal(type, name) {
@@ -780,6 +779,18 @@ content += `<button class="add-to-record-btn" style="margin-top:25px;" onclick="
     document.body.style.overflow = 'hidden'; // 뒷배경 스크롤 방지
 }
 
+// 모달을 닫는 독립 함수
+function closeModal(event) {
+    // 배경 클릭 시 닫기 기능을 위해 event 체크
+    if (event && event.target !== event.currentTarget) return;
+    
+    const modal = document.getElementById('cardModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // 스크롤 복구
+    }
+}
+	
 function renderGrid(type) {
     const data = type === 'needs' ? needsData : emotionsData;
     const grid = document.getElementById(type + '-grid');
