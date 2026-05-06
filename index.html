@@ -772,7 +772,8 @@ function openModal(type, name) {
         `;
     }
 
-    content += `<button class="add-to-record-btn" style="margin-top:25px;" onclick="addToRecord('${type}', '${item.name}', this); closeModal();">＋ 기록장에 추가</button>`;
+    // openModal 함수 하단부의 content 추가 로직
+content += `<button class="add-to-record-btn" style="margin-top:25px;" onclick="addToRecord('${type}', '${item.name}', this)">＋ 기록장에 추가</button>`;
 
     body.innerHTML = content;
     modal.style.display = 'flex';
