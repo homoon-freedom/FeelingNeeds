@@ -13,25 +13,26 @@
             --wellbeing-core: #81d4fa; --peace-core: #b39ddb;
             --joy-core: #fff176; --love-core: #f06292; --sadness-core: #64b5f6;
             --anxiety-core: #ba68c8; --anger-core: #ef5350;
+            
             --meaning-bg: rgba(255, 204, 128, 0.7); 
-			--connection-bg: rgba(244, 143, 177, 0.8); 
-			--autonomy-bg: rgba(144, 206, 173, 0.7);
+            --connection-bg: rgba(244, 143, 177, 0.8); 
+            --autonomy-bg: rgba(144, 206, 173, 0.7);
             --wellbeing-bg: rgba(129, 212, 250, 0.7); 
-			--peace-bg: rgba(179, 157, 219, 0.8);
+            --peace-bg: rgba(179, 157, 219, 0.8);
             --joy-bg: rgba(255, 241, 118, 0.7); 
-			--love-bg: rgba(240, 98, 146, 0.8); 
-			--sadness-bg: rgba(100, 181, 246, 0.8);
+            --love-bg: rgba(240, 98, 146, 0.8); 
+            --sadness-bg: rgba(100, 181, 246, 0.8);
             --anxiety-bg: rgba(186, 104, 200, 0.8); 
-			--anger-bg: rgba(239, 83, 80, 0.8);
+            --anger-bg: rgba(239, 83, 80, 0.8);
             
             /* 기록장 색상 */
             --primary-blue: #003366; 
-			--accent-blue: #007AFF; 
-			--light-blue: #EBF4FF;
+            --accent-blue: #007AFF; 
+            --light-blue: #EBF4FF;
             --danger-red: #FF3B30; 
-			--bg-gray: #F2F5F8;
+            --bg-gray: #F2F5F8;
             --text: #333; 
-			--bg: #f8f9fa;
+            --bg: #f8f9fa;
         }
         
         html, body { 
@@ -94,9 +95,23 @@
         }
         .item-link { 
             height: 42px; display: flex; align-items: center; justify-content: center; 
-            border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: 700; 
-            border: 1px solid rgba(0,0,0,0.03); text-align: center; transition: 0.2s; padding: 0 4px;
+            border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 700; 
+            border: 1px solid rgba(0,0,0,0.05); text-align: center; transition: 0.2s; padding: 0 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
+        .item-link:active { transform: scale(0.96); opacity: 0.9; }
+
+        /* 카테고리별 색상 클래스 */
+        .link-meaning { background-color: var(--meaning-bg); color: #5c3a00; }
+        .link-conn { background-color: var(--connection-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .link-auto { background-color: var(--autonomy-bg); color: #1b4332; }
+        .link-well { background-color: var(--wellbeing-bg); color: #0b3c5d; }
+        .link-peace { background-color: var(--peace-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .link-joy { background-color: var(--joy-bg); color: #534c00; }
+        .link-love { background-color: var(--love-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .link-sad { background-color: var(--sadness-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .link-anx { background-color: var(--anxiety-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .link-ang { background-color: var(--anger-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
 
         .grid { display: grid; grid-template-columns: 1fr; max-width: 440px; margin: 15px auto; padding: 0 15px; gap: 20px; }
         .card { perspective: 2000px; height: 400px; cursor: pointer; position: relative; scroll-margin-bottom: 50px; } 
@@ -131,10 +146,10 @@
             font-size: 13px; font-weight: 800; color: var(--primary-blue); cursor: pointer;
             display: flex; justify-content: space-between; align-items: center;
         }
-		.admin-content { 
-  		  padding: 15px 15px 10px 15px; 
-		    display: none; 
-		}
+        .admin-content { 
+            padding: 15px 15px 10px 15px; 
+            display: none; 
+        }
         .admin-content.show { display: block; }
         .manage-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px dashed #888; }
         .input-group { display: flex; gap: 5px; }
@@ -150,25 +165,25 @@
         .record-card-desc { font-size: 13px; color: #8E8E93; margin-bottom: 10px; line-height: 1.6; }
         
         /* 공통 텍스트 입력 스타일 */
-	textarea, .editable-list { 
-    	width: 100%; box-sizing: border-box; 
-    	min-height: 130px; 
-    	height: auto;     
-    	border: none; outline: none; resize: none; 
-    	font-size: 14px; background: var(--light-blue); padding: 12px; border-radius: 5px; 
-    	line-height: 1.6; color: #2c3e50; font-family: 'Pretendard', sans-serif; 
-    	white-space: pre-wrap; word-break: break-all; overflow-wrap: break-word;
-    	overflow: hidden; 
-	}
+        textarea, .editable-list { 
+            width: 100%; box-sizing: border-box; 
+            min-height: 130px; 
+            height: auto;     
+            border: none; outline: none; resize: none; 
+            font-size: 14px; background: var(--light-blue); padding: 12px; border-radius: 5px; 
+            line-height: 1.6; color: #2c3e50; font-family: 'Pretendard', sans-serif; 
+            white-space: pre-wrap; word-break: break-all; overflow-wrap: break-word;
+            overflow: hidden; 
+        }
         textarea::placeholder { color: #9bbad3; font-size: 13px; }
         
         .editable-list:empty::before {
-        content: attr(data-placeholder);
-        color: #9bbad3;
-        font-size: 13px;
-        pointer-events: none;
-        white-space: pre-wrap;
-	}
+            content: attr(data-placeholder);
+            color: #9bbad3;
+            font-size: 13px;
+            pointer-events: none;
+            white-space: pre-wrap;
+        }
 
         .copy-btn {
             margin-top: 10px; padding: 12px; width: 100%; background: #333; color: white;
@@ -211,62 +226,81 @@
         #previewImg { max-width: 100%; max-height: 70%; border-radius: 10px; object-fit: contain; }
         #closeBtn { margin-top: 15px; padding: 10px 30px; background: white; border-radius: 20px; font-weight: 600; border: none; cursor: pointer; }
 
-        /* --- 모달 화면 전체 풀스크린(꽉 차게) 스타일 개편 --- */
+        /* 모달 기본 스타일 (중앙 정렬 카드) */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 5000;
-            padding: 0; /* 주변 여백 완전 제거 */
+            padding: 20px;
             box-sizing: border-box;
         }
 
         .modal-content {
             background: white;
             width: 100%;
-            height: 100%; /* 화면 높이에 빈틈없이 꽉 채움 */
-            max-width: 100%; /* 기기 너비 제한 해제 */
-            max-height: 100vh;
-            border-radius: 0; /* 화면 가득 채울 때 불필요한 라운딩 제거 */
+            max-width: 440px; 
+            max-height: 82vh; 
+            border-radius: 20px;
             position: relative;
-            /* 상단 노치 바 영역 및 하단 소프트키 영역 여백 안전 확보 */
-            padding: calc(45px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
+            padding: 30px 22px 24px;
             overflow-y: auto;
-            box-shadow: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             box-sizing: border-box;
-            /* 위로 매끄럽게 솟아오르는 전체 스크린 애니메이션 적용 */
-            animation: modalSlideUp 0.3s cubic-bezier(0.1, 0.76, 0.55, 0.94);
+            animation: modalPopUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15);
         }
 
-        @keyframes modalSlideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
+        /* 👑 일반 감정/욕구 카드 모달 높이 및 구조 확장 */
+        #cardModal .modal-content {
+            max-height: 88vh; /* 82vh -> 88vh 상향 조정하여 긴 텍스트 수용 */
+            padding: 24px 22px 28px; /* 내부 여백 비율 패킹 최적화 */
+        }
+
+        /* 제미나이 가이드 모달 전체화면 극대화 구조 커스텀 */
+        #geminiModal {
+            padding: 0; /* 내부 여백 제거하여 완전한 전체화면 구현 */
+        }
+        #geminiModal .modal-content {
+            max-width: 100%;
+            width: 100vw;
+            height: 100vh;      
+            max-height: 100vh;
+            border-radius: 0; /* 전체화면 핏을 위해 라운드 해제 */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;  
+            padding: 25px 20px calc(20px + env(safe-area-inset-bottom));
+            animation: none; /* 자연스러운 전환을 위해 애니메이션 해제 */
+        }
+
+        @keyframes modalPopUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .modal-close {
             position: absolute;
-            /* 노치 바 아래에 완벽히 고정되도록 조정 */
-            top: calc(12px + env(safe-area-inset-top)); 
-            right: 20px;
-            width: 36px; height: 36px;
+            top: 14px; 
+            right: 16px;
+            width: 30px; height: 30px;
             background: #eee;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 22px; cursor: pointer; font-weight: bold;
+            font-size: 18px; cursor: pointer; font-weight: bold;
             z-index: 5100;
+            color: #555;
         }
 
-        .modal-content .title { font-size: 2rem; font-weight: 950; margin-bottom: 15px; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 10px;}
-        .modal-content .desc { font-size: 1rem; color: #555; margin-bottom: 20px; line-height: 1.6; text-align: center; font-weight: 800;}
+        .modal-content .title { font-size: 1.8rem; font-weight: 950; margin-bottom: 12px; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 5px;}
+        .modal-content .desc { font-size: 0.95rem; color: #555; margin-bottom: 18px; line-height: 1.6; text-align: center; font-weight: 800; word-break: keep-all; }
     </style>
 </head>
 <body>
 
-<!-- 카드 정보 모달 -->
 <div id="cardModal" class="modal-overlay" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-close" onclick="closeModal()">×</div>
@@ -274,13 +308,12 @@
     </div>
 </div>
 
-<!-- 제미나이 가이드 모달 (너비 제한 제거) -->
 <div id="geminiModal" class="modal-overlay" onclick="closeGeminiModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div class="modal-close" onclick="closeGeminiModal()">×</div>
-        <div class="title" style="font-size: 1.6rem; color: var(--primary-blue); font-weight: 900; margin-bottom: 10px;">✨ 제미나이 가이드</div>
-        <div id="geminiModalBody" style="font-size: 0.95rem; line-height: 1.7; color: #2c3e50; white-space: pre-wrap; margin-top: 15px; max-height: 60vh; overflow-y: auto; padding: 15px; background: #f4f6f9; border-radius: 12px; border: 1px solid #e1e8ed; text-align: left;"></div>
-        <button class="copy-btn" id="btn-copy-gemini" onclick="copyGeminiResponseText()" style="background-color: var(--primary-blue); margin-top: 20px;">📋 답변 내용 전체 복사하기</button>
+        <div class="title" style="font-size: 1.6rem; color: var(--primary-blue); font-weight: 900; margin-bottom: 5px; flex-shrink: 0;">✨ 제미나이 가이드</div>
+        <div id="geminiModalBody" style="font-size: 0.95rem; line-height: 1.7; color: #2c3e50; white-space: pre-wrap; margin-top: 15px; flex: 1; overflow-y: auto; padding: 15px; background: #f4f6f9; border-radius: 12px; border: 1px solid #e1e8ed; text-align: left;"></div>
+        <button class="copy-btn" id="btn-copy-gemini" onclick="copyGeminiResponseText()" style="background-color: var(--primary-blue); margin-top: 15px; margin-bottom: 0; flex-shrink: 0;">📋 답변 내용 전체 복사하기</button>
     </div>
 </div>
 
@@ -365,45 +398,44 @@
 
         <div class="record-card">
             <div class="record-card-title">3. 위의 감정들을 일으킨 생각들</div>
-			<div class="record-card-desc">감정을 일으킨 내 안의 '판단'이나 '생각'들을 적어보세요.<br>(원인을 상대나 상황이 아닌 내안에서 찾아보세요.)</div>
+            <div class="record-card-desc">감정을 일으킨 내 안의 '판단'이나 '생각'들을 적어보세요.<br>(원인을 상대나 상황이 아닌 내안에서 찾아보세요.)</div>
             <div id="step3" class="editable-list" contenteditable="true" data-placeholder="❌ 그 사람이 약속시간에 늦어서 나는 화가난다.&#10;✅ 그 사람이 나를 무시했다는 생각에 화가난다."></div>
         </div>
 
         <div class="record-card">
             <div class="record-card-title">4. 핵심 욕구</div>
-			<div class="record-card-desc">욕구카드에서 찾은 욕구 단어들을 추가</div>
+            <div class="record-card-desc">욕구카드에서 찾은 욕구 단어들을 추가</div>
             <textarea id="step4"></textarea>
         </div>
 
         <div class="record-card">
             <div class="record-card-title">5. 욕구 강화</div>
-			<div class="record-card-desc">이 욕구가 나에게 왜 그토록 중요한 이유를 적어보세요.<br>(나는 '욕구'를 원한다. 왜냐하면 ~ 때문이다. )</div>
+            <div class="record-card-desc">이 욕구가 나에게 왜 그토록 중요한 이유를 적어보세요.<br>(나는 '욕구'를 원한다. 왜냐하면 ~ 때문이다. )</div>
             <div id="step5" class="editable-list" contenteditable="true"></div>
         </div>
 
         <div class="record-card">
             <div class="record-card-title">6. 구체적인 행동</div>
-			<div class="record-card-desc">나와 상대의 욕구를 강화를 위한 긍정적이고 구체적이며 내가 할 수 있는 실천3가지</div>
+            <div class="record-card-desc">나와 상대의 욕구를 강화를 위한 긍정적이고 구체적이며 내가 할 수 있는 실천3가지</div>
             <div id="step6" class="editable-list" contenteditable="true" data-placeholder="❌ 나는 저녁시간에 스마트폰을 보지않겠다.&#10;✅ 나는 저녁시간에 30분씩 산책을 하겠다."></div>
         </div>
 
         <div class="record-card">
             <div class="record-card-title">7. 정리 및 통합</div>
-			<div class="record-card-desc">새롭게 알게된 점이나 나에게 해주고 싶은 말</div>
+            <div class="record-card-desc">새롭게 알게된 점이나 나에게 해주고 싶은 말</div>
             <textarea id="step7"></textarea>
         </div>
 
         <div class="record-card" style="border-top: 5px solid var(--connection-core);">
             <div class="record-card-title">8. 상대의 욕구 인식</div>
-			<div class="record-card-desc">상대방의 욕구 공유하기</div>
+            <div class="record-card-desc">상대방의 욕구 공유하기</div>
             <textarea id="step8"></textarea>
         </div>
 
-        <!-- 제미나이 통합 연동 질문창 -->
         <div class="record-card" id="step9-container" style="border-top: 5px solid #333;">
             <div class="card-title-row" onclick="togglestep9()" style="cursor: pointer;">
                 <div class="record-card-title">Gemini 연동 질문창 <span id="toggle-icon">▲</span></div>
-				<div class="record-card-desc">기록 내용과 질문들을 합쳐서 바로 질문하기</div>
+                <div class="record-card-desc">기록 내용과 질문들을 합쳐서 바로 질문하기</div>
             </div>
             <div id="step9-content" style="display: none; padding-top:10px;">
                 
@@ -471,7 +503,7 @@ const needsData = [
     { name: "협력", cat: "cat-conn", desc: "공통 목표를 위해 힘을 합치고 싶은 바람", sat: ["든든하다", "뿌듯하다"], unsat: ["답답하다", "귀찮다"], action: "상대에게 도움을 요청하세요." },
     { name: "연결•친밀함", cat: "cat-conn", desc: "정서적으로 가까워져 유대감을 느끼고 싶은 욕구", sat: ["사랑스럽다", "설레다"], unsat: ["외롭다", "서운하다"], action: "눈을 맞추며 대화해 보세요." },
     { name: "어울리기", cat: "cat-conn", desc: "즐겁게 섞여 사회적인 에너지를 나누고 싶은 바람", sat: ["신나다", "재미있다"], unsat: ["어색하다", "외롭다"], action: "가벼운 티타임에 참석하세요." },
-    { name: "공감", cat: "cat-conn", desc: "상대의 마음을 내 것처럼 느끼고 싶은 욕구", sat: ["감동하다", "따뜻하다"], unsat: ["서운하다", "외롭다"], action: "공감의 한마디를 건네보세요." },
+    { name: "공감", cat: "cat-conn", desc: "상대의 마음을 내 것처럼 느끼고 싶은 욕구", sat: ["감동하다", "따뜻하다"], unsat: ["외롭다", "서운하다"], action: "공감의 한마디를 건네보세요." },
     { name: "포용", cat: "cat-conn", desc: "나의 못난 부분이나 실수, 다름까지도 조건 없이 있는 그대로 받아들여지길 바라는 욕구", sat: ["안심되다", "든든하다"], unsat: ["위축되다", "소외감을 느끼다"], action: "상대의 판단이나 평가 없이 있는 그대로 수용하는 태도를 보여주세요." },
     { name: "수용", cat: "cat-conn", desc: "나의 생각, 감정, 현재의 모습을 왜곡이나 저항 없이 있는 그대로 받아들여 주길 바라는 욕구", sat: ["자유롭다", "편안하다"], unsat: ["답답하다", "거부당하다"], action: "상대의 이야기를 바꾸려 하거나 조언하려 하지 말고, '그랬구나' 하며 있는 그대로 비춰주세요." },
     { name: "위로", cat: "cat-conn", desc: "나의 슬픔과 아픔, 지친 마음을 누군가 알아주고 다독여주길 바라는 욕구", sat: ["위안이 되다", "평온하다"], unsat: ["속상하다", "막막하다"], action: "상대의 힘든 마음을 묵묵히 들어주며 따뜻한 체온이나 가벼운 신체 접촉을 나눠보세요." },
@@ -520,7 +552,7 @@ const needsData = [
     { name: "자부심", cat: "cat-meaning", desc: "자신의 능력이나 성취, 존재 가치에 대해 스스로 당당하고 명예롭게 여기고 싶은 마음", sat: ["당당하다", "자랑스럽다", "충만하다"], unsat: ["초라하다", "부끄럽다", "위축되다"], action: "오늘 내가 해낸 작은 성과나 나의 긍정적인 면을 세 가지만 기록해보세요." },
     { name: "축하", cat: "cat-meaning", desc: "기쁜 순간을 기리고 싶은 마음", sat: ["기쁘다", "감동하다"], unsat: ["서운하다", "속상하다"], action: "작은 보상을 선물하세요." },
     { name: "존재감", cat: "cat-meaning", desc: "의미 있는 존재로 인식되고 싶은 마음", sat: ["자랑스럽다", "뿌듯하다"], unsat: ["위축되다", "허탈하다"], action: "당당히 드러내세요." },
-	{ name: "평온함", cat: "cat-meaning", desc: "마음이 동요 없이 고요하고 안녕한 상태", sat: ["평화롭다", "안온하다"], unsat: ["불안하다", "초조하다"],action: "숨을 깊게 고르며 이 순간을 음미하세요."}
+    { name: "평온함", cat: "cat-meaning", desc: "마음이 동요 없이 고요하고 안녕한 상태", sat: ["평화롭다", "안온하다"], unsat: ["불안하다", "초조하다"],action: "숨을 깊게 고르며 이 순간을 음미하세요."}
 ];
 
 const emotionsData = [
@@ -564,7 +596,7 @@ const emotionsData = [
     { name: "분하다", cat: "cat-ang", desc: "부당한 일로 울분이 가득 찬 상태", sit: "노력을 가로채이거나 상처 입었을 때", body: "얼굴이 붉어지고 몸에 열이 오르며 거친 숨을 내쉼", aff: "지혜로운 대처를 통해 나를 지겠습니다." },
     { name: "밉다", cat: "cat-ang", desc: "원망스러워 거리감을 두고 싶은 감정", sit: "진심을 무시한 상대가 떠오를 때", body: "입술을 굳게 다물게 되고 상대 쪽으로 고개를 돌리기 싫어짐", aff: "미움 대신 나를 아끼는 마음을 채웁니다." },
     { name: "원망스럽다", cat: "cat-ang", desc: "고통의 책임을 상대에게 돌리는 아픈 마음", sit: "결정적 순간에 곁에 없었던 이에 대한 서운함", body: "가슴 깊은 곳이 쓰리고 명치 부근이 딱딱해짐", aff: "기대를 내려놓고 스스로를 돕습니다." },
-    { name: "얄밉다", cat: "cat-ang", desc: "타인의 행동이 공정함에 어긋나 보이는 거부감", sit: "책임을 회피하며 이득만 챙기는 이를 볼 때", body: "코웃음이 나거나 눈매가 가늘어지며 혀를 차게 됨", aff: "타인에게 휘둘리지 않고 품위를 유지합니다." },
+    { name: "얄밉다", cat: "cat-ang", desc: "타인의 행동이 공정함에 어긋나 보이는 거부감", sit: "책임을 회피하며 이득만 챙기는 이를 볼 때", body: "코웃음이 나거나눈매가 가늘어지며 혀를 차게 됨", aff: "타인에게 휘둘리지 않고 품위를 유지합니다." },
     { name: "질투하다", cat: "cat-ang", desc: "남의 것을 보고 나의 결핍이 자극되는 시기", sit: "타인의 성과를 축하하기 힘들 때", body: "속이 뒤틀리는 느낌과 함께 가슴이 서늘해짐", aff: "타인의 성취는 나의 가능성을 보여주는 거울입니다." },
     { name: "불편하다", cat: "cat-ang", desc: "평온이 깨져 대상을 피하고 싶은 방어 상태", sit: "가치관이 맞지 않는 사람과 있을 때", body: "몸이 뻣뻣해지고 자꾸 자세를 바꾸게 되며 시선을 피함", aff: "나의 경계를 지키며 지혜롭게 지나갑니다." },
     { name: "어색하다", cat: "cat-ang", desc: "분위기 속에서 행동이 부자연스러운 상태", sit: "서먹한 이와 단둘이 남겨졌을 때", body: "손을 어디에 둘지 모르겠고 미소가 부자연스러움", aff: "어색함조차 과정입니다. 가벼운 미소를 지어봅니다." },
@@ -573,13 +605,13 @@ const emotionsData = [
     { name: "속상하다", cat: "cat-ang", desc: "슬픔과 화가 미묘하게 섞인 상태", sit: "가까운 이가 나의 배려를 무시할 때", body: "코끝이 찡해지고 가슴 중앙이 아릿하게 저려옴", aff: "나는 존중받을 자격이 있습니다." },
     { name: "서운하다", cat: "cat-sad", desc: "연결이 부족해 씁쓸함이 남는 상태", sit: "특별한 날을 잊었거나 무관심할 때", body: "입꼬리가 처지고 가슴이 텅 빈 듯한 허전함이 느껴짐", aff: "서운함은 더 사랑받고 싶은 마음입니다." },
     { name: "외롭다", cat: "cat-sad", desc: "이해받지 못해 섬처럼 느껴지는 쓸쓸함", sit: "군중 속이나 혼자 남겨진 밤", body: "팔다리가 차갑게 느껴지고 몸이 작아지는 듯한 오한", aff: "나는 나 자신과 먼저 친해지겠습니다." },
-    { name: "슬프다", cat: "cat-sad", desc: "상실의 아픔을 수용하고 정화하는 애도", sit: "이별이나 아픈 진실을 마주할 때", body: "눈시울이 뜨거워지고 온몸에 힘이 빠지며 가슴이 무거움", aff: "눈물은 상처 입은 마음을 씻어줍니다." },
+    { name: "슬프다", cat: "cat-sad", desc: "상실의 아픔을 수용하고 정화하는 애도", sit: "이별이나 아픈 진실을 마주할 때", body: "눈시울이 뜨거워지고 온몸에 힘이 빠며 가슴이 무거움", aff: "눈물은 상처 입은 마음을 씻어줍니다." },
     { name: "소외되다", cat: "cat-sad", desc: "연결감을 잃고 단절된 듯한 마음", sit: "모임에 초대받지 못하거나 대화에 낄 수 없을 때", body: "목이 메이고 가슴 부근이 싸늘하게 식는 느낌", aff: "나는 그 자체로 소중하며 진정한 곳을 찾을 것입니다." },
     { name: "우울하다", cat: "cat-sad", desc: "에너지가 낮아져 마음이 무거운 상태", sit: "무력감이 지속되거나 단절된 느낌일 때", body: "눈꺼풀이 무겁고 온몸이 젖은 솜처럼 바닥으로 가라앉음", aff: "이 또한 날씨일 뿐입니다. 해는 뜹니다." },
     { name: "무기력하다", cat: "cat-sad", desc: "아무것도 할 힘이 없어 에너지가 바닥난 상태", sit: "반복된 실패나 번아웃이 왔을 때", body: "손가락 하나 까딱하기 싫고 목소리에 생기가 전혀 없음", aff: "지금은 뿌리를 내리는 쉼의 시간입니다." },
     { name: "무력하다", cat: "cat-sad", desc: "상황을 바꿀 수 없다는 느낌에 압도된 마음", sit: "반복되는 갈등 속에 해결책이 없을 때", body: "어깨가 축 처지고 심장 박동이 아주 느리고 약해짐", aff: "아무것도 하지 않아도 괜찮습니다." },
     { name: "후회하다", cat: "cat-sad", desc: "과거의 선택을 아쉬워하는 성찰", sit: "기회를 놓쳤거나 상처를 주었을 때", body: "가슴을 치고 싶거나 머리를 감싸 쥐게 되며 속이 쓰림", aff: "과거의 실수에서 지혜를 배워 성장합니다." },
-    { name: "좌절하다", cat: "cat-sad", desc: "의지가 꺾이고 희망이 사라진 아픈 시간", sit: "노력이 실패로 돌아가 엄두가 나지 않을 때", body: "무릎에 힘이 풀리고 가슴이 턱 막혀 숨쉬기가 힘듦", aff: "좌절은 멈춤이지 끝이 아닙니다." },
+    { name: "좌절하다", cat: "cat-sad", desc: "의지가 꺾이고 희망이 사라진 아픈 시간", sit: "노력이 실패로 돌아가 엄두가 나지 않을 때", body: "무릎에 힘이 풀리고 가슴이 턱 막혀 숨쉬기가 힘들듦", aff: "좌절은 멈춤이지 끝이 아닙니다." },
     { name: "귀찮다", cat: "cat-sad", desc: "에너지를 최소화하고 싶은 정지 신호", sit: "해야 할 일은 많지만 몸이 무거울 때", body: "눈을 감고 싶고 몸의 반응 속도가 현저히 느려짐", aff: "쉼이 필요하다는 신호임을 인정합니다." },
     { name: "지루하다", cat: "cat-sad", desc: "의미를 발견하지 못해 시간이 정체된 상태", sit: "단조로운 일상이 반복될 때", body: "하품이 나오고 턱을 괴거나 몸을 비틀게 됨", aff: "지루함 속에 영감의 씨앗이 있습니다." },
     { name: "피곤하다", cat: "cat-sad", desc: "쉼을 강력하게 요청하는 고갈 신호", sit: "쉼 없이 달려와 모든 의욕이 사라질 때", body: "머리가 무겁고 눈이 따가우며 뒷목이 뻣팎함", aff: "고생한 나에게 깊은 휴식을 선물합니다." },
@@ -733,7 +765,27 @@ function openModal(type, name) {
     const body = document.getElementById('modalBody');
     
     const emojis = {joy:"😊", love:"❤️", peace:"🌿", anx:"😰", ang:"🔥", sad:"💧", auto:"🦋", conn:"🤝", well:"🍎", meaning:"💎"};
-    const emoji = emojis[item.cat.split('-')[1]] || "✨";
+    const catKey = item.cat.split('-')[1];
+    const emoji = emojis[catKey] || "✨";
+
+    // 카테고리별 상단 border 디자인 매핑
+    const catMap = {
+        auto: "var(--autonomy-core)",
+        conn: "var(--connection-core)",
+        well: "var(--wellbeing-core)",
+        peace: "var(--peace-core)",
+        meaning: "var(--meaning-core)",
+        joy: "var(--joy-core)",
+        love: "var(--love-core)",
+        anx: "var(--anxiety-core)",
+        ang: "var(--anger-core)",
+        sad: "var(--sadness-core)"
+    };
+    
+    const modalContent = modal.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.style.borderTop = `10px solid ${catMap[catKey] || 'var(--accent-blue)'}`;
+    }
 
     let content = `
         <div style="font-size:60px; text-align:center; margin-bottom:10px; margin-top:20px;">${emoji}</div>
@@ -772,7 +824,7 @@ function closeModal(event) {
         document.body.style.overflow = 'auto';
     }
 }
-	
+    
 function renderGrid(type) {
     const data = type === 'needs' ? needsData : emotionsData;
     const index = document.getElementById(type + '-index');
@@ -977,7 +1029,7 @@ function showSavedGeminiResponse(mode) {
     openGeminiModal(savedResponse);
 }
 
-/* --- 제미나이 API 연동 및 직접 질문 로직 (정리필터 추가) --- */
+/* --- 제미나이 API 연동 및 직접 질문 로직 --- */
 async function askGeminiDirect(mode) {
     const apiKeyInput = document.getElementById("geminiApiKey");
     const apiKey = apiKeyInput ? apiKeyInput.value.trim() : "";
@@ -1001,7 +1053,10 @@ async function askGeminiDirect(mode) {
         const s1 = document.getElementById('step1').value;
         const q1 = document.getElementById('step9').value;
         if(!s1 && !q1) { alert("사건 내용이나 질문을 입력해주세요."); return; }
-        promptText = `[나의 마음 관찰 기록 - 공감 모드]\n1. 사건: ${s1}\n\n[Gemini에게 보내는 질문]\n${q1}`;
+        
+        // 프롬프트 가이드 파이프라인 추가 (상대방의 욕구를 규격화된 태그 내에 쓰도록 강제 유도)
+        promptText = `[나의 마음 관찰 기록 - 공감 모드]\n1. 사건: ${s1}\n\n[Gemini에게 보내는 질문]\n${q1}\n\n` + 
+                     `[AI 내부 지침: 답변 과정에서 이 사건을 바탕으로 유추할 수 있는 '상대방의 핵심 욕구'나 '상대방의 입장'이 발견된다면, 본문 답변 끝마친 뒤 가장 맨 아랫줄에 반드시 정확히 다음의 태그 형식을 맞춰 한 줄 추가해 주세요. 예시: [상대방의 욕구]유추된 상대방의 욕구 및 간략한 소견 작성[/상대방의 욕구]]`;
         targetButton = document.getElementById("btn-api-q1");
     } else {
         const s1 = document.getElementById('step1').value;
@@ -1036,11 +1091,29 @@ async function askGeminiDirect(mode) {
         if (data.candidates && data.candidates[0].content.parts[0].text) {
             let resultText = data.candidates[0].content.parts[0].text;
             
-            /* --- 사용자 요청사항: ###과 * 등의 마크다운 기호를 정규식으로 자동 제거 고도화 --- */
+            // 모드 1일 경우 상대방의 욕구 추출 연동 및 8번 필드 반영 로직
+            if (mode === 1) {
+                const targetRegex = /\[상대방의 욕구\]([\s\S]*?)\[\/상대방의 욕구\]/;
+                const match = resultText.match(targetRegex);
+                if (match && match[1]) {
+                    const extractedPartnerNeed = match[1].trim();
+                    const step8Textarea = document.getElementById("step8");
+                    if (step8Textarea) {
+                        step8Textarea.value = extractedPartnerNeed;
+                        autoResizeTextarea(step8Textarea); // 높이 자동 제어
+                    }
+                    // 메인 모달 가이드 창에는 기호 태그들을 숨기기 위해 제거 처리
+                    resultText = resultText.replace(targetRegex, "").trim();
+                }
+            }
+            
             resultText = resultText.replace(/###/g, "").replace(/\*/g, "");
             
             const key = getStorageKey();
             localStorage.setItem(key + "_gemini_resp_" + mode, resultText);
+            
+            // 변동된 8번 기록 필드가 로컬 스토리지에 자동 저장되도록 시퀀스 추가
+            saveAllToLocal();
             
             openGeminiModal(resultText);
         } else {
