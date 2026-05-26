@@ -359,7 +359,7 @@ const emotionsData = [
     { name: "감사하다", cat: "cat-joy", desc: "상대의 선의나 주어진 상황에 고마움을 느껴 마음이 따뜻하게 열리는 상태", sit: "배려를 경험하거나 평화를 깨달았을 때", body: "가슴 부위가 훈훈해지고 어깨의 긴장이 스르르 풀림", aff: "세상이 건네는 모든 친절에 감사합니다." },
     { name: "행복하다", cat: "cat-joy", desc: "생활 속에서 충분한 만족และ 기쁨을 느끼며 내면이 훈훈하게 가득 찬 상태", sit: "사랑하는 이들과 함께하는 순간", body: "온몸에 따뜻한 에너지가 퍼지고 호흡이 깊고 편안해짐", aff: "나는 지금 이 순간 행복할 자격이 있습니다." },
     { name: "감동하다", cat: "cat-joy", desc: "타인의 진심이나 아름다운 모습에 마음이 크게 움직여 가슴이 뭉클해지는 떨림", sit: "명장면이나 희생을 보았을 때", body: "콧날이 시큰해지거나 가슴 중앙이 조여오는 듯한 뭉클함", aff: "내 마음을적시는 따뜻한 떨림을 소중히 여깁니다." },
-    { name: "만족하다", cat: "cat-joy", desc: "모자람 없이 마음에 흡족하여 모나지 않고 있는 그대로를 긍정하는 여유", sit: "몰두한 일을 마친 뒤 쉴 때", body: "몸의 모든 근육이 이완되고 미각이나 후각이 예민해짐", aff: "나는 이미 충분하며 지금 이대로 만족합니다." },
+    { name: "만족하다", cat: "cat-joy", desc: "모자람 없이 마음에 흡족하여 모나지 않고 있는 그대로를 긍정하는 여유", sit: "몰두한 일을 마친 뒤 쉴 때", body: "몸의 모든 근욕이 이완되고 미각이나 후각이 예민해짐", aff: "나는 이미 충분하며 지금 이대로 만족합니다." },
     { name: "든든하다", cat: "cat-joy", desc: "뒤를 받쳐주는 신뢰나 지지가 있음을 확인하여 마음이 굳건하고 강인해진 상태", sit: "나를 믿어주는 사람의 격려를 받았을 때", body: "척추가 곧게 펴지는 느낌과 함께 아랫배에 힘이 들어감", aff: "소중한 존재들이 나를 지켜줍니다." },
     { name: "자랑스럽다", cat: "cat-joy", desc: "스스로 이뤄낸 성취나 대상의 가치를 대견하고 떳떳하게 여기는 마음", sit: "어려운 도전을 끝내거나 성장을 볼 때", body: "어깨가 펴지고 고개가 들리며 심장이 힘차게 뜀", aff: "나는 나의 노력을 진심으로 자랑스러워합니다." },
     { name: "편안하다", cat: "cat-joy", desc: "어떠한 걱정이나 얽매임이 없이 몸과 마음의 긴장이 풀리고 안정을 되찾은 상태", sit: "따뜻한 차를 마시며 쉴 때", body: "눈꺼풀이 가벼워지고 손끝과 발끝까지 이완됨", aff: "나는 모든 긴장을 내려놓고 평온에 머눕니다." },
@@ -618,7 +618,7 @@ function saveAllToLocal() {
     for(let i=1; i<=8; i++) { const el = getEl("step" + i); if(el) localStorage.setItem(key + "_step" + i, el.tagName === "TEXTAREA" ? el.value : el.innerText); }
 }
 
-function openGeminiModal(text) { getTxt("geminiModalBody", text); getEl("geminiModal").style.display = "flex"; document.body.style.overflow = "hidden"; }
+function openGeminiModal(text) { setTxt("geminiModalBody", text); getEl("geminiModal").style.display = "flex"; document.body.style.overflow = "hidden"; }
 function closeGeminiModal(e) { if (e && e.target !== e.currentTarget) return; getEl("geminiModal").style.display = "none"; document.body.style.overflow = "auto"; }
 function copyGeminiResponseText() { const txt = getTxt("geminiModalBody"); if (txt && !txt.includes("🧠") && !txt.includes("⚠️")) navigator.clipboard.writeText(txt).then(() => alert("📋 복사되었습니다!")); }
 
