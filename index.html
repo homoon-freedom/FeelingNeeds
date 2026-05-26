@@ -409,7 +409,7 @@ const emotionsData = [
     { name: "우울하다", cat: "cat-sad", desc: "마음의 에너지가 급격히 낮아져 매사에 의욕이 없고 침잠해 있는 무거운 상태", sit: "무력감이 지속되거나 단절된 느낌일 때", body: "눈꺼풀이 무겁고 온몸이 젖은 솜처럼 바닥으로 가라앉음", aff: "이 또한 날씨일 뿐입니다. 해는 뜹니다." },
     { name: "무기력하다", cat: "cat-sad", desc: "누적된 번아웃이나 실패로 인해 아무것도 하고 싶지 않고 에너지가 바닥난 상태", sit: "반복된 실패나 번아웃이 왔을 때", body: "손가락 하나 까딱하기 싫고목소리에 생기가 전혀 없음", aff: "지금은 뿌리를 내리는 쉼의 시간입니다." },
     { name: "무력하다", cat: "cat-sad", desc: "내 힘으로는 도저히 현재의 상황을 바꿀 수 없다는 거대한 한계에 압도된 마음", sit: "반복되는 갈등 속에 해결책이 없을 때", body: "어깨가 축 처지고 심장 박동이 아주 느리고 약해짐", aff: "아무것도 하지 않아도 괜찮습니다." },
-    { name: "후회하다", cat: "cat-sad", desc: "과거에 했던 자신의 선택이나 행동에 아쉬움과 미련을 느끼며 스스로를 성찰함", sit: "기회를 놓쳤거나 상처를 주었을 때", body: "가슴을 치고 싶거나 머리를 감싸 쥐게 되며 속이 쓰림", aff: "과거의 실수에서 지혜를 배워 성장합니다." },
+    { name: "후회하다", cat: "cat-sad", desc: "과거에 했던 자신의 선택이나 행동에 아쉬움과 미련을 느끼며 스스로를 성찰함", sit: "기회를 놓쳤거나 상처를 주었을 때", body: "가슴을치고 싶거나 머리를 감싸 쥐게 되며 속이 쓰림", aff: "과거의 실수에서 지혜를 배워 성장합니다." },
     { name: "좌절하다", cat: "cat-sad", desc: "노력하던 목표가 무너지고 희망이 꺾여 다시 일어설 엄두가 나지 않는 아픈 상태", sit: "노력이 실패로 돌아가 엄두가 나지 않을 때", body: "무릎에 힘이 풀리고 가슴이 턱 막혀 숨쉬기가 힘들듦", aff: "좌절은 멈춤이지 끝이 아닙니다." },
     { name: "귀찮다", cat: "cat-sad", desc: "모든 활동에 필요한 에너지를 아끼고 최소화하라는 몸과 마음의 정지 신호", sit: "해야 할 일은 많지만 몸이 무거울 때", body: "눈을 감고 싶고 몸의 반응 속도가 현저히 느려짐", aff: "쉼이 필요하다는 신호임을 인정합니다." },
     { name: "지루하다", cat: "cat-sad", desc: "현재 하는 행동에서 어떠한 흥미나 의미도 발견하지 못해 시간이 정체된 느낌", sit: "단조로운 일상이 반복될 때", body: "하품이 나오고 턱을 괴거나 몸을 비틀게 됨", aff: "지루함 속에 영감의 씨앗이 있습니다." },
@@ -679,7 +679,11 @@ async function makeImage() {
                     d.style.cssText = "background:white; border:1px solid #dce4ee; padding:40px; border-radius:20px; font-size:48px; line-height:1.7; color:#2c3e50; white-space:pre-wrap; margin-top:15px;";
                     if (txt) {
                         d.innerHTML = txt.split('\n').map((l, i, a) => {
-                            const t = l.trim(); if (!t) return '<div style="height: 0.8em;"></div>';
+                            let t = l.trim(); if (!t) return '<div style="height: 0.8em;"></div>';
+                            
+                            // [수정 포인트] 정규식을 활용하여 괄호 ()와 그 안의 내용만 추출해 style 주입
+                            t = t.replace(/\(([^)]+)\)/g, '<span style="color: #007AFF; font-weight: normal;">($1)</span>');
+
                             return `<div style="padding-left:1.4em; text-indent:-0.7em; word-break:break-all; ${i === a.length - 1 ? "" : "border-bottom:2px dashed #cbd6e2; padding-bottom:25px; margin-bottom:25px;"}">${(!t.startsWith('•') && !t.startsWith('-') && !t.startsWith('*')) ? '• ' : ''}${t}</div>`;
                         }).join('');
                     } else { d.innerText = "기록된 내용이 없습니다."; d.style.color = "#ccc"; }
