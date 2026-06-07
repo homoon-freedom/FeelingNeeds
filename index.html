@@ -139,6 +139,19 @@
         .btn-save-cloud { background: #3ecf8e; color: white; flex: 1.0; padding: 12px; font-size: 15px; }
         .btn-image { background: var(--primary-blue); color: white; flex: 1.0; padding: 12px; font-size: 15px; }
 
+/* 새로고침 버튼 스타일 최적화 */
+.btn-refresh {
+    padding: 12px 15px; 
+    background: #e9ecef; 
+    border: none; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    font-size: 16px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.btn-refresh:active { background: #dee2e6; }
+
+
         #previewBox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; flex-direction: column; z-index: 4000; padding: 20px; }
         #previewImg { max-width: 100%; max-height: 70%; border-radius: 10px; object-fit: contain; }
         #closeBtn { margin-top: 15px; padding: 10px 30px; background: white; border-radius: 20px; font-weight: 600; border: none; cursor: pointer; }
@@ -275,7 +288,9 @@
 <div class="fixed-bottom-bar" id="fixedBottomBar">
     <button class="btn-save-cloud" onclick="saveToSupabase()">☁️ 클라우드 저장</button>
     <button class="btn-image" id="shareBtn" onclick="makeImage()">❤️ 이미지 공유</button>
+    <button class="btn-refresh" onclick="location.reload()" title="새로고침">🔄</button>
 </div>
+
 <div id="previewBox"><img id="previewImg"><button id="closeBtn" onclick="closePreview()">닫기</button></div>
 
 <script>
@@ -286,7 +301,7 @@ const needsData = [
   {"name": "유능감",
     "cat": "cat-auto",
     "desc": "자신의 능력을 신뢰하고, 주어진 과제를 성공적으로 수행할 수 있다는 믿음과 성취감",
-    "sat": ["성취감을 느끼다", "스스로가 자랑스럽다", "자신감이 생긴다"],
+    "sat": ["성취감을 느끼다", "자랑스럽다", "자신감이 생긴다"],
     "unsat": ["무력감을 느끼다", "자신을 의심하다", "위축되다"],
     "action": "작은 성공을 경험할 수 있는 목표를 세우고, 이를 달성한 뒤 스스로를 칭찬해주세요."
   },
