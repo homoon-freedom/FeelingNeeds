@@ -1,4 +1,837 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>통합 마음 가이드 & 기록장</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --meaning-core: #ffcc80; --connection-core: #f48fb1; --autonomy-core: #90cead;
+            --wellbeing-core: #81d4fa; --peace-core: #b39ddb;
+            --joy-core: #fff176; --love-core: #f06292; --sadness-core: #64b5f6;
+            --anxiety-core: #ba68c8; --anger-core: #ef5350;
+            
+            --meaning-bg: rgba(255, 204, 128, 0.7); --connection-bg: rgba(244, 143, 177, 0.8); --autonomy-bg: rgba(144, 206, 173, 0.7);
+            --wellbeing-bg: rgba(129, 212, 250, 0.7); --peace-bg: rgba(179, 157, 219, 0.8); --joy-bg: rgba(255, 241, 118, 0.7); 
+            --love-bg: rgba(240, 98, 146, 0.8); --sadness-bg: rgba(100, 181, 246, 0.8); --anxiety-bg: rgba(186, 104, 200, 0.8); --anger-bg: rgba(239, 83, 80, 0.8);
+            
+            --primary-blue: #003366; --accent-blue: #007AFF; --light-blue: #EBF4FF;
+            --danger-red: #FF3B30; --bg-gray: #F2F5F8; --text: #333; --bg: #f8f9fa;
+        }
+        
+        html, body { 
+            height: 100%; margin: 0; padding: 0; overflow: hidden; 
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            background: var(--bg-gray); color: var(--text); line-height: 1.5; word-break: keep-all;
+        }
+        body { display: flex; flex-direction: column; }
+
+        .nav-container { flex-shrink: 0; background: white; border-bottom: 2px solid #eee; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 2000; }
+        .tab-menu { display: flex; justify-content: center; max-width: 1200px; margin: 0 auto; }
+        .tab-btn {
+            flex: 1; padding: 15px 5px; font-size: 0.95rem; font-weight: 800; color: #999;
+            cursor: pointer; border: none; background: none; transition: 0.3s; position: relative; text-align: center;
+        }
+        .tab-btn.active { color: var(--accent-blue); }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 4px; background: var(--accent-blue); }
+
+        .content-section { display: none; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 120px; }
+        .content-section.active { display: block; }
+
+        header { padding: 25px 20px 10px; text-align: center; background: white; }
+        h1 { margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--primary-blue); }
+        .subtitle { color: #666; font-size: 0.85rem; margin-top: 5px; }
+
+        .context-guide {
+            position: sticky; top: 0; z-index: 1000; max-width: 1200px; margin: 0 auto; padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.96); border-left: 2px solid var(--accent-blue); border-bottom: 1px solid #eee;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); backdrop-filter: blur(8px); box-sizing: border-box;
+        }
+        .context-label { font-weight: 800; color: var(--accent-blue); display: block; font-size: 0.75rem; margin-bottom: 6px; align-self: flex-start;}
+        .context-text-display { font-weight: 600; color: #333; font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap; word-break: break-all; overflow-wrap: break-word; max-height: 80px; overflow-y: auto; }
+
+        .index-container { max-width: 1200px; margin: 15px auto; padding: 0 15px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .item-link { 
+            height: 42px; display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 700; 
+            border: 1px solid rgba(0,0,0,0.05); text-align: center; transition: 0.2s; padding: 0 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .item-link:active { transform: scale(0.96); opacity: 0.9; }
+
+        .link-meaning { background-color: var(--meaning-bg); color: #5c3a00; }
+        .link-conn { background-color: var(--connection-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .link-auto { background-color: var(--autonomy-bg); color: #1b4332; }
+        .link-well { background-color: var(--wellbeing-bg); color: #0b3c5d; }
+        .link-peace { background-color: var(--peace-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .link-joy { background-color: var(--joy-bg); color: #534c00; }
+        .link-love { background-color: var(--love-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .link-sad { background-color: var(--sadness-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .link-anx { background-color: var(--anxiety-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .link-ang { background-color: var(--anger-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+
+        .grid { display: grid; grid-template-columns: 1fr; max-width: 440px; margin: 15px auto; padding: 0 15px; gap: 20px; }
+        .card { perspective: 2000px; height: 400px; cursor: pointer; position: relative; scroll-margin-bottom: 50px; } 
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+        .card.is-flipped .card-inner { transform: rotateY(180deg); }
+        .front, .back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; padding: 24px; border-radius: 20px; box-sizing: border-box; border: 2px solid transparent; }
+        .back { transform: rotateY(180deg); background-color: white !important; overflow-y: auto; }
+        .front { justify-content: center; align-items: center; text-align: center; }
+        
+        .front .title { font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; color: #222; }
+        .front .desc { font-size: 0.95rem; font-weight: 600; color: #444; }
+        .back .title { font-size: 2.1rem; font-weight: 950; margin-bottom: 15px; color: #222; padding-bottom: 10px; border-bottom: 2px solid #e0e0e0; width: 100%; text-align: center; }
+
+        .section-label { font-size: 0.75rem; font-weight: 800; color: #aaa; text-transform: uppercase; margin-top: 12px; display: block; }
+        .content-text, .body-status, .affirmation-box { font-size: 0.92rem; color: #444; margin-bottom: 8px; line-height: 1.6; font-weight: 800;}
+        .emotion-tag { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; margin: 4px; display: inline-block; cursor: pointer; }
+        .tag-sat { background: #e8f5e9; color: #4caf50; }
+        .tag-unsat { background: #ffebee; color: #f44336; }
+        .action-box { margin-top: auto; padding: 12px; border-radius: 10px; font-size: 0.85rem; background: #f0f7ff; border: 1px dashed var(--accent-blue); color: #0056b3; font-weight: 600; margin-bottom: 10px; }
+
+        .add-to-record-btn {
+            padding: 12px; width: 100%; background: var(--accent-blue); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 0.9rem;
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 4px 10px rgba(0, 122, 255, 0.2); margin-top: 10px;
+        }
+
+        .admin-section { background: white; margin: 15px 15px 15px; padding: 0; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); overflow: hidden; }
+        .admin-toggle-btn {
+            width: 100%; padding: 12px; background: #f8f9fa; border: none; border-bottom: 1px solid #eee;
+            font-size: 13px; font-weight: 800; color: var(--primary-blue); cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+        }
+        .admin-content { padding: 15px 15px 10px 15px; display: none; }
+        .admin-content.show { display: block; }
+        .manage-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 5px; padding-bottom: 5px; border-bottom: 1px dashed #888; }
+        .input-group { display: flex; gap: 5px; }
+        input[type="text"], select { flex: 1; padding: 10px; border: 1.5px solid #DDE4EE; border-radius: 8px; font-size: 14px; outline: none; }
+        .btn { padding: 8px 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; }
+        .btn-add { background: var(--accent-blue); color: white; }
+        .btn-del { background: var(--danger-red); color: white; }
+        
+        #mainTitle { width: calc(100% - 30px); margin: 10px 15px; padding: 12px; font-size: 18px; font-weight: 800; text-align: center; border: 2px solid var(--accent-blue); border-radius: 10px; color: var(--primary-blue); background: white; box-sizing: border-box; }
+        
+        .record-card { background: white; border-radius: 10px; padding: 18px; margin: 0 15px 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border-top: 5px solid var(--accent-blue); }
+        .record-card-title { font-size: 15px; font-weight: 700; color: var(--primary-blue); margin-bottom: 4px; }
+        .record-card-desc { font-size: 13px; color: #8E8E93; margin-bottom: 10px; line-height: 1.6; }
+        
+        textarea, .editable-list { 
+            width: 100%; box-sizing: border-box; min-height: 130px; height: auto; border: none; outline: none; resize: none; 
+            font-size: 14px; background: var(--light-blue); padding: 12px; border-radius: 5px; line-height: 1.6; color: #2c3e50; font-family: 'Pretendard', sans-serif; 
+            white-space: pre-wrap; word-break: break-all; overflow-wrap: break-word; overflow: hidden; 
+        }
+        textarea::placeholder { color: #9bbad3; font-size: 13px; }
+        
+        .editable-list:empty::before { content: attr(data-placeholder); color: #9bbad3; font-size: 13px; pointer-events: none; white-space: pre-wrap; }
+
+        .copy-btn {
+            margin-top: 10px; padding: 12px; width: 100%; background: #333; color: white; border: none; border-radius: 10px; font-weight: 800; font-size: 0.85rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s;
+        }
+        .copy-btn:active { transform: scale(0.98); background: #000; }
+        .btn-q1 { background: #007AFF; }
+        .btn-q2 { background: #5856D6; }
+
+        .fixed-bottom-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; display: flex; gap: 10px; padding: 15px 15px calc(30px + env(safe-area-inset-bottom));
+            background: rgba(242, 245, 248, 0.95); backdrop-filter: blur(10px); border-top: 1px solid #eee; box-sizing: border-box; z-index: 2500; align-items: center;
+        }
+        .fixed-bottom-bar button { border-radius: 10px; border: none; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s; }
+        .btn-save-cloud { background: #3ecf8e; color: white; flex: 1.0; padding: 12px; font-size: 15px; }
+        .btn-image { background: var(--primary-blue); color: white; flex: 1.0; padding: 12px; font-size: 15px; }
+
+/* 새로고침 버튼 스타일 최적화 */
+.btn-refresh {
+    padding: 12px 15px; 
+    background: #e9ecef; 
+    border: none; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    font-size: 16px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.btn-refresh:active { background: #dee2e6; }
+
+
+        #previewBox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; flex-direction: column; z-index: 4000; padding: 20px; }
+        #previewImg { max-width: 100%; max-height: 70%; border-radius: 10px; object-fit: contain; }
+        #closeBtn { margin-top: 15px; padding: 10px 30px; background: white; border-radius: 20px; font-weight: 600; border: none; cursor: pointer; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 5000; padding: 20px; box-sizing: border-box; }
+        .modal-content { background: white; width: 100%; max-width: 440px; max-height: 82vh; border-radius: 20px; position: relative; padding: 30px 22px 24px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); box-sizing: border-box; animation: modalPopUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15); }
+        #cardModal .modal-content { max-height: 88vh; padding: 24px 22px 28px; }
+        #geminiModal { padding: 0; }
+        #geminiModal .modal-content { max-width: 100%; width: 100vw; height: 100vh; max-height: 100vh; border-radius: 0; display: flex; flex-direction: column; overflow: hidden; padding: 25px 20px calc(20px + env(safe-area-inset-bottom)); animation: none; }
+
+        @keyframes modalPopUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-close { position: absolute; top: 14px; right: 16px; width: 30px; height: 30px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; font-weight: bold; z-index: 5100; color: #555; }
+        .modal-content .title { font-size: 1.8rem; font-weight: 950; margin-bottom: 12px; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 5px;}
+        .modal-content .desc { font-size: 0.95rem; color: #555; margin-bottom: 18px; line-height: 1.6; text-align: center; font-weight: 800; word-break: keep-all; }
+    </style>
+</head>
+<body>
+
+<div id="cardModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-close" onclick="closeModal()">×</div>
+        <div id="modalBody"></div>
+    </div>
+</div>
+
+<div id="geminiModal" class="modal-overlay" onclick="closeGeminiModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-close" onclick="closeGeminiModal()">×</div>
+        <div class="title" style="font-size: 1.6rem; color: var(--primary-blue); font-weight: 900; margin-bottom: 5px; flex-shrink: 0;">✨ 제미나이 가이드</div>
+        <div id="geminiModalBody" style="font-size: 0.95rem; line-height: 1.7; color: #2c3e50; white-space: pre-wrap; margin-top: 15px; flex: 1; overflow-y: auto; padding: 15px; background: #f4f6f9; border-radius: 12px; border: 1px solid #e1e8ed; text-align: left;"></div>
+        <button class="copy-btn" id="btn-copy-gemini" onclick="copyGeminiResponseText()" style="background-color: var(--primary-blue); margin-top: 15px; margin-bottom: 0; flex-shrink: 0;">📋 답변 내용 전체 복사하기</button>
+    </div>
+</div>
+
+<nav class="nav-container">
+    <div class="tab-menu">
+        <button class="tab-btn active" id="btn-record" onclick="showSection('record')">마음 관찰 기록</button>
+        <button class="tab-btn" id="btn-emotions" onclick="showSection('emotions')">감정 카드</button>
+        <button class="tab-btn" id="btn-needs" onclick="showSection('needs')">욕구 카드</button>
+    </div>
+</nav>
+
+<section id="emotions-section" class="content-section">
+    <div class="context-guide"><span class="context-label">지금 관찰 중인 사건</span><div id="context-display-emotions" class="context-text-display">기록장에서 사건을 먼저 입력해 보세요.</div></div>
+    <div class="index-container" id="emotions-index"></div>
+    <div class="grid" id="emotions-grid"></div>
+</section>
+
+<section id="needs-section" class="content-section">
+    <div class="context-guide"><span class="context-label">지금 관찰 중인 사건</span><div id="context-display-needs" class="context-text-display">기록장에서 사건을 먼저 입력해 보세요.</div></div>
+    <div class="index-container" id="needs-index"></div>
+    <div class="grid" id="needs-grid"></div>
+</section>
+
+<section id="record-section" class="content-section active">
+    <div id="capture">
+        <div class="admin-section" id="adminPanel">
+            <button class="admin-toggle-btn" onclick="toggleAdminPanel()"><span id="adminStatusText">⚙️ 사용자 및 사건 설정</span><span id="toggleIcon">▼</span></button>
+            <div class="admin-content" id="adminContent">
+                <div class="manage-row">
+                    <span class="label" style="font-size:12px; font-weight:400; color:#8E8E93">1. 사용자</span>
+                    <div class="input-group"><input type="text" id="newUserName" placeholder="이름"><button class="btn btn-add" onclick="addUser()">등록</button></div>
+                    <div class="input-group"><select id="userSelect" onchange="changeUser()"></select><button class="btn btn-del" onclick="deleteUser()">삭제</button></div>
+                </div>
+                <div class="manage-row">
+                    <span class="label" style="font-size:12px; font-weight:400; color:#8E8E93">2. 사건</span>
+                    <div class="input-group"><input type="text" id="newEventName" placeholder="사건명"><button class="btn btn-add" onclick="addEvent()">추가</button></div>
+                    <div class="input-group"><select id="eventSelect" onchange="syncTitleAndLoad()"></select><button class="btn btn-del" onclick="deleteEvent()">삭제</button></div>
+                </div>
+                <div class="manage-row" style="border-bottom:none; margin-top: 5px; margin-bottom: 0; padding-bottom: 0;">
+                    <span class="label" style="font-size:12px; font-weight:400; color:#8E8E93">3. 클라우드에서 불러오기</span>
+                    <div class="input-group"><button class="btn" style="background:#6c757d; color:white; flex:1;" onclick="loadFromSupabase()">불러오기(다른 기기 저장 내용)</button></div>
+                </div>
+            </div>
+        </div>
+
+        <input type="text" id="mainTitle" placeholder="기록의 제목을 적어보세요">
+
+        <div class="record-card">
+            <div class="record-card-title">1. 사건 인식</div>
+            <div class="record-card-desc">투사나 판단, 자기비난을 내려놓고 관찰된 사실만 적어보세요</div>
+            <textarea id="step1" placeholder="❌ 판단:그 사람이 나를 무시했다&#10;✅ 사실:회의 중 내가 말을 할 때 그 사람이 휴대폰을 보았다"></textarea>
+        </div>
+        <div class="record-card"><div class="record-card-title">2. 감정 찾기(가장 강하게 올라오는 감정 3개)</div><div class="record-card-desc">카드에서 찾은 감정 단어 추가</div><textarea id="step2"></textarea></div>
+        <div class="record-card">
+            <div class="record-card-title">3. 위의 감정들을 일으킨 생각들</div>
+            <div class="record-card-desc">감정을 일으킨 내 안의 '판단'이나 '생각'들을 적어보세요.<br>(원인을 상대나 상황이 아닌 내안에서 찾아보세요.)</div>
+            <div id="step3" class="editable-list" contenteditable="true" data-placeholder="❌ 그 사람이 약속시간에 늦어서 나는 화가난다.&#10;✅ 그 사람이 나를 무시했다는 생각에 화가난다."></div>
+        </div>
+        <div class="record-card"><div class="record-card-title">4. 핵심 욕구(가장 원하는 욕구 3개)</div><div class="record-card-desc">욕구카드에서 찾은 욕구 단어들을 추가</div><textarea id="step4"></textarea></div>
+        <div class="record-card">
+            <div class="record-card-title">5. 욕구 강화(각각의 욕구를 원하는 긍정적인 이유 3개)</div>
+            <div class="record-card-desc">이 욕구가 나에게 왜 그토록 중요한 이유를 적어보세요.<br>(나는 '욕구'를 원한다. 왜냐하면 ~ 때문이다. )</div>
+            <div id="step5" class="editable-list" contenteditable="true"></div>
+        </div>
+        <div class="record-card">
+            <div class="record-card-title">6. 구체적인 행동</div>
+            <div class="record-card-desc">나와 상대의 욕구를 강화를 위한 긍정적이고 구체적이며 내가 할 수 있는 실천3가지</div>
+            <div id="step6" class="editable-list" contenteditable="true" data-placeholder="❌ 나는 저녁시간에 스마트폰을 보지않겠다.&#10;✅ 나는 저녁시간에 30분씩 산책을 하겠다."></div>
+        </div>
+        <div class="record-card"><div class="record-card-title">7. 정리 및 통합</div><div class="record-card-desc">새롭게 알게된 점이나 나에게 해주고 싶은 말</div><textarea id="step7"></textarea></div>
+        <div class="record-card" style="border-top: 5px solid var(--connection-core);"><div class="record-card-title">8. 상대의 욕구 인식</div><div class="record-card-desc">상대방의 욕구 공유하기</div><textarea id="step8"></textarea></div>
+
+        <div class="record-card" id="step9-container" style="border-top: 5px solid #333;">
+            <div class="card-title-row" onclick="togglestep9()" style="cursor: pointer;">
+                <div class="record-card-title">Gemini 연동 질문창 <span id="toggle-icon">▲</span></div>
+                <div class="record-card-desc">기록 내용과 질문들을 합쳐서 바로 질문하기</div>
+            </div>
+            <div id="step9-content" style="display: none; padding-top:10px;">
+                <div style="margin-bottom: 15px; background: #fffdf3; padding: 12px; border-radius: 8px; border: 1px solid #ffe0b2;">
+                    <span class="section-label" style="margin-top:0; color:#e65100; font-weight:800;">🔑 제미나이 API 키 설정</span>
+                    <input type="text" id="geminiApiKey" placeholder="AIzaSy...로 시작하는 API 키를 입력하세요" style="width:100%; box-sizing:border-box; margin-top:5px;">
+                </div>
+                <span class="section-label">사건  + 질문(Gemini 도움받기)</span>
+                <textarea id="step9" placeholder="예: 위의 사건과 감정을 바탕으로 나에게 필요한 공감과 위로를 해줘."></textarea>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    <button class="copy-btn btn-q1" onclick="copyCombined(1)" style="flex:1; margin-top:5px;">질문 복사</button>
+                    <button class="copy-btn" id="btn-api-q1" onclick="askGeminiDirect(1)" style="flex:1.5; background-color:#007AFF; margin-top:5px;">바로 질문</button>
+                    <button class="copy-btn" id="btn-view-q1" onclick="showSavedGeminiResponse(1)" style="flex:1.5; background-color:#34c759; margin-top:5px;">답변 보기</button>
+                </div>
+                <div style="height: 15px; border-bottom: 1px solid #eee; margin-bottom: 15px;"></div>
+                <span class="section-label">전체내용 + 질문 (상대에게 요청하기)</span>
+                <textarea id="step9_extra" placeholder="예: 1~6번 내용을 바탕으로 나의 욕구와 상대의 욕구를 조화시킬 대화법을 제안해줘."></textarea>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    <button class="copy-btn btn-q2" onclick="copyCombined(2)" style="flex:1; margin-top:5px;">질문 복사</button>
+                    <button class="copy-btn" id="btn-api-q2" onclick="askGeminiDirect(2)" style="flex:1.5; background-color:#5856D6; margin-top:5px;">바로 질문</button>
+                    <button class="copy-btn" id="btn-view-q2" onclick="showSavedGeminiResponse(2)" style="flex:1.5; background-color:#34c759; margin-top:5px;">답변 보기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="fixed-bottom-bar" id="fixedBottomBar">
+    <button class="btn-save-cloud" onclick="saveToSupabase()">☁️ 클라우드 저장</button>
+    <button class="btn-image" id="shareBtn" onclick="makeImage()">❤️ 이미지 공유</button>
+    <button class="btn-refresh" onclick="location.reload()" title="새로고침">🔄</button>
+</div>
+
+<div id="previewBox"><img id="previewImg"><button id="closeBtn" onclick="closePreview()">닫기</button></div>
+
+<script>
+const nB = ["뿌듯하다", "경쾌하다", "홀가분하다"], nC = ["허탈하다", "조급하다", "무기력하다"];
+const needsData = [
+    { name: "효율성", cat: "cat-auto", desc: "최소한의 자원과 에너지로 최대한의 결실을 얻고, 질서 있게 일을 처리하고 싶은 욕구", sat: ["홀가분하다", "만족하다"], unsat: ["답답하다", "피곤하다"], action: "우선순위를 정하고 불필요한 단계를 줄여보세요." },
+    { name: "효능감", cat: "cat-auto", desc: "어떤 일을 성공적으로 수행할 수 있다는 자신의 능력에 대한 믿음과 확신을 얻고 싶은 마음", sat: ["자신 있다", "활기차다", "든든하다"], unsat: ["막막하다", "회의적이다", "무력하다"], action: "아주 작은 목표를 설정하고 그것을 완수하는 경험을 반복해보세요." },
+  {"name": "유능감",
+    "cat": "cat-auto",
+    "desc": "자신의 능력을 신뢰하고, 주어진 과제를 성공적으로 수행할 수 있다는 믿음과 성취감",
+    "sat": ["성취감을 느끼다", "자랑스럽다", "자신감이 생긴다"],
+    "unsat": ["무력감을 느끼다", "자신을 의심하다", "위축되다"],
+    "action": "작은 성공을 경험할 수 있는 목표를 세우고, 이를 달성한 뒤 스스로를 칭찬해주세요."
+  },
+    { name: "자유•자율성", cat: "cat-auto", desc: "외부의 압박 없이 자신의 가치와 신념에 따라 스스로 선택하고 행동하고 싶은 마음", sat: ["행복하다", "만족하다"], unsat: ["답답하다", "억울하다"], action: "나만의 시간을 확보하세요." },
+    { name: "공정함", cat: "cat-auto", desc: "노력한 만큼 정당한 대우를 받고, 치우침 없이 평등하게 다루어지길 바라는 욕구", sat: ["홀가분하다", "신뢰감을 느끼다"], unsat: ["억울하다", "분개하다"], action: "개인의 편견을 내려놓고 정해진 기준과 원칙에 따라 투명하게 대처해보세요." },
+    { name: "명확함", cat: "cat-auto", desc: "상황이나 정보, 상대의 의도를 왜곡 없이 투명하고 확실하게 알고 싶은 욕구", sat: ["홀가분하다", "편안하다"], unsat: ["혼란스럽다", "답답하다"], action: "모호한 짐작을 내려놓고, 구체적인 사실을 확인하거나 상대에게 명확한 질문을 건네보세요." },
+    { name: "선택", cat: "cat-auto", desc: "타인에게 휘둘리지 않고 나의 의지로 삶의 방향을 정하고 결정하고 싶은 마음", sat: ["자랑스럽다", "기쁘다"], unsat: ["답답하다", "억울하다"], action: "사소한 결정부터 직관에 따라 결정해 보세요." },
+    { name: "혼자만의 시간과 공간", cat: "cat-auto", desc: "타인의 시선에서 벗어나 온전히 나 자신과 마주하며 에너지를 채우고 싶은 욕구", sat: ["편안하다", "만족하다"], unsat: ["답답하다", "불편하다"], action: "아지트에서 1시간 동안 집중해 보세요." },
+    { name: "자기표현", cat: "cat-auto", desc: "나만의 고유한 생각, 감정, 개성을 외부로 솔직하게 드러내고 싶은 욕구", sat: ["기쁘다", "자랑스럽다"], unsat: ["답답하다", "부끄럽다"], action: "독창적인 생각을 기록해 보세요." },
+    { name: "자기주도", cat: "cat-auto", desc: "내 삶의 주인이 되어 행동과 선택의 과정을 스스로 이끌어가고 싶은 욕구", sat: ["자유롭다", "당당하다", "활기차다"], unsat: ["무력하다", "답답하다", "억울하다"], action: "오늘 내가 스스로 선택할 수 있는 작은 일 하나를 정해보세요." },
+{ name: "책임감", cat: "cat-auto", desc: "주어진 역할이나 행동의 결과에 대해 주체적으로 책임을 지고 완수하려는 의지", sat: ["뿌듯하다", "신뢰받다", "든든하다"], unsat: ["불안하다", "버겁다", "회피하고싶다"], action: "오늘 완수해야 할 작은 과제 하나를 정하고, 끝까지 마무리해보세요." },
+    { name: "우정", cat: "cat-conn", desc: "서로 아끼고 신뢰를 나누며 깊은 정서적 유대감을 쌓고 싶은 바람", sat: ["사랑스럽다", "든든하다"], unsat: ["서운하다", "외롭다"], action: "친구에게 안부를 물어보세요." },
+    { name: "공동체", cat: "cat-conn", desc: "집단에 속해 서로 돕고 기여하며 연결되어 있음을 느끼고 싶은 욕구", sat: ["뿌듯하다", "든든하다"], unsat: ["소외되다", "불안하다"], action: "이웃에게 가벼운 인사를 건네보세요." },
+    { name: "이해", cat: "cat-conn", desc: "나의 진심과 마음이 왜곡 없이 상대에게 정확히 전달되고 수용되기를 바라는 마음", sat: ["감동하다", "편안하다"], unsat: ["서운하다", "답답하다"], action: "소통의 오해를 확인해 보세요." },
+    { name: "존중", cat: "cat-conn", desc: "하나의 독립된 인격체로서 가치를 인정받고 소중히 다뤄지기를 바라는 마음", sat: ["뿌듯하다", "든든하다"], unsat: ["억울하다", "속상하다"], action: "받고 싶은 대우를 요청하세요." },
+    { name: "상호존중", cat: "cat-conn", desc: "서로의 다름을 인정하고, 품격 있는 태도로 존재와 가치를 소중히 여기는 마음", sat: ["존중받다", "든든하다", "편안하다"], unsat: ["무시당하다", "불쾌하다", "비참하다"], action: "상대방의 말을 끝까지 듣고 비판 없이 수용하는 연습을 해보세요." },
+    { name: "관심", cat: "cat-conn", desc: "타인에게 소중한 존재로 여겨지고 내 존재가 긍정적으로 인식되기를 바라는 마음", sat: ["반갑다", "행복하다"], unsat: ["서운하다", "외롭다"], action: "나에 대해 질문해달라고 요청하세요." },
+    { name: "소통", cat: "cat-conn", desc: "서로의 생각과 느낌을 투명하게 주고받으며 깊은 연결을 맺고 싶은 욕구", sat: ["반갑다", "재미있다"], unsat: ["답답하다", "어색하다"], action: "끝까지 듣고 요약해 보세요." },
+    { name: "신뢰", cat: "cat-conn", desc: "서로를 의심 없이 믿고 의지할 수 있는 단단한 관계를 맺고 싶은 바람", sat: ["든든하다", "편안하다"], unsat: ["불안하다", "걱정하다"], action: "작은 도움을 요청해 보세요." },
+    { name: "협력", cat: "cat-conn", desc: "공통의 목표를 이루기 위해 서로 힘을 합치고 시너지를 내고 싶은 바람", sat: ["든든하다", "뿌듯하다"], unsat: ["답답하다", "귀찮다"], action: "상대에게 도움을 요청하세요." },
+    { name: "연결•친밀함", cat: "cat-conn", desc: "정서적으로 가까워져 깊은 유대감과 따뜻함을 나누고 싶은 욕구", sat: ["사랑스럽다", "설레다"], unsat: ["외롭다", "서운하다"], action: "눈을 맞추며 대화해 보세요." },
+    { name: "어울리기", cat: "cat-conn", desc: "타인과 즐겁게 섞여 사회적인 에너지를 가볍고 유쾌하게 나누고 싶은 바람", sat: ["신나다", "재미있다"], unsat: ["어색하다", "외롭다"], action: "가벼운 티타임에 참석하세요." },
+    { name: "공감", cat: "cat-conn", desc: "상대의 마음과 감정을 깊이 이해하고 내 것처럼 함께 느끼고 싶은 욕구", sat: ["감동하다", "따뜻하다"], unsat: ["외롭다", "서운하다"], action: "공감의 한마디를 건네보세요." },
+    { name: "포용", cat: "cat-conn", desc: "나의 부족함, 실수, 다름까지도 조건 없이 있는 그대로 받아들여지길 바라는 욕구", sat: ["안심되다", "든든하다"], unsat: ["위축되다", "소외감을 느끼다"], action: "상대의 판단이나 평가 없이 있는 그대로 수용하는 태도를 보여주세요." },
+    { name: "수용", cat: "cat-conn", desc: "나의 생각과 현재 모습이 왜곡이나 저항 없이 있는 그대로 인정받기를 바라는 욕구", sat: ["자유롭다", "편안하다"], unsat: ["답답하다", "거부당하다"], action: "상대의 이야기를 바꾸려 하거나 조언하려 하지 말고, '그랬구나' 하며 있는 그대로 비춰주세요." },
+    { name: "위로", cat: "cat-conn", desc: "슬픔이나 아픔으로 지친 마음을 타인이 알아주고 따뜻하게 다독여주길 바라는 욕구", sat: ["위안이 되다", "평온하다"], unsat: ["속상하다", "막막하다"], action: "상대의 힘든 마음을 묵묵히 들어주며 따뜻한 체온이나 가벼운 신체 접촉을 나눠보세요." },
+    { name: "마음알아주기", cat: "cat-conn", desc: "평가나 판단 없이 내 감정과 진심을 있는 그대로 알아봐 주길 바라는 욕구", sat: ["감동하다", "든든하다"], unsat: ["억울하다", "서럽다"], action: "감정의 이름을 불러주세요." },
+    { name: "소속감", cat: "cat-conn", desc: "특정 집단의 일원으로서 거부당하지 않고 안정을 느끼고 싶은 마음", sat: ["든든하다", "편안하다"], unsat: ["외롭다", "불안하다"], action: "작은 역할을 자원해 보세요." },
+    { name: "도움•지지", cat: "cat-conn", desc: "어렵고 힘든 순간에 기댈 수 있는 든든한 조력과 격려를 받고 싶은 마음", sat: ["든든하다", "감사하다"], unsat: ["막막하다", "서럽다"], action: "명확히 도움을 요청하세요." },
+    { name: "나눔", cat: "cat-conn", desc: "내가 가진 물질적, 정서적 가치를 대가 없이 전달하며 기쁨을 얻고 싶은 마음", sat: ["행복하다", "뿌듯하다"], unsat: ["속상하다", "허탈하다"], action: "깜짝 선물을 해보세요." },
+    { name: "배려", cat: "cat-conn", desc: "타인의 상황과 형편을 세심하게 살피고 마음을 쓰고 싶은 따뜻한 성품", sat: ["뿌듯하다", "따뜻하다"], unsat: ["속상하다", "서운하다"], action: "주변 필요를 살펴보세요." },
+    { name: "정서적 배려", cat: "cat-conn", desc: "자신과 타인의 감정 상태를 세심하게 살피며 안전하게 연결되고 싶은 마음", sat: ["따뜻하다", "연결되다", "안심하다"], unsat: ["서운하다", "외롭다", "단절되다"], action: "상대방의 감정 단어에 귀를 기울이고 공감의 한마디를 건네보세요." },
+    { name: "보살핌", cat: "cat-conn", desc: "소중한 대상을 따뜻하게 돌보거나, 누군가로부터 돌봄을 받고 싶은 본능적 마음", sat: ["사랑스럽다", "든든하다"], unsat: ["외롭다", "불안하다"], action: "나 자신을 돌보세요." },
+    { name: "사랑", cat: "cat-conn", desc: "존재 자체를 아끼고 소중히 여기며 조건 없이 베풀고 받고 싶은 강력한 에너지", sat: ["사랑스럽다", "행복하다"], unsat: ["슬프다", "서럽다"], action: "사랑해라고 전하세요." },
+{
+  "name": "안정감",
+  "cat": "cat-conn",
+  "desc": "예측 가능한 환경과 신뢰 속에서 심리적으로 흔들림 없이 평온함을 유지하고 싶은 욕구",
+  "sat": ["편안하다", "차분하다"],
+  "unsat": ["불안하다", "초조하다"],
+  "action": "일관된 태도와 행동으로 예측 가능한 환경을 제공하고 신뢰를 쌓아주세요."
+},
+{
+  "name": "정서적 안정",
+  "cat": "cat-conn",
+  "desc": "감정의 기복을 너그럽게 이해받고, 자신의 내면이 존중받으며 심리적인 평화를 누리고 싶은 욕구",
+  "sat": ["평온하다", "안온하다"],
+  "unsat": ["불안정하다", "예민해지다"],
+  "action": "감정의 변화를 있는 그대로 경청하며, 따뜻한 위로와 지지를 보내주세요."
+},
+    { name: "공기", cat: "cat-well", desc: "맑고 깨끗한 숨을 통해 몸을 정화하고 생명을 유지하는 필수적인 에너지", sat: ["편안하다", "만족하다"], unsat: ["답답하다", "괴롭다"], action: "심호흡을 하세요." },
+    { name: "음식•주거", cat: "cat-well", desc: "안정적인 삶의 기반을 다지고 신체 에너지를 얻고 싶은 생존의 욕구", sat: ["든든하다", "편안하다"], unsat: ["불안하다", "걱정하다"], action: "건강한 한 끼를 드세요." },
+    { name: "건강", cat: "cat-well", desc: "몸과 마음이 질병 없이 활기차고 정상적으로 기능하기를 바라는 상태", sat: ["행복하다", "만족하다"], unsat: ["우울하다", "걱정하다"], action: "물 한 잔을 마셔보세요." },
+    { name: "휴식", cat: "cat-well", desc: "지친 몸과 마음의 긴장을 풀고 에너지를 재충전하고 싶은 욕구", sat: ["편안하다", "만족하다"], unsat: ["피곤하다", "짜증나다"], action: "10분간 멈춰보세요." },
+    { name: "잠", cat: "cat-well", desc: "하루 동안 소모된 육체적, 정신적 피로를 완전히 회복시키는 필수 조건", sat: ["편안하다", "만족하다"], unsat: ["피곤하다", "예민하다"], action: "스마트폰을 멈추세요." },
+    { name: "재미", cat: "cat-well", desc: "단조로운 일상에서 벗어나 신선하고 유쾌한 자극을 즐기고 싶은 욕구", sat: ["신나다", "재미있다"], unsat: ["지루하다", "답답하다"], action: "취미 활동을 하세요." },
+    { name: "놀이", cat: "cat-well", desc: "어떠한 목적이나 부담 없이, 순수한 즐거움 자체를 느끼는 모든 활동", sat: ["신나다", "재미있다"], unsat: ["지루하다", "답답하다"], action: "어린아이처럼 낙서하세요." },
+    { name: "운동", cat: "cat-well", desc: "몸을 역동적으로 움직여 체력을 기르고 활발한 에너지를 발산하고 싶은 욕구", sat: ["신나다", "만족하다"], unsat: ["피곤하다", "무기력하다"], action: "15분간 산책하세요." },
+    { name: "편안함", cat: "cat-well", desc: "아무런 불안이나 불편함 없이 몸과 마음이 이완되어 안정을 찾은 상태", sat: ["편안하다", "만족하다"], unsat: ["불안하다", "불편하다"], action: "편한 옷을 입으세요." },
+    { name: "회복", cat: "cat-well", desc: "소모되거나 손상된 에너지를 원래의 건강한 균형태로 되돌리고 싶은 욕구", sat: ["뿌듯하다", "편안하다"], unsat: ["무기력하다", "괴롭다"], action: "자연 속으로 나가보세요." },
+    { name: "예측가능성", cat: "cat-peace", desc: "앞으로 일어날 상황을 미리 파악하여 심리적 안정을 얻고 싶은 욕구", sat: ["편안하다", "든든하다"], unsat: ["불안하다", "당황하다"], action: "루틴을 만드세요." },
+    { name: "일관성", cat: "cat-peace", desc: "언행의 앞뒤가 맞고 변함이 없어 굳건한 신뢰를 유지하고 싶은 바람", sat: ["든든하다", "편안하다"], unsat: ["당황하다", "혼란스럽다"], action: "작은 약속부터 지키세요." },
+    { name: "믿음", cat: "cat-peace", desc: "내면의 흔들림을 잡아주는 단단한 가치관이나 신념을 지키고 싶은 마음", sat: ["든든하다", "평온하다"], unsat: ["불안하다", "막막하다"], action: "힘이 되는 문구를 읽으세요." },
+    { name: "여유", cat: "cat-peace", desc: "조급함 없이 현재의 순간을 온전히 음미할 수 있는 마음의 공간", sat: ["행복하다", "만족하다"], unsat: ["초조하다", "긴장하다"], action: "일정 사이에 여백을 두세요." },
+    { name: "조화", cat: "cat-peace", desc: "주변 환경이나 타인과 갈등 없이 균형을 이루고 싶은 평화로운 상태", sat: ["평온하다", "만족하다"], unsat: ["불편하다", "어색하다"], action: "제3의 길을 질문하세요." },
+    { name: "감사", cat: "cat-peace", desc: "삶에서 주어진 소중함과 고마움을 깊이 느끼고 표현하고 싶은 욕구", sat: ["행복하다", "따뜻하다"], unsat: ["속상하다", "허탈하다"], action: "3가지를 기록하세요." },
+    { name: "평등", cat: "cat-peace", desc: "차별 없이 누구에게나 균등한 기회와 정당한 대우가 주어지길 바라는 마음", sat: ["편안하다", "만족하다"], unsat: ["분하다", "억울하다"], action: "의견을 정중히 밝히세요." },
+    { name: "평화", cat: "cat-peace", desc: "분쟁이나 소음 없이 외부와 내면이 고요하고 조화로운 상태", sat: ["편안하다", "행복하다"], unsat: ["불안하다", "짜증나다"], action: "명상을 해보세요." },
+    { name: "안전", cat: "cat-peace", desc: "위험이나 위협으로부터 신체적, 정신적으로 보호받고 싶은 원초적 욕구", sat: ["편안하다", "든든하다"], unsat: ["두렵다", "무섭다"], action: "안전한 사람을 떠올리세요." },
+    { name: "보호", cat: "cat-peace", desc: "소중한 가치, 사람, 환경을 외부의 위험으로부터 안전하게 지키고 싶은 마음", sat: ["든든하다", "뿌듯하다"], unsat: ["걱정하다", "무섭다"], action: "식물을 돌보세요." },
+    { name: "희망", cat: "cat-peace", desc: "지금보다 더 나은 내일이 올 것이라는 긍정적이고 밝은 믿음", sat: ["기대하다", "설레다"], unsat: ["좌절하다", "우울하다"], action: "작은 변화에 집중하세요." },
+    { name: "애도", cat: "cat-peace", desc: "소중한 존재의 상실을 충분히 슬퍼하고 마음을 건강하게 정리하는 과정", sat: ["평온하다", "안도하다"], unsat: ["서럽다", "슬프다"], action: "편지를 써보세요." },
+    { name: "슬퍼하기", cat: "cat-peace", desc: "내면의 아픔을 억누르지 않고 눈물 등으로 정화하고 싶은 솔직한 욕구", sat: ["후련하다", "편안하다"], unsat: ["괴롭다", "우울하다"], action: "마음껏 울어보세요." },
+    { name: "진실", cat: "cat-meaning", desc: "거짓 없이 사물의 본질이나 실제 사실을 있는 그대로 마주하고 싶은 욕구", sat: ["편안하다", "당당하다"], unsat: ["혼란스럽다", "억울하다"], action: "사실을 털어놓으세요." },
+    { name: "솔직함", cat: "cat-meaning", desc: "꾸밈이나 숨김없이 자신의 내면을 용기 있게 드러내고 싶은 마음", sat: ["자랑스럽다", "편안하다"], unsat: ["부끄럽다", "불편하다"], action: "마음을 표현하세요." },
+    { name: "도전", cat: "cat-meaning", desc: "현실에 안주하지 않고 새로운 성취를 위해 위험을 감수하고 싶은 열정", sat: ["신나다", "기대하다"], unsat: ["두렵다", "막막하다"], action: "첫 단계를 실행하세요." },
+    { name: "배움", cat: "cat-meaning", desc: "새로운 지식이나 깨달음을 얻어 지적으로 성장하고 싶은 깊은 욕구", sat: ["재미있다", "기대하다"], unsat: ["지루하다", "답답하다"], action: "새로 알게 된 것을 기록하세요." },
+    { name: "성취", cat: "cat-meaning", desc: "목표한 바를 끝까지 해내어 스스로 결과물을 만들어내고 싶은 마음", sat: ["뿌듯하다", "자랑스럽다"], unsat: ["좌절하다", "실망하다"], action: "체크 표시를 하세요." },
+    { name: "보람", cat: "cat-meaning", desc: "내가 한 행동이 가치 있고 의미 있는 일이었음을 확인하고 싶은 마음", sat: ["뿌듯하다", "만족하다"], unsat: ["허탈하다", "무력하다"], action: "긍정적 영향들을 떠올리세요." },
+    { name: "기여", cat: "cat-meaning", desc: "내 능력이나 행동을 통해 사회나 타인에게 긍정적인 영향을 주고 싶은 바람", sat: ["뿌듯하다", "자랑스럽다"], unsat: ["허탈하다", "속상하다"], action: "봉사를 실천해 보세요." },
+    { name: "능력", cat: "cat-meaning", desc: "어떤 일을 탁월하게 해낼 수 있는 기술과 역량을 탄착히 갖추고 싶은 욕구", sat: ["자랑스럽다", "든든하다"], unsat: ["위축되다", "부끄럽다"], action: "타인을 도와주세요." },
+    { name: "꿈", cat: "cat-meaning", desc: "자신이 바라는 이상적인 가치나 미래의 목표를 실현하고 싶은 간절한 열망", sat: ["기대하다", "설레다"], unsat: ["막막하다", "좌절하다"], action: "계획을 세우세요." },
+    { name: "창조성", cat: "cat-meaning", desc: "틀에 박힌 것에서 벗어나 새로운 생각이나 결과물을 만들어내고 싶은 욕구", sat: ["신나다", "설레다"], unsat: ["지루하다", "답답하다"], action: "일상에 변화를 시도하세요." },
+    { name: "자신감", cat: "cat-meaning", desc: "자신의 능력을 신뢰하며 어떤 일에도 당당하게 마주하고 싶은 내면의 에너지", sat: ["자랑스럽다", "신나다"], unsat: ["위축되다", "초조하다"], action: "기억 3가지를 되새기세요." },
+    { name: "자부심", cat: "cat-meaning", desc: "자신의 성취와 존재 가치에 대해 스스로 당당하고 명예롭게 여기고 싶은 마음", sat: ["당당하다", "자랑스럽다", "충만하다"], unsat: ["초라하다", "부끄럽다", "위축되다"], action: "오늘 내가 해낸 작은 성과나 나의 긍정적인 면을 세 가지만 기록해보세요." },
+    { name: "축하", cat: "cat-meaning", desc: "이뤄낸 결실이나 기쁜 순간을 기리며 기쁨을 널리 나누고 싶은 마음", sat: ["기쁘다", "감동하다"], unsat: ["서운하다", "속상하다"], action: "작은 보상을 선물하세요." },
+    { name: "존재감", cat: "cat-meaning", desc: "어디서나 소외되지 않고 가치 있고 의미 있는 존재로 뚜렷하게 인식되고 싶은 마음", sat: ["자랑스럽다", "뿌듯하다"], unsat: ["위축되다", "허탈하다"], action: "당당히 드러내세요." },
+    { name: "평온함", cat: "cat-meaning", desc: "마음의 동요나 불안 없이 고요하고 안녕한 상태를 지속하고 싶은 욕구", sat: ["평화롭다", "안온하다"], unsat: ["불안하다", "초조하다"], action: "숨을 깊게 고르며 이 순간을 음미하세요." }
+];
+
+
+const emotionsData = [
+    { name: "기쁘다", cat: "cat-joy", desc: "원하던 일이 뜻대로 이루어져 마음이 매우 즐겁고 흐뭇한 상태", sit: "목표 달성이나 축하를 들었을 때", body: "가슴이 벅차오르고 입가에 미소가 번지며 몸이 가벼워짐", aff: "이 기쁨을 충분히 누리며 나를 축하합니다." },
+    { name: "감사하다", cat: "cat-joy", desc: "상대의 선의나 주어진 상황에 고마움을 느껴 마음이 따뜻하게 열리는 상태", sit: "배려를 경험하거나 평화를 깨달았을 때", body: "가슴 부위가 훈훈해지고 어깨의 긴장이 스르르 풀림", aff: "세상이 건네는 모든 친절에 감사합니다." },
+    { name: "행복하다", cat: "cat-joy", desc: "생활 속에서 충분한 만족และ 기쁨을 느끼며 내면이 훈훈하게 가득 찬 상태", sit: "사랑하는 이들과 함께하는 순간", body: "온몸에 따뜻한 에너지가 퍼지고 호흡이 깊고 편안해짐", aff: "나는 지금 이 순간 행복할 자격이 있습니다." },
+    { name: "감동하다", cat: "cat-joy", desc: "타인의 진심이나 아름다운 모습에 마음이 크게 움직여 가슴이 뭉클해지는 떨림", sit: "명장면이나 희생을 보았을 때", body: "콧날이 시큰해지거나 가슴 중앙이 조여오는 듯한 뭉클함", aff: "내 마음을적시는 따뜻한 떨림을 소중히 여깁니다." },
+    { name: "만족하다", cat: "cat-joy", desc: "모자람 없이 마음에 흡족하여 모나지 않고 있는 그대로를 긍정하는 여유", sit: "몰두한 일을 마친 뒤 쉴 때", body: "몸의 모든 근욕이 이완되고 미각이나 후각이 예민해짐", aff: "나는 이미 충분하며 지금 이대로 만족합니다." },
+    { name: "든든하다", cat: "cat-joy", desc: "뒤를 받쳐주는 신뢰나 지지가 있음을 확인하여 마음이 굳건하고 강인해진 상태", sit: "나를 믿어주는 사람의 격려를 받았을 때", body: "척추가 곧게 펴지는 느낌과 함께 아랫배에 힘이 들어감", aff: "소중한 존재들이 나를 지켜줍니다." },
+    { name: "자랑스럽다", cat: "cat-joy", desc: "스스로 이뤄낸 성취나 대상의 가치를 대견하고 떳떳하게 여기는 마음", sit: "어려운 도전을 끝내거나 성장을 볼 때", body: "어깨가 펴지고 고개가 들리며 심장이 힘차게 뜀", aff: "나는 나의 노력을 진심으로 자랑스러워합니다." },
+    { name: "편안하다", cat: "cat-joy", desc: "어떠한 걱정이나 얽매임이 없이 몸과 마음의 긴장이 풀리고 안정을 되찾은 상태", sit: "따뜻한 차를 마시며 쉴 때", body: "눈꺼풀이 가벼워지고 손끝과 발끝까지 이완됨", aff: "나는 모든 긴장을 내려놓고 평온에 머눕니다." },
+    { name: "뿌듯하다", cat: "cat-joy", desc: "성실한 노력의 결과로 가슴이 벅차오르고 내면이 가득 채워지는 듯한 성취감", sit: "하루의 할 일을 성실히 마친 순간", body: "가슴 상부가 넓게 확장되는 느낌과 가벼운 고양감", aff: "성실하게 채워온 나의 시간이 자랑스럽습니다." },
+    { name: "기대하다", cat: "cat-joy", desc: "앞으로 일어날 긍정적인 변화나 만남을 상상하며 마음속에 샘솟는 활기", sit: "새로운 도전이나 기다리던 만남 전", body: "몸이 앞으로 기울어지고 눈빛이 반짝이며 에너지가 상승함", aff: "찾아올 멋진 미래를 설레며 기다립니다." },
+    { name: "반갑다", cat: "cat-joy", desc: "그리워하던 존재를 다시 마주하게 되어 단절되었던 연결이 회복되는 기쁨", sit: "친한 친구를 오랜만에 만났을 때", body: "목소리 톤이 높아지고 손동작이 커지며 심박수가 증가함", aff: "만남이 주는 활기찬 에너지를 맞이합니다." },
+    { name: "신나다", cat: "cat-joy", desc: "흥분과 기대로 인해 몸 전체에 활발하고 유쾌한 에너지가 강하게 도는 상태", sit: "공연을 보러 가기 직전이나 여행길", body: "손발을 가만히 두기 어렵고 몸에 가벼운 전율이 느껴짐", aff: "내 안의 즐거운 에너지가 힘차게 솟구칩니다." },
+    { name: "재미있다", cat: "cat-joy", desc: "흥미로운 자극이나 활동에 깊이 몰입하여 느끼는 즐겁고 유쾌한 기분", sit: "좋아하는 취미 생활에 몰입할 때", body: "입꼬리가 올라가고 눈 주변의 근육이 부드러워짐", aff: "삶은 즐거운 놀이터이며 매 순간을 즐깁니다." },
+    { name: "당당하다", cat: "cat-joy", desc: "자신의 가치와 신념에 확신을 가져 남 앞에 굽힘 없이 떳떳하고 곧은 상태", sit: "진실을 말하거나 원칙에 따라 행동할 때", body: "발바닥이 지면에 단단히 닿은 느낌과 목소리에 힘이 실림", aff: "나는 나의 존재와 선택에 확신이 있습니다." },
+    { name: "평온하다", cat: "cat-joy", desc: "갈등이나 외부 자극이 걷히고 내면의 질서가 잡혀 깊은 안식을 누리는 상태", sit: "갈등 해결 후 고요한 시간을 가질 때", body: "얼굴 근육이 완전히 풀리고 호흡의 주기가 일정해짐", aff: "내 마음은 잔잔한 호수처럼 고요합니다." },
+    { name: "사랑스럽다", cat: "cat-love", desc: "대상의 존재가 너무나 소중하고 예뻐서 온 마음으로 아껴주고 싶은 깊은 애정", sit: "잠든 아기나 반려동물을 볼 때", body: "심장 부위가 간질거리고 온몸의 감각이 부드러워짐", aff: "내 마음의 사랑이 주변을 따뜻하게 비춥니다." },
+    { name: "설레다", cat: "cat-love", desc: "새로운 가능성이나 사랑하는 존재에 대한 기대로 가슴이 잔잔하게 뛰는 기분", sit: "좋아하는 사람을 만나기 전", body: "가슴이 두근거리고 아랫배가 화해지는 묘한 떨림", aff: "기분 좋은 떨림이 삶을 새롭게 깨웁니다." },
+    { name: "미안하다", cat: "cat-love", desc: "자신의 행동이 타인에게 불편이나 상처를 주었음을 인정하고 회복을 바라는 마음", sit: "약속에 늦었거나 상처를 주었을 때", body: "가슴이 답답하고 고개가 숙여지며 눈치를 보게 됨", aff: "나의 진심 어린 사과가 관계를 회복시킵니다." },
+    { name: "따뜻하다", cat: "cat-love", desc: "타인의 친절과 위로를 경험하며 마음속의 경계와 긴장이 부드럽게 녹아내리는 상태", sit: "위로를 받거나 깊은 교감을 나눌 때", body: "몸의 온도가 올라가는 듯한 느낌과 함께 표정이 온화해짐", aff: "내 마음은 사랑의 온기로 가득합니다." },
+    { name: "안도하다", cat: "cat-love", desc: "마음을 무겁게 짓누르던 걱정이 해결되거나 눈앞의 위험이 사라져 놓이는 상태", sit: "어려운 고비를 무사히 넘겼을 때", body: "참았던 숨을 깊게 내뱉으며(한숨) 온몸의 힘이 쭉 빠짐", aff: "폭풍이 지나갔습니다. 이제는 안전합니다." },
+    { name: "불안하다", cat: "cat-anx", desc: "다가올 불확실한 상황에 대비하여 신경과 감각이 예민하게 깨어있는 긴장 상태", sit: "결과를 기다리거나 불확실한 미래 앞에서", body: "심장이 빠르게 뛰고 손발이 차가워지며 호흡이 얕아짐", aff: "불안은 나를 지키려는 신호일 뿐입니다." },
+    { name: "걱정하다", cat: "cat-anx", desc: "아직 일어나지 않은 부정적인 가능성에 온 신경과 에너지가 쏠려 있는 상태", sit: "연락이 늦거나 해결 안 된 일이 있을 때", body: "미간에 주름이 잡히고 머리 뒷부분이 팽팽하게 당김", aff: "걱정 대신 지금 할 수 있는 행동에 집중합니다." },
+    { name: "혼란스럽다", cat: "cat-anx", desc: "상충하는 생각과 욕구가 마음속에서 뒤엉켜 판단의 기준과 질서가 흔들리는 상태", sit: "중요한 갈림길에서 판단이 서지 않을 때", body: "머릿속이 멍해지거나 눈동자가 자주 흔들리며 어지러움", aff: "생각이 걷히면 곧 명확한 답이 보일 것입니다." },
+    { name: "긴장하다", cat: "cat-anx", desc: "중요한 일이나 낯선 환경을 앞두고 몸과 마음이 굳어 조마조마해진 상태", sit: "면접을 앞두고 너무 긴장해서 손에 땀이 났다.", body: "손바닥에 땀이 나고 어깨가 귀 쪽으로 바짝 올라감", aff: "이 긴장은 준비되었다는 증거입니다." },
+    { name: "놀라다", cat: "cat-anx", desc: "뜻밖의 갑작스러운 변화나 충격을 마주하여 순간적으로 신체 감각이 얼어붙는 상태", sit: "예상치 못한 소식이나 큰 소리가 날 때", body: "눈이 커지고 숨이 턱 막히며 몸이 순간적으로 굳음", aff: "차분하게 안정을 되찾고 상황을 봅니다." },
+    { name: "당황하다", cat: "cat-anx", desc: "예상치 못한 돌발 상황을 마주하여 대처 능력이 일시적으로 마비되고 허둥대는 상태", sit: "실수를 하거나 갑작스러운 질문을 받을 때", body: "얼굴이 화끈거림을 느끼고 머릿속이 하얘지며 손동작이 꼬임", aff: "당황해도 괜찮습니다. 지혜를 찾을 것입니다." },
+    { name: "두렵다", cat: "cat-anx", desc: "위협적이거나 해를 끼칠 만한 대상을 마주하여 도망치거나 저항하고 싶은 무서운 감정", sit: "압박을 주는 상대나 공포를 마주할 때", body: "몸이 떨리고 입술이 마르며 뒤로 물러나고 싶어짐", aff: "내 안의 용기를 믿으며 나를 지킵니다." },
+    { name: "무섭다", cat: "cat-anx", desc: "눈앞의 구체적인 위험이나 공포 대상 앞에서 자신을 보호하려는 방어 기제가 작동한 상태", sit: "천둥번개나 위험 요소를 발견할 때", body: "소름이 돋고식은땀이 흐르며 근육이 경직됨", aff: "나는 안전한 곳에 있습니다. 곧 지나갑니다." },
+    { name: "초조하다", cat: "cat-anx", desc: "일이 뜻대로 되지 않거나 기한에 임박하여 마음이 조급하고 애가 타는 상태", sit: "순서를 기다리거나 기한이 임박할 때", body: "다리를 떨거나 손톱을 만지작거리며 자꾸 시계를 봄", aff: "모든 것은 제때 이루어집니다. 나를 믿습니다." },
+    { name: "부끄럽다", cat: "cat-anx", desc: "자신의 실수가 드러났거나 스스로 떳떳하지 못하다고 느껴 숨고 싶어지는 마음", sit: "사람들 앞에서 실수를 했을 때", body: "귀가 빨개지고 목소리가 작아지며 시선을 피하게 됨", aff: "실수는 인간미의 증거입니다. 나를 수용합니다." },
+    { name: "부담스럽다", cat: "cat-anx", desc: "자신이 감당하기 어려운 무거운 책임이나 큰 기대를 요구받아 생기는 중압감", sit: "무리한 부탁을 받거나 책임이 무거울 때", body: "어깨와 목덜미가 묵직하고 가슴이 답답하게 압박됨", aff: "나는 내 한계를 존중하며 거절할 수 있습니다." },
+    { name: "막막하다", cat: "cat-anx", desc: "해결의 실마리가 전혀 보이지 않고 의지할 곳도 없어 어찌할 바를 모르는 무력한 상태", sit: "진로 등 선택지가 보이지 않을 때", body: "눈앞이 흐릿한 기분과 함께 깊은 숨이 자주 나옴", aff: "한 걸음씩 나아갑니다. 길은 만들어집니다." },
+    { name: "위축되다", cat: "cat-anx", desc: "비난이나 비교 등으로 인해 자신감을 잃고 마음이 조그맣게 오그라드는 상태", sit: "비난을 받거나 비교를 당할 때", body: "가슴을 웅크리게 되고 목소리가 기어들어 가듯 작아짐", aff: "나는 그 자체로 고유한 빛을 가진 존재입니다." },
+{ 
+  name: "꺼림칙하다", 
+  cat: "cat-anx", 
+  desc: "어떤 상황이나 태도가 도덕적, 논리적, 직관적으로 마음에 걸려 개운하지 않고 불쾌한 상태", 
+  sit: "상식적이지 않은 일을 접하거나, 내 가치관에 어긋나는 선택을 강요받을 때", 
+  body: "미간이 살짝 찌푸려지고 가슴 한쪽이 무겁거나 답답한 느낌이 듦", 
+  aff: "나는 내면의 소리에 귀를 기울이고, 명확함과 진실함을 선택할 수 있는 힘이 있습니다." 
+},
+{ 
+  name: "찜찜하다", 
+  cat: "cat-anx", 
+  desc: "어떤 일을 마무리했음에도 여전히 찝찝함이 남아 마무리가 덜 된 듯한 상태", 
+  sit: "일을 확실히 처리하지 못했거나, 타인과의 관계에서 미묘한 앙금이 남았을 때", 
+  body: "머릿속에서 특정 생각이 맴돌며 시선이 불안정하게 흔들림", 
+  aff: "나는 현재의 불완전함을 수용하고, 필요한 만큼 최선을 다했음을 스스로 인정합니다." 
+},
+    { name: "답답하다", cat: "cat-ang", desc: "마음의 소통이나 행동의 자유가 해소되지 못하고 무언가에 꽉 막혀 있는 듯한 기분", sit: "말이 통하지 않거나 정체되어 있을 때", body: "가슴 한복판이 꽉 막힌 느낌과 목이 조이는 듯함", aff: "답답함은 변화를 원한다는 신호입니다." },
+    { name: "억울하다", cat: "cat-ang", desc: "공정함과 진실이 훼손되어 자신의 정당함이 무시당했을 때 느끼는 분노와 속상함", sit: "오해받거나 기여가 무시당했을 때", body: "눈시울이 뜨거워지고 이가 갈리며 주먹에 힘이 들어감", aff: "진실은 나를 지켜줄 것입니다." },
+{ 
+  "name": "불공평하다", 
+  "cat": "cat-ang", 
+  "desc": "조건이나 대우가 평등하지 않아 느껴지는 부당함과 그로 인한 불만족스러운 감정", 
+  "sit": "똑같은 노력을 했음에도 차별받거나 기회의 균등이 보장되지 않았을 때", 
+  "body": "심박수가 빨라지고 가슴이 답답하며 미간이 찌푸려짐", 
+  "aff": "모두에게 공정한 기회가 주어지길 바랍니다." 
+},
+    { name: "짜증나다", cat: "cat-ang", desc: "피로나 불편함이 누적되어 마음에 여유가 없고 신경이 날카롭게 곤두선 상태", sit: "피로가 쌓인 상태에서 소음을 겪을 때", body: "얼굴 근육이 팽팽해지고 목소리가 날카워지며 미간을 찌푸림", aff: "나는 감정의 주인이며 평온을 선택합니다." },
+    { name: "불쾌하다", cat: "cat-ang", desc: "무례한 행동이나 마음에 들지 않는 환경으로 인해 기분이 상하고 꺼림칙한 상태", sit: "무례한 행동을 목격하거나, 위생적이지 못한 환경에 처했을 때", body: "미간이 찌푸려지고 몸이 움츠러들며, 기운이 소모되는 느낌이 듦", aff: "불편한 원인을 살피고, 나를 보호하기 위해 적절한 거리를 둡니다." },
+{ 
+  name: "언짢다", 
+  cat: "cat-ang", 
+  desc: "마음에 차지 않아 기분이 개운하지 않고 약간 불쾌하거나 섭섭한 상태", 
+  sit: "예의 없는 대우를 받거나, 기대와 달리 상황이 좋지 않게 흘러갈 때", 
+  body: "미간이 찌푸려지고 입술을 굳게 다물게 되며, 어깨와 몸이 경직됨", 
+  aff: "나는 불쾌한 상황 속에서도 내면의 중심을 지키며, 나의 평온함을 선택할 권리가 있습니다." 
+},
+    { name: "분하다", cat: "cat-ang", desc: "부당한 일을 당하거나 억울한 상처를 입어 가슴속에 울분이 가득 찬 상태", sit: "노력을 가로채이거나 상처 입었을 때", body: "얼굴이 붉어지고 몸에 열이 오르며 거친 숨을 내쉼", aff: "지혜로운 대처를 통해 나를 지겠습니다." },
+    { name: "밉다", cat: "cat-ang", desc: "대상의 행동이나 태도가 원망스러워 정서적 거리감을 두고 싶어지는 거부감", sit: "진심을 무시한 상대가 떠오를 때", body: "입술을 굳게 다물게 되고 상대 쪽으로 고개를 돌리기 싫어짐", aff: "미움 대신 나를 아끼는 마음을 채웁니다." },
+    { name: "원망스럽다", cat: "cat-ang", desc: "자신이 겪는 고통이나 아픔의 원인을 대상에게 돌리며 한탄하는 아픈 마음", sit: "결정적 순간에 곁에 없었던 이에 대한 서운함", body: "가슴 깊은 곳이 쓰리고 명치 부근이 딱딱해짐", aff: "기대를 내려놓고 스스로를 돕습니다." },
+    { name: "얄밉다", cat: "cat-ang", desc: "타인의 얌체 같은 행동이 공정함에 어긋나 보여 은근히 미움이 생기는 거부감", sit: "책임을 회피하며 이득만 챙기는 이를 볼 때", body: "코웃음이 나거나눈매가 가늘어지며 혀를 차게 됨", aff: "타인에게 휘둘리지 않고 품위를 유지합니다." },
+    { name: "질투하다", cat: "cat-ang", desc: "타인의 성취나 소유를 바라보며 자신의 내면적 결핍이 날카롭게 자극되는 시기심", sit: "타인의 성과를 축하하기 힘들 때", body: "속이 뒤틀리는 느낌과 함께 가슴이 서늘해짐", aff: "타인의 성취는 나의 가능성을 보여주는 거울입니다." },
+    { name: "불편하다", cat: "cat-ang", desc: "내면의 평온이 깨져 대상이나 자리를 지혜롭게 피하고 싶어지는 방어 상태", sit: "가치관이 맞지 않는 사람과 있을 때", body: "몸이 뻣팎해지고 자꾸 자세를 바꾸게 되며 시선을 피함", aff: "나의 경계를 지키며 지혜롭게 지나갑니다." },
+    { name: "어색하다", cat: "cat-ang", desc: "서목한 관계나 낯선 분위기 속에서 말과 행동이 부자연스럽고 굳어있는 상태", sit: "서먹한 이와 단둘이 남겨졌을 때", body: "손을 어디에 둘지 모르겠고 미소가 부자연스러움", aff: "어색함조차 과정입니다. 가벼운 미소를 지어봅니다." },
+    { name: "황당하다", cat: "cat-ang", desc: "상식적이지 않거나 비논리적인 일을 마주하여 어처구니가 없고 기가 막힌 상태", sit: "터무니없는 거짓말을 들었을 때", body: "입이 벌어지고 헛웃음이 나오며 힘이 탁 풀림", aff: "황당한 일에 소중한 감정을 쏟지 않습니다." },
+    { name: "어이없다", cat: "cat-ang", desc: "상황이나 타인의 무례함이 상식 선을 크게 넘어서 말문이 막히고 기가 차는 상태", sit: "상식 밖의 행동이나 도를 넘은 무례함을 목격했을 때", body: "순간적으로 머릿속이 하얘지고, 헛웃음이 나며 가슴이 답답해짐", aff: "어이없는 상황에 휘둘리기보다, 내 중심을 잡고 상황과 한 걸음 거리를 줍니다." },
+    { name: "속상하다", cat: "cat-ang", desc: "뜻대로 되지 않은 상황 속에서 슬픔과 화가 미묘하게 얽혀 마음이 아린 상태", sit: "가깝고 소중한 이가 나의 배려를 무시할 때", body: "코끝이 찡해지고 가슴 중앙이 아릿하게 저려옴", aff: "나는 존중받을 자격이 있습니다." },
+    { name: "서운하다", cat: "cat-sad", desc: "기대했던 만큼의 관심이나 연결이 부족하여 마음에 씁쓸한 아쉬움이 남는 상태", sit: "특별한 날을 잊었거나 무관심할 때", body: "입꼬리가 처지고 가슴이 텅 빈 듯한 허전함이 느껴짐", aff: "서운함은 더 사랑받고 싶은 마음입니다." },
+    { name: "외롭다", cat: "cat-sad", desc: "세상이나 집단 속에서 누구에게도 온전히 이해받지 못한다고 느껴지는 쓸쓸함", sit: "군중 속이나 혼자 남겨진 밤", body: "팔다리가 차갑게 느껴지고 몸이 작아지는 듯한 오한", aff: "나는 나 자신과 먼저 친해지겠습니다." },
+    { name: "슬프다", cat: "cat-sad", desc: "소중한 존재나 가치를 잃어버린 상실의 아픔을 마음 가득 수용하고 정화하는 과정", sit: "이별이나 아픈 진실을 마주할 때", body: "눈시울이 뜨거워지고 온몸에 힘이 빠지며 가슴이 무거움", aff: "눈물은 상처 입은 마음을 씻어줍니다." },
+    { name: "소외되다", cat: "cat-sad", desc: "주변 관계망이나 집단으로부터 단절되어 혼자 떨어져 나간 듯한 쓸쓸한 마음", sit: "모임에 초대받지 못하거나 대화에 낄 수 없을 때", body: "목이 메이고 가슴 부근이 싸늘하게 식는 느낌", aff: "나는 그 자체로 소중하며 진정한 곳을 찾을 것입니다." },
+    { name: "우울하다", cat: "cat-sad", desc: "마음의 에너지가 급격히 낮아져 매사에 의욕이 없고 침잠해 있는 무거운 상태", sit: "무력감이 지속되거나 단절된 느낌일 때", body: "눈꺼풀이 무겁고 온몸이 젖은 솜처럼 바닥으로 가라앉음", aff: "이 또한 날씨일 뿐입니다. 해는 뜹니다." },
+    { name: "무기력하다", cat: "cat-sad", desc: "누적된 번아웃이나 실패로 인해 아무것도 하고 싶지 않고 에너지가 바닥난 상태", sit: "반복된 실패나 번아웃이 왔을 때", body: "손가락 하나 까딱하기 싫고목소리에 생기가 전혀 없음", aff: "지금은 뿌리를 내리는 쉼의 시간입니다." },
+    { name: "무력하다", cat: "cat-sad", desc: "내 힘으로는 도저히 현재의 상황을 바꿀 수 없다는 거대한 한계에 압도된 마음", sit: "반복되는 갈등 속에 해결책이 없을 때", body: "어깨가 축 처지고 심장 박동이 아주 느리고 약해짐", aff: "아무것도 하지 않아도 괜찮습니다." },
+    { name: "후회하다", cat: "cat-sad", desc: "과거에 했던 자신의 선택이나 행동에 아쉬움과 미련을 느끼며 스스로를 성찰함", sit: "기회를 놓쳤거나 상처를 주었을 때", body: "가슴을치고 싶거나 머리를 감싸 쥐게 되며 속이 쓰림", aff: "과거의 실수에서 지혜를 배워 성장합니다." },
+    { name: "좌절하다", cat: "cat-sad", desc: "노력하던 목표가 무너지고 희망이 꺾여 다시 일어설 엄두가 나지 않는 아픈 상태", sit: "노력이 실패로 돌아가 엄두가 나지 않을 때", body: "무릎에 힘이 풀리고 가슴이 턱 막혀 숨쉬기가 힘들듦", aff: "좌절은 멈춤이지 끝이 아닙니다." },
+    { name: "귀찮다", cat: "cat-sad", desc: "모든 활동에 필요한 에너지를 아끼고 최소화하라는 몸과 마음의 정지 신호", sit: "해야 할 일은 많지만 몸이 무거울 때", body: "눈을 감고 싶고 몸의 반응 속도가 현저히 느려짐", aff: "쉼이 필요하다는 신호임을 인정합니다." },
+    { name: "지루하다", cat: "cat-sad", desc: "현재 하는 행동에서 어떠한 흥미나 의미도 발견하지 못해 시간이 정체된 느낌", sit: "단조로운 일상이 반복될 때", body: "하품이 나오고 턱을 괴거나 몸을 비틀게 됨", aff: "지루함 속에 영감의 씨앗이 있습니다." },
+    { name: "피곤하다", cat: "cat-sad", desc: "신체적, 정신적 한계를 초과하여 몸이 강력하게 휴식을 요청하는 고갈 신호", sit: "쉼 없이 달려와 모든 의욕이 사라질 때", body: "머리가 무겁고 눈이 따가우며 뒷목이 뻣뻣함", aff: "고생한 나에게 깊은 휴식을 선물합니다." },
+    { name: "부럽다", cat: "cat-sad", desc: "타인의 훌륭한 처지나 성취를 보며 자신의 감춰진 결핍이 자극되는 미묘한 마음", sit: "친구의 성공 소식을 보았을 때", body: "시선이 자꾸 아래로 향하고 가슴 한구석이 쿡쿡 쑤심", aff: "나에게는 나만의 고유한 행복이 이미 있습니다." },
+    { name: "괴롭다", cat: "cat-sad", desc: "신체적, 정신적 통증이나 고통이 극심하여 당장 그 상황에서 벗어나고픈 간절함", sit: "상처가 떠오르거나 현실이 힘들 때", body: "온몸의 근육이 뒤틀리는 듯하고 가슴이 찢어지는 통증", aff: "고통을 따뜻하게 안아주며 치유합니다." },
+    { name: "그리워하다", cat: "cat-sad", desc: "지금은 곁에 없는 소중한 대상과의 추억을 떠올리며 다시 연결되고 싶은 상태", sit: "이별한 이의 유품이나 흔적을 볼 때", body: "가슴 부근이 아련하게 저리고 목소리가 떨림", aff: "그리움은 내가 사랑했다는 증거입니다." },
+    { name: "실망하다", cat: "cat-sad", desc: "품었던 기대가 허무하게 무너지면서 상대에 대한 굳건한 신뢰가 흔들리는 상태", sit: "믿었던 이의 무심한 모습을 보았을 때", body: "몸에서 기운이 빠져나가며 입안이 마르는 느낌", aff: "실망은 환상이 걷힌 자리에 진실을 세우는 일입니다." },
+    { 
+  "name": "한심하다", 
+  "cat": "cat-sad", 
+  "desc": "상대방이나 자신의 행동이 기대에 미치지 못하거나 부족하다고 느껴질 때 나타나는 비판적이고 안타까운 감정", 
+  "sit": "스스로의 의지가 부족하거나 타인이 어리석은 실수를 반복하는 것을 보았을 때", 
+  "body": "깊은 한숨이 나오고 어깨가 처지며 시선을 아래로 떨구게 됨", 
+  "aff": "스스로를 다잡고 더 나은 선택을 할 수 있습니다." 
+},
+    { name: "서럽다", cat: "cat-sad", desc: "오해나 외로움 속에서 억울함과 슬픔이 제어할 수 없이 북받쳐 오르는 아픈 마음", sit: "혼자 아프거나 오해받을 때", body: "어깨를 떨며 흐느끼게 되고 가슴이 요동침", aff: "내 마음의 울음을 충분히 들어주겠습니다." },
+    { name: "안타깝다", cat: "cat-sad", desc: "상황을 좋게 개선해주고 싶으나 자신의 힘으로는 지켜볼 수밖에 없어 애가 타는 상태", sit: "도움을 주고 싶지만 지켜만 봐야 할 때", body: "손바닥을 비비거나 발을 동동 구르며 가슴이 타는 듯함", aff: "나의 기도가 작은 위로가 되길 바랍니다." },
+    { name: "아쉽다", cat: "cat-sad", desc: "바라던 바가 완벽히 채워지지 않고 무언가 미련이나 부족함이 남은 섭섭한 마음", sit: "조금만 더 노력했거나 기회가 있었다면 결과가 달랐을 때", body: "입술을 깨물거나 한숨을 깊게 쉬며 가슴 한구석이 허전함", aff: "다음에는 당신이 원하는 결과를 꼭 얻기를 응원합니다." },
+    { name: "허탈하다", cat: "cat-sad", desc: "쏟아부은 노력과 기대가 한순간에 수포로 돌아가 마음속에 큰 구멍이 뚫린 허전함", sit: "노력이 수포로 돌아갔을 때", body: "팔다리에 힘이 하나도 없고 가슴 속이 텅 빈 구멍 같음", aff: "비워진 마음을 인정하며 새로운 에너지를 기다립니다." }
+];
+
+const SUPABASE_URL = 'https://ocghxynajjbkpbyljxzg.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jZ2h4eW5hampia3BieWxqeHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2OTg4MTksImV4cCI6MjA5MTI3NDgxOX0.weaiOCV0UMjsfSmEI_WU_0L4qJUOGRrtoWEwPKN26is';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const getEl = id => document.getElementById(id);
+const getVal = id => getEl(id).value;
+const getTxt = id => getEl(id).innerText;
+const setVal = (id, val) => { const el = getEl(id); if(el) el.value = val; };
+const setTxt = (id, val) => { const el = getEl(id); if(el) el.innerText = val; };
+
+function getStorageKey() { return `mindApp_${getVal("userSelect") || "guest"}_${getVal("eventSelect") || "default"}`; }
+
+async function saveToSupabase() {
+    const user = getVal("userSelect"), event = getVal("eventSelect");
+    if(!user || !event || user === "사용자 없음" || event === "사건 없음") return alert("사용자와 사건을 먼저 설정해주세요.");
+    try {
+        const { error } = await supabaseClient.from('mind_records').upsert({
+            user_id: user, event_name: event, title: getVal("mainTitle"),
+            step1: getVal("step1"), step2: getVal("step2"), step3: getTxt("step3"),
+            step4: getVal("step4"), step5: getTxt("step5"), step6: getTxt("step6"),
+            step7: getVal("step7"), step8: getVal("step8"), updated_at: new Date()
+        }, { onConflict: 'user_id, event_name' });
+        if (error) throw error;
+        saveAllToLocal(); alert("☁️ 클라우드 저장이 완료되었습니다!");
+    } catch (err) { alert("저장 실패: " + err.message); }
+}
+
+async function loadFromSupabase() {
+    const user = getVal("userSelect"), event = getVal("eventSelect");
+    if(!user || !event || user === "사용자 없음" || event === "사건 없음") return alert("불러올 사용자와 사건을 선택해주세요.");
+    try {
+        const { data, error } = await supabaseClient.from('mind_records').select('*').eq('user_id', user).eq('event_name', event).maybeSingle();
+        if (error) throw error; if (!data) return alert("저장된 데이터가 없습니다.");
+        if(confirm("클라우드 데이터를 불러올까요?")) {
+            setVal("mainTitle", data.title || ""); setVal("step1", data.step1 || ""); setVal("step2", data.step2 || "");
+            setTxt("step3", data.step3 || ""); setVal("step4", data.step4 || ""); setTxt("step5", data.step5 || "");
+            setTxt("step6", data.step6 || ""); setVal("step7", data.step7 || ""); setVal("step8", data.step8 || "");
+            saveAllToLocal(); updateContextDisplay(data.step1 || ""); alert("✅ 불러오기 성공!");
+        }
+    } catch (err) { alert("불러오기 실패: " + err.message); }
+}
+
+function autoResizeTextarea(el) { if (!el) return; el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+
+function toggleAdminPanel() {
+    const content = getEl("adminContent"), icon = getEl("toggleIcon"), status = getEl("adminStatusText");
+    const isShow = content.classList.toggle("show");
+    icon.innerText = isShow ? "▲" : "▼";
+    status.innerText = isShow ? "⚙️ 사용자 및 사건 설정" : `⚙️ 설정 (사용자: ${getVal("userSelect") || "없음"} / 사건: ${getVal("eventSelect") || "없음"})`;
+}
+
+function showSection(type) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+    getEl('btn-' + type).classList.add('active'); getEl(type + '-section').classList.add('active');
+    getEl('fixedBottomBar').style.display = (type === 'record') ? 'flex' : 'none';
+    if(type !== 'record') renderGrid(type);
+    updateContextDisplay(getVal('step1'));
+}
+
+function updateContextDisplay(val) {
+    const txt = val.trim() || "기록장에서 사건을 먼저 입력해 보세요.";
+    getEl('context-display-emotions').innerText = txt; getEl('context-display-needs').innerText = txt;
+}
+
+function addToRecord(type, name, btn) {
+    const target = getEl(type === 'emotions' ? 'step2' : 'step4');
+    const item = (type === 'emotions' ? emotionsData : needsData).find(d => d.name === name);
+    const entryText = `• ${name} : ${item ? item.desc : ""}`;
+    let cur = target.value || target.innerText;
+    if (cur.split('\n').some(l => l.trim().startsWith(`• ${name} :`))) { alert("이미 기록장에 추가된 항목입니다."); return closeModal(); }
+    const next = cur.trim() ? `${cur.trim()}\n${entryText}` : entryText;
+    if (target.tagName === "TEXTAREA") { target.value = next; autoResizeTextarea(target); } else { target.innerText = next; }
+    saveAllToLocal();
+    const orig = btn.innerHTML; btn.innerHTML = `✅ 추가됨`;
+    setTimeout(() => { btn.innerHTML = orig; closeModal(); }, 300);
+}
+
+function openModal(type, name) {
+    const item = (type === 'needs' ? needsData : emotionsData).find(d => d.name === name);
+    const modal = getEl('cardModal'), body = getEl('modalBody');
+    const emojis = {joy:"😊", love:"❤️", peace:"🌿", anx:"😰", ang:"🔥", sad:"💧", auto:"🦋", conn:"🤝", well:"🍎", meaning:"💎"};
+    const catKey = item.cat.split('-')[1];
+    modal.querySelector('.modal-content').style.borderTop = `10px solid var(--${catKey === 'auto' ? 'autonomy' : catKey === 'conn' ? 'connection' : catKey === 'well' ? 'wellbeing' : catKey}-core)`;
+    
+    let html = `<div style="font-size:60px; text-align:center; margin:20px 0 10px;">${emojis[catKey] || "✨"}</div><div class="title">${item.name}</div><div class="desc">${item.desc}</div>`;
+    if (type === 'needs') {
+        html += `<span class="section-label">충족 시</span><div>${item.sat.map(s => `<span class="emotion-tag tag-sat">${s}</span>`).join('')}</div>
+                 <span class="section-label">미충족 시</span><div>${item.unsat.map(s => `<span class="emotion-tag tag-unsat">${s}</span>`).join('')}</div>
+                 <div class="action-box" style="margin-top:20px;">${item.action}</div>`;
+    } else {
+        html += `<span class="section-label">상황</span><div class="content-text">${item.sit}</div><span class="section-label">몸의 상태</span><div class="body-status">${item.body}</div>
+                 <span class="section-label">확언</span><div class="affirmation-box" style="background:#f9f9f9; padding:15px; border-radius:10px; font-style:italic;">"${item.aff}"</div>`;
+    }
+    body.innerHTML = html + `<button class="add-to-record-btn" style="margin-top:25px;" onclick="addToRecord('${type}', '${item.name}', this)">＋ 기록장에 추가</button>`;
+    modal.style.display = 'flex'; document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) { if (e && e.target !== e.currentTarget) return; getEl('cardModal').style.display = 'none'; document.body.style.overflow = 'auto'; }
+
+function renderGrid(type) {
+    const idx = getEl(type + '-index'); if(idx.children.length > 0) return;
+    (type === 'needs' ? needsData : emotionsData).forEach(item => {
+        const link = document.createElement('div'); link.className = `item-link link-${item.cat.split('-')[1]}`; link.innerText = item.name;
+        link.onclick = () => openModal(type, item.name); idx.appendChild(link);
+    });
+}
+
+function addUser() {
+    const n = getVal("newUserName").trim(); if(!n) return;
+    let u = JSON.parse(localStorage.getItem("mindUsers") || "[]"); if(!u.includes(n)) u.push(n);
+    localStorage.setItem("mindUsers", JSON.stringify(u)); setVal("newUserName", ""); renderUserList(n);
+}
+
+function deleteUser() {
+    const uName = getVal("userSelect"); if (!uName || uName === "사용자 없음") return;
+    if (confirm(`'${uName}'의 모든 데이터를 삭제하시겠습니까?`)) {
+        let u = JSON.parse(localStorage.getItem("mindUsers") || "[]").filter(x => x !== uName);
+        localStorage.setItem("mindUsers", JSON.stringify(u)); renderUserList();
+    }
+}
+
+function renderUserList(sN) {
+    const s = getEl("userSelect"), u = JSON.parse(localStorage.getItem("mindUsers") || "[]");
+    s.innerHTML = u.length ? u.map(x => `<option value="${x}">${x}</option>`).join('') : "<option>사용자 없음</option>";
+    if(sN && u.includes(sN)) s.value = sN; changeUser();
+}
+
+function changeUser() { localStorage.setItem("lastSelectedUser", getVal("userSelect")); renderEventList(); }
+
+function addEvent() {
+    const u = getVal("userSelect"), e = getVal("newEventName").trim(); if(!u || u === "사용자 없음" || !e) return;
+    let evs = JSON.parse(localStorage.getItem(`events_${u}`) || "[]").filter(x => x !== e); evs.unshift(e);
+    localStorage.setItem(`events_${u}`, JSON.stringify(evs)); setVal("newEventName", ""); renderEventList(e);
+}
+
+function deleteEvent() {
+    const u = getVal("userSelect"), evName = getVal("eventSelect"); if (!evName || evName === "사건 없음") return;
+    if (confirm(`사건 '${evName}'을 삭제합니까?`)) {
+        let evs = JSON.parse(localStorage.getItem(`events_${u}`) || "[]").filter(x => x !== evName);
+        localStorage.setItem(`events_${u}`, JSON.stringify(evs)); renderEventList();
+    }
+}
+
+function renderEventList(sE) {
+    const u = getVal("userSelect"), s = getEl("eventSelect");
+    if (!u || u === "사용자 없음") { s.innerHTML = "<option>사건 없음</option>"; return syncTitleAndLoad(); }
+    const evs = JSON.parse(localStorage.getItem(`events_${u}`) || "[]");
+    s.innerHTML = evs.length ? evs.map(x => `<option value="${x}">${x}</option>`).join('') : "<option>사건 없음</option>";
+    const last = localStorage.getItem(`lastSelectedEvent_${u}`);
+    if(sE) s.value = sE; else if (last && evs.includes(last)) s.value = last;
+    syncTitleAndLoad();
+}
+
+function syncTitleAndLoad() {
+    const u = getVal("userSelect"), e = getVal("eventSelect");
+    if(u && u !== "사용자 없음") localStorage.setItem("lastSelectedUser", u);
+    if(e && e !== "사건 없음") localStorage.setItem(`lastSelectedEvent_${u}`, e);
+    if (!u || u === "사용자 없음" || !e || e === "사건 없음") {
+        setVal("mainTitle", ""); for(let i=1; i<=8; i++) { const el = getEl("step"+i); if(el) el.tagName === "TEXTAREA" ? el.value = "" : el.innerText = ""; }
+        return loadStep9Global();
+    }
+    let evs = JSON.parse(localStorage.getItem(`events_${u}`) || "[]");
+    if (evs.includes(e) && evs[0] !== e) {
+        evs = evs.filter(x => x !== e); evs.unshift(e); localStorage.setItem(`events_${u}`, JSON.stringify(evs));
+        getEl("eventSelect").innerHTML = evs.map(x => `<option value="${x}">${x}</option>`).join(''); getEl("eventSelect").value = e;
+    }
+    const key = getStorageKey(); setVal("mainTitle", localStorage.getItem(key + "_title") || e || "");
+    for(let i=1; i<=8; i++) {
+        const val = localStorage.getItem(key + "_step" + i) || "", el = getEl("step"+i); if(!el) continue;
+        if(el.tagName === "TEXTAREA") { el.value = val; autoResizeTextarea(el); } else el.innerText = val;
+    }
+    updateContextDisplay(getVal('step1')); loadStep9Global();
+}
+
+function loadStep9Global() {
+    setVal("step9", localStorage.getItem("mindApp_global_step9") || ""); autoResizeTextarea(getEl("step9"));
+    setVal("step9_extra", localStorage.getItem("mindApp_global_step9_extra") || ""); autoResizeTextarea(getEl("step9_extra"));
+    setVal("geminiApiKey", localStorage.getItem("gemini_api_key") || "");
+}
+
+function saveAllToLocal() {
+    const u = getVal("userSelect"), e = getVal("eventSelect");
+    localStorage.setItem("mindApp_global_step9", getVal("step9")); localStorage.setItem("mindApp_global_step9_extra", getVal("step9_extra"));
+    if (!u || u === "사용자 없음" || !e || e === "사건 없음") return;
+    let evs = JSON.parse(localStorage.getItem(`events_${u}`) || "[]");
+    if (evs.includes(e) && evs[0] !== e) {
+        evs = evs.filter(x => x !== e); evs.unshift(e); localStorage.setItem(`events_${u}`, JSON.stringify(evs));
+        getEl("eventSelect").innerHTML = evs.map(x => `<option value="${x}">${x}</option>`).join(''); getEl("eventSelect").value = e;
+    }
+    const key = getStorageKey(); localStorage.setItem(key + "_title", getVal("mainTitle"));
+    for(let i=1; i<=8; i++) { const el = getEl("step" + i); if(el) localStorage.setItem(key + "_step" + i, el.tagName === "TEXTAREA" ? el.value : el.innerText); }
+}
+
+function openGeminiModal(text) { setTxt("geminiModalBody", text); getEl("geminiModal").style.display = "flex"; document.body.style.overflow = "hidden"; }
+function closeGeminiModal(e) { if (e && e.target !== e.currentTarget) return; getEl("geminiModal").style.display = "none"; document.body.style.overflow = "auto"; }
+function copyGeminiResponseText() { const txt = getTxt("geminiModalBody"); if (txt && !txt.includes("🧠") && !txt.includes("⚠️")) navigator.clipboard.writeText(txt).then(() => alert("📋 복사되었습니다!")); }
+
+function showSavedGeminiResponse(mode) {
+    const key = getStorageKey(), saved = localStorage.getItem(key + "_gemini_resp_" + mode);
+    if (!saved) return alert("저장된 답변이 없습니다. '바로 질문하기'를 먼저 실행해 주세요.");
+    openGeminiModal(saved);
+}
+
+async function askGeminiDirect(mode) {
+    const key = getVal("geminiApiKey").trim(); if (!key) return alert("🔒 제미나이 API 키를 먼저 입력해 주세요.");
+    const u = getVal("userSelect"), e = getVal("eventSelect"); if (!u || u === "사용자 없음" || !e || e === "사건 없음") return alert("사건 설정을 완료해주세요.");
+    
+    let promptText = "", btn = getEl("btn-api-q" + mode);
+    if (mode === 1) {
+        if(!getVal('step1') && !getVal('step9')) return alert("내용을 입력해주세요.");
+        promptText = `[나의 마음 관찰 기록 - 공감 모드]\n1. 사건: ${getVal('step1')}\n\n[Gemini 질문]\n${getVal('step9')}\n\n[AI 지침: 상대방의 핵심 욕구가 발견되면 맨 아래 형식에 맞춰 추가: [상대방의 욕구]유추내용[/상대방의 욕구]]`;
+    } else {
+        if(!getVal('step1') && !getVal('step9_extra')) return alert("내용을 입력해주세요.");
+        promptText = `[나의 마음 관찰 기록 - 성찰 모드]\n1. 사건: ${getVal('step1')}\n2. 감정: ${getVal('step2')}\n3. 생각: ${getTxt('step3')}\n4. 욕구: ${getVal('step4')}\n5. 이유: ${getTxt('step5')}\n6. 행동: ${getTxt('step6')}\n\n[Gemini 질문]\n${getVal('step9_extra')}`;
+    }
+
+    openGeminiModal("제미나이가 기록을 읽고 깊이 생각하는 중입니다... 잠시만 기다려 주세요. 🧠");
+    const orig = btn.innerText; btn.disabled = true; btn.innerText = "⏳ 생산 중...";
+
+    try {
+        const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+        });
+        const data = await resp.json();
+        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+            let res = data.candidates[0].content.parts[0].text;
+            if (mode === 1) {
+                const match = res.match(/\[상대방의 욕구\]([\s\S]*?)\[\/상대방의 욕구\]/);
+                if (match?.[1]) { setVal("step8", match[1].trim()); autoResizeTextarea(getEl("step8")); res = res.replace(/\[상대방의 욕구\][\s\S]*?\[\/상대방의 욕구\]/, "").trim(); }
+            }
+            res = res.replace(/###/g, "").replace(/\*/g, "");
+            localStorage.setItem(getStorageKey() + "_gemini_resp_" + mode, res); saveAllToLocal(); openGeminiModal(res);
+        } else { openGeminiModal("⚠️ 응답 해석 실패. 키 정보나 할당량을 확인해주세요.\n" + JSON.stringify(data)); }
+    } catch (err) { openGeminiModal("❌ 연결 오류: " + err.message); } finally { btn.disabled = false; btn.innerText = orig; }
+}
+
+async function makeImage() {
+    const btn = getEl("shareBtn");
+    
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.innerText = "생성 중...";
+
+    try {
+        const canvas = await html2canvas(getEl("capture"), {
+            scale: 2, useCORS: true, backgroundColor: "#F2F5F8", width: 1800, 
+            onclone: (doc) => {
+                doc.getElementById('adminPanel').style.display = 'none'; 
+                doc.getElementById('step9-container').style.display = 'none';
+                doc.querySelectorAll('.record-card-desc').forEach(el => el.style.display = 'none');
+                doc.getElementById('capture').style.cssText = 'width:1800px; padding:0;';
+                
+                const title = doc.getElementById('mainTitle'), div = doc.createElement('div');
+                div.innerText = title.value || "나의 마음 탐구 기록";
+                div.style.cssText = "font-size:75px; font-weight:900; color:#003366; text-align:center; margin-bottom:60px; padding:30px; border-bottom:8px solid #003366;";
+                title.replaceWith(div);
+                
+                doc.querySelectorAll('textarea, .editable-list').forEach(ta => {
+                    const txt = (ta.tagName === "TEXTAREA" ? ta.value : ta.innerText).trim(), d = doc.createElement('div');
+                    d.style.cssText = "background:white; border:1px solid #dce4ee; padding:40px; border-radius:20px; font-size:48px; line-height:1.7; color:#2c3e50; white-space:pre-wrap; margin-top:15px;";
+                    if (txt) {
+                        d.innerHTML = txt.split('\n').map((l, i, a) => {
+                            let t = l.trim(); if (!t) return '<div style="height: 0.8em;"></div>';
+                            t = t.replace(/\(([^)]+)\)/g, '<span style="color: #007AFF; font-weight: normal;">($1)</span>');
+                            return `<div style="padding-left:1.4em; text-indent:-0.7em; word-break:break-all; ${i === a.length - 1 ? "" : "border-bottom:2px dashed #cbd6e2; padding-bottom:25px; margin-bottom:25px;"}">${(!t.startsWith('•') && !t.startsWith('-') && !t.startsWith('*')) ? '• ' : ''}${t}</div>`;
+                        }).join('');
+                    } else { d.innerText = "기록된 내용이 없습니다."; d.style.color = "#ccc"; }
+                    ta.replaceWith(d);
+                });
+                doc.querySelectorAll('.record-card-title').forEach(el => el.style.cssText = 'font-size:45px; margin-bottom:15px; color:#007AFF;');
+            }
+        });
+
+        await new Promise((resolve, reject) => {
+            canvas.toBlob(async (blob) => {
+                if (!blob) {
+                    reject(new Error("지점 이미지 생성 실패"));
+                    return;
+                }
+                
+                try {
+                    const file = new File([blob], "mind_diary.png", { type: "image/png" });
+                    
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({ files: [file] });
+                    } else {
+                        getEl("previewImg").src = canvas.toDataURL();
+                        getEl("previewBox").style.display = "flex";
+                    }
+                    resolve();
+                } catch (shareError) {
+                    console.warn("공유 취소 또는 에러:", shareError);
+                    resolve();
+                }
+            }, "image/png");
+        });
+
+    } catch (e) {
+        console.error("이미지 생성 중 치명적 오류:", e);
+        alert("이미지 생성 및 공유 중 오류가 발생했습니다.");
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "❤️ 이미지 공유";
+    }
+}
+
+function togglestep9() { const c = getEl('step9-content'), i = getEl('toggle-icon'), isNone = c.style.display === 'none'; c.style.display = isNone ? 'block' : 'none'; i.innerText = isNone ? '▼' : '▲'; }
+function closePreview() { getEl("previewBox").style.display = "none"; }
+
+function copyCombined(mode) {
+    const txt = mode === 1 ? `[나의 마음 관찰 기록 - 공감 모드]\n1. 사건: ${getVal('step1')}\n\n[Gemini 질문]\n${getVal('step9')}` :
+                          `[나의 마음 관찰 기록 - 성찰 모드]\n1. 사건: ${getVal('step1')}\n2. 감정: ${getVal('step2')}\n3. 생각: ${getTxt('step3')}\n4. 욕구: ${getVal('step4')}\n5. 이유: ${getTxt('step5')}\n6. 행동: ${getTxt('step6')}\n\n[Gemini 질문]\n${getVal('step9_extra')}`;
+    navigator.clipboard.writeText(txt).then(() => alert("복사되었습니다!")).catch(() => alert("복사 실패"));
+}
+
+window.onload = function() {
+    renderUserList(localStorage.getItem("lastSelectedUser"));
+    document.querySelectorAll("textarea").forEach(ta => {
+        ta.addEventListener("input", (e) => { autoResizeTextarea(e.target); saveAllToLocal(); if(e.target.id === 'step1') updateContextDisplay(e.target.value); });
+        setTimeout(() => autoResizeTextarea(ta), 200); 
+    });
+    getEl("record-section").addEventListener("input", e => { if(e.target.classList.contains('editable-list') || e.target.id === 'mainTitle' || e.target.id === 'step7' || e.target.id === 'step8') saveAllToLocal(); });
+    loadStep9Global();
+    getEl("geminiApiKey")?.addEventListener("input", e => localStorage.setItem("gemini_api_key", e.target.value.trim()));
+};
+</script>
+</body>
+</html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
