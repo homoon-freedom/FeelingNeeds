@@ -30,6 +30,13 @@
     
     --cat-res-bg: rgba(255, 167, 38, 0.2);  /* 연한 주황 */
     --cat-res-text: #ef6c00;               /* 진한 주황 */
+ 
+    /* 추가된 스타일 */
+    --cat-neg-bg: rgba(76, 175, 80, 0.2);  /* 연한 초록 */
+    --cat-neg-text: #2e7d32;               /* 진한 초록 */
+    
+    --cat-pre-bg: rgba(92, 107, 192, 0.2);  /* 연한 남색 */
+    --cat-pre-text: #303f9f;               /* 진한 남색 */
 }
         html, body { 
             height: 100%; margin: 0; padding: 0; overflow: hidden; 
@@ -80,11 +87,12 @@
         .link-anx { background-color: var(--anxiety-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         .link-ang { background-color: var(--anger-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
 
-.link-low { background-color: var(--cat-low-bg); color: var(--cat-low-text); border: 1px solid var(--cat-low-text); }
-.link-irr { background-color: var(--cat-irr-bg); color: var(--cat-irr-text); border: 1px solid var(--cat-irr-text); }
-.link-res { background-color: var(--cat-res-bg); color: var(--cat-res-text); border: 1px solid var(--cat-res-text); }
-
-
+		.link-low { background-color: var(--cat-low-bg); color: var(--cat-low-text); border: 1px solid var(--cat-low-text); }
+		.link-irr { background-color: var(--cat-irr-bg); color: var(--cat-irr-text); border: 1px solid var(--cat-irr-text); }
+		.link-res { background-color: var(--cat-res-bg); color: var(--cat-res-text); border: 1px solid var(--cat-res-text); }
+		/* 추가된 스타일 */
+		.link-neg { background-color: var(--cat-neg-bg); color: var(--cat-neg-text); border: 1px solid var(--cat-neg-text); }
+		.link-pre { background-color: var(--cat-pre-bg); color: var(--cat-pre-text); border: 1px solid var(--cat-pre-text); }
         .grid { display: grid; grid-template-columns: 1fr; max-width: 440px; margin: 15px auto; padding: 0 15px; gap: 20px; }
         .card { perspective: 2000px; height: 400px; cursor: pointer; position: relative; scroll-margin-bottom: 50px; } 
         .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
@@ -103,12 +111,10 @@
         .tag-sat { background: #e8f5e9; color: #4caf50; }
         .tag-unsat { background: #ffebee; color: #f44336; }
         .action-box { margin-top: auto; padding: 12px; border-radius: 10px; font-size: 0.85rem; background: #f0f7ff; border: 1px dashed var(--accent-blue); color: #0056b3; font-weight: 600; margin-bottom: 10px; }
-
         .add-to-record-btn {
             padding: 12px; width: 100%; background: var(--accent-blue); color: white; border: none; border-radius: 12px; font-weight: 800; font-size: 0.9rem;
             cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; box-shadow: 0 4px 10px rgba(0, 122, 255, 0.2); margin-top: 10px;
         }
-
         .admin-section { background: white; margin: 15px 15px 15px; padding: 0; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); overflow: hidden; }
         .admin-toggle-btn {
             width: 100%; padding: 12px; background: #f8f9fa; border: none; border-bottom: 1px solid #eee;
@@ -407,13 +413,7 @@ const judgmentData = [
   { name: "미숙하다", cat: "cat-low", desc: "경험의 부재로 인해 발생하는 실수를 무능함으로 치부함", sit: "사소한 업무 실수를 할 때", body: "비웃음 섞인 미소와 함께 경멸적인 태도", aff: "경험은 시행착오를 통해 쌓이는 것임을 인정하기" },
   { name: "오만하다", cat: "cat-low", desc: "상대가 자신의 성취를 지나치게 과시하여 눈살이 찌푸려짐", sit: "상대가 지속적으로 잘난 척을 할 때", body: "방어적으로 팔짱을 끼고 몸을 뒤로 뺌", aff: "상대의 오만함 뒤에 숨겨진 불안을 들여다보기" },
   { name: "속물적이다", cat: "cat-low", desc: "상대가 정신적 가치보다 물질적 이익만을 우선시한다고 느낌", sit: "이익 앞에서 태도가 180도 바뀔 때", body: "비난 섞인 시선과 차가운 침묵", aff: "생존을 위한 치열한 현실 감각을 이해해보려 노력하기" },
-{ 
-    name: "가식적이다", cat: "cat-low", 
-    desc: "상대의 태도가 진심이 아닌 연기처럼 느껴짐", 
-    sit: "상대방의 눈빛과 말에 온도 차이가 느껴지고, 가식적인 웃음이나 칭찬이 반복될 때", 
-    body: "상대에게 정서적 거리감을 두며 무의식적으로 팔짱을 끼거나 뒤로 물러남", 
-    aff: "상대방이 가면 뒤에 숨겨둔 진짜 마음을 읽어내어, 그가 진정으로 보호받고 인정받고 싶은 욕구를 헤아리기" 
-  },
+  { name: "가식적이다", cat: "cat-low", desc: "상대의 태도가 진심이 아닌 연기처럼 느껴짐", sit: "상대방의 눈빛과 말에 온도 차이가 느껴지고, 가식적인 웃음이나 칭찬이 반복될 때", body: "상대에게 정서적 거리감을 두며 무의식적으로 팔짱을 끼거나 뒤로 물러남", aff: "상대방이 가면 뒤에 숨겨둔 진짜 마음을 읽어내어, 그가 진정으로 보호받고 인정받고 싶은 욕구를 헤아리기" },
   { 
     name: "비굴하다", cat: "cat-low", 
     desc: "자신의 가치를 스스로 깎아내리며 과도하게 굽실거림", 
