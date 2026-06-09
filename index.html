@@ -266,7 +266,7 @@
         </div>
         <div class="record-card"><div class="record-card-title">2. 감정 찾기(가장 강하게 올라오는 감정 3개)</div><div class="record-card-desc">카드에서 찾은 감정 단어 추가</div><textarea id="step2"></textarea></div>
         <div class="record-card">
-            <div class="record-card-title">3. 위의 감정들을 일으킨 생각들(생각밑에 있는 나와 상대에 대한 판단과 당위성)</div>
+            <div class="record-card-title">3. 위의 감정들을 일으킨 생각들(나와 상대에 대한 판단과 당위성)</div>
             <div class="record-card-desc">감정을 일으킨 내 안의 '판단'이나 '생각'들을 적어보세요.<br>(원인을 상대나 상황이 아닌 내안에서 찾아보세요.)</div>
             <div id="step3" class="editable-list" contenteditable="true" data-placeholder="❌ 그 사람이 약속시간에 늦어서 나는 화가난다.&#10;✅ 그 사람이 나를 무시했다는 생각에 화가난다."></div>
         </div>
@@ -1002,37 +1002,73 @@ function showSavedGeminiResponse(mode) {
 }
 
 async function askGeminiDirect(mode) {
-    const key = getVal("geminiApiKey").trim(); if (!key) return alert("🔒 제미나이 API 키를 먼저 입력해 주세요.");
-    const u = getVal("userSelect"), e = getVal("eventSelect"); if (!u || u === "사용자 없음" || !e || e === "사건 없음") return alert("사건 설정을 완료해주세요.");
+    const key = getVal("geminiApiKey").trim(); 
+    if (!key) return alert("🔒 제미나이 API 키를 먼저 입력해 주세요.");
+    const u = getVal("userSelect"), e = getVal("eventSelect"); 
+    if (!u || u === "사용자 없음" || !e || e === "사건 없음") return alert("사건 설정을 완료해주세요.");
     
     let promptText = "", btn = getEl("btn-api-q" + mode);
+    
     if (mode === 1) {
         if(!getVal('step1') && !getVal('step9')) return alert("내용을 입력해주세요.");
-        promptText = `[나의 마음 관찰 기록 - 공감 모드]\n1. 사건: ${getVal('step1')}\n\n[Gemini 질문]\n${getVal('step9')}\n\n[AI 지침: 상대방의 핵심 욕구가 발견되면 맨 아래 형식에 맞춰 추가: [상대방의 욕구]유추내용[/상대방의 욕구]]`;
+        // 제미나이가 상세한 욕구 분석을 하도록 지침 강화
+        promptText = `[나의 마음 관찰 기록 - 공감 모드]\n1. 사건: ${getVal('step1')}\n\n[Gemini 질문]\n${getVal('step9')}\n\n
+[AI 지침: 상대방의 핵심 욕구가 발견되면 반드시 아래 형식으로 작성해줘]
+[상대방의 욕구]
+- 욕구 이름: 
+- 추측되는 상황/이유: 
+- 나의 해석: 
+[/상대방의 욕구]`;
     } else {
         if(!getVal('step1') && !getVal('step9_extra')) return alert("내용을 입력해주세요.");
         promptText = `[나의 마음 관찰 기록 - 성찰 모드]\n1. 사건: ${getVal('step1')}\n2. 감정: ${getVal('step2')}\n3. 생각: ${getTxt('step3')}\n4. 욕구: ${getVal('step4')}\n5. 이유: ${getTxt('step5')}\n6. 행동: ${getTxt('step6')}\n\n[Gemini 질문]\n${getVal('step9_extra')}`;
     }
 
     openGeminiModal("제미나이가 기록을 읽고 깊이 생각하는 중입니다... 잠시만 기다려 주세요. 🧠");
-    const orig = btn.innerText; btn.disabled = true; btn.innerText = "⏳ 생산 중...";
+    const orig = btn.innerText; 
+    btn.disabled = true; 
+    btn.innerText = "⏳ 생산 중...";
 
     try {
         const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
         });
         const data = await resp.json();
+        
         if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
             let res = data.candidates[0].content.parts[0].text;
+            
+            // 공감 모드(mode 1)일 때만 태그 파싱 수행
             if (mode === 1) {
+                // [\s\S]*? 를 사용하여 줄바꿈을 포함한 태그 안의 모든 내용을 추출
                 const match = res.match(/\[상대방의 욕구\]([\s\S]*?)\[\/상대방의 욕구\]/);
-                if (match?.[1]) { setVal("step8", match[1].trim()); autoResizeTextarea(getEl("step8")); res = res.replace(/\[상대방의 욕구\][\s\S]*?\[\/상대방의 욕구\]/, "").trim(); }
+                if (match?.[1]) {
+                    // ★ 여기서 정규식을 사용해 * 기호를 모두 제거하고 공백을 정리합니다.
+                    const needsContent = match[1].replace(/\*/g, "").trim(); 
+                    setVal("step8", needsContent); 
+                    autoResizeTextarea(getEl("step8")); 
+                    
+                    // 응답 화면에서는 태그 부분을 깔끔하게 제거
+                    res = res.replace(/\[상대방의 욕구\][\s\S]*?\[\/상대방의 욕구\]/, "").trim(); 
+                }
             }
+            
             res = res.replace(/###/g, "").replace(/\*/g, "");
-            localStorage.setItem(getStorageKey() + "_gemini_resp_" + mode, res); saveAllToLocal(); openGeminiModal(res);
-        } else { openGeminiModal("⚠️ 응답 해석 실패. 키 정보나 할당량을 확인해주세요.\n" + JSON.stringify(data)); }
-    } catch (err) { openGeminiModal("❌ 연결 오류: " + err.message); } finally { btn.disabled = false; btn.innerText = orig; }
+            localStorage.setItem(getStorageKey() + "_gemini_resp_" + mode, res); 
+            saveAllToLocal(); 
+            openGeminiModal(res);
+        } else { 
+            openGeminiModal("⚠️ 응답 해석 실패. 키 정보나 할당량을 확인해주세요.\n" + JSON.stringify(data)); 
+        }
+    } catch (err) { 
+        openGeminiModal("❌ 연결 오류: " + err.message); 
+    } finally { 
+        btn.disabled = false; 
+        btn.innerText = orig; 
+    }
 }
+
+
 
 async function makeImage() {
     const btn = getEl("shareBtn");
@@ -1058,13 +1094,28 @@ async function makeImage() {
                 doc.querySelectorAll('textarea, .editable-list').forEach(ta => {
                     const txt = (ta.tagName === "TEXTAREA" ? ta.value : ta.innerText).trim(), d = doc.createElement('div');
                     d.style.cssText = "background:white; border:1px solid #dce4ee; padding:40px; border-radius:20px; font-size:48px; line-height:1.7; color:#2c3e50; white-space:pre-wrap; margin-top:15px;";
+                    
                     if (txt) {
                         d.innerHTML = txt.split('\n').map((l, i, a) => {
-                            let t = l.trim(); if (!t) return '<div style="height: 0.8em;"></div>';
+                            let t = l.trim(); 
+                            if (!t) return '<div style="height: 0.8em;"></div>';
+                            
+                            // [수정 포인트] step8 요소인지 확인
+                            const isStep8 = ta.id === 'step8';
+                            // step8이 아니면서 불렛이 없는 경우에만 불렛 추가
+                            const shouldAddBullet = !isStep8 && !t.startsWith('•') && !t.startsWith('-') && !t.startsWith('*');
+                            
                             t = t.replace(/\(([^)]+)\)/g, '<span style="color: #007AFF; font-weight: normal;">($1)</span>');
-                            return `<div style="padding-left:1.4em; text-indent:-0.7em; word-break:break-all; ${i === a.length - 1 ? "" : "border-bottom:2px dashed #cbd6e2; padding-bottom:25px; margin-bottom:25px;"}">${(!t.startsWith('•') && !t.startsWith('-') && !t.startsWith('*')) ? '• ' : ''}${t}</div>`;
+                            
+                            // style.padding-left와 text-indent를 조건부로 적용
+                            const indentStyle = isStep8 ? 'padding-left:0;' : 'padding-left:1.4em; text-indent:-0.7em;';
+                            
+                            return `<div style="${indentStyle} word-break:break-all; ${i === a.length - 1 ? "" : "border-bottom:2px dashed #cbd6e2; padding-bottom:25px; margin-bottom:25px;"}">${shouldAddBullet ? '• ' : ''}${t}</div>`;
                         }).join('');
-                    } else { d.innerText = "기록된 내용이 없습니다."; d.style.color = "#ccc"; }
+                    } else { 
+                        d.innerText = "기록된 내용이 없습니다."; 
+                        d.style.color = "#ccc"; 
+                    }
                     ta.replaceWith(d);
                 });
                 doc.querySelectorAll('.record-card-title').forEach(el => el.style.cssText = 'font-size:45px; margin-bottom:15px; color:#007AFF;');
@@ -1074,13 +1125,11 @@ async function makeImage() {
         await new Promise((resolve, reject) => {
             canvas.toBlob(async (blob) => {
                 if (!blob) {
-                    reject(new Error("지점 이미지 생성 실패"));
+                    reject(new Error("이미지 생성 실패"));
                     return;
                 }
-                
                 try {
                     const file = new File([blob], "mind_diary.png", { type: "image/png" });
-                    
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
                         await navigator.share({ files: [file] });
                     } else {
@@ -1094,15 +1143,15 @@ async function makeImage() {
                 }
             }, "image/png");
         });
-
     } catch (e) {
-        console.error("이미지 생성 중 치명적 오류:", e);
+        console.error("이미지 생성 중 오류:", e);
         alert("이미지 생성 및 공유 중 오류가 발생했습니다.");
     } finally {
         btn.disabled = false;
         btn.innerText = "❤️ 이미지 공유";
     }
 }
+
 
 function togglestep9() { const c = getEl('step9-content'), i = getEl('toggle-icon'), isNone = c.style.display === 'none'; c.style.display = isNone ? 'block' : 'none'; i.innerText = isNone ? '▼' : '▲'; }
 function closePreview() { getEl("previewBox").style.display = "none"; }
