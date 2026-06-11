@@ -248,7 +248,11 @@
                 <div class="manage-row">
                     <span class="label" style="font-size:12px; font-weight:400; color:#8E8E93">2. 사건</span>
                     <div class="input-group"><input type="text" id="newEventName" placeholder="사건명"><button class="btn btn-add" onclick="addEvent()">추가</button></div>
-                    <div class="input-group"><select id="eventSelect" onchange="syncTitleAndLoad()"></select><button class="btn btn-del" onclick="deleteEvent()">삭제</button></div>
+                    <div class="input-group">
+                        <select id="eventSelect" onchange="syncTitleAndLoad()"></select>
+                        <button class="btn" style="background:#FF9500; color:white;" onclick="editEvent()">수정</button>
+                        <button class="btn btn-del" onclick="deleteEvent()">삭제</button>
+                    </div>
                 </div>
                 <div class="manage-row" style="border-bottom:none; margin-top: 5px; margin-bottom: 0; padding-bottom: 0;">
                     <span class="label" style="font-size:12px; font-weight:400; color:#8E8E93">3. 클라우드에서 불러오기</span>
@@ -339,7 +343,7 @@ const needsData = [
     { name: "우정", cat: "cat-conn", desc: "서로 아끼고 신뢰를 나누며 깊은 정서적 유대감을 쌓고 싶은 바람", sat: ["사랑스럽다", "든든하다"], unsat: ["서운하다", "외롭다"], action: "친구에게 안부를 물어보세요." },
     { name: "공동체", cat: "cat-conn", desc: "집단에 속해 서로 돕고 기여하며 연결되어 있음을 느끼고 싶은 욕구", sat: ["뿌듯하다", "든든하다"], unsat: ["소외되다", "불안하다"], action: "이웃에게 가벼운 인사를 건네보세요." },
     { name: "이해", cat: "cat-conn", desc: "나의 진심과 마음이 왜곡 없이 상대에게 정확히 전달되고 수용되기를 바라는 마음", sat: ["감동하다", "편안하다"], unsat: ["서운하다", "답답하다"], action: "소통의 오해를 확인해 보세요." },
-    { name: "존중", cat: "cat-conn", desc: "하나의 독립된 인격체로서 가치를 인정받고 소중히 다뤄지기를 바라는 마음", sat: ["뿌듯하다", "든든하다"], unsat: ["억울하다", "속상하다"], action: "받고 싶은 대우를 요청하세요." },
+    { name: "존중", cat: "cat-conn", desc: "하나의 독립된 인격체로서 가치를 인정받고 소중히 다뤄지길 바라는 마음", sat: ["뿌듯하다", "든든하다"], unsat: ["억울하다", "속상하다"], action: "받고 싶은 대우를 요청하세요." },
     { name: "상호존중", cat: "cat-conn", desc: "서로의 다름을 인정하고, 품격 있는 태도로 존재와 가치를 소중히 여기는 마음", sat: ["존중받다", "든든하다", "편안하다"], unsat: ["무시당하다", "불쾌하다", "비참하다"], action: "상대방의 말을 끝까지 듣고 비판 없이 수용하는 연습을 해보세요." },
     { name: "관심", cat: "cat-conn", desc: "타인에게 소중한 존재로 여겨지고 내 존재가 긍정적으로 인식되기를 바라는 마음", sat: ["반갑다", "행복하다"], unsat: ["서운하다", "외롭다"], action: "나에 대해 질문해달라고 요청하세요." },
     { name: "소통", cat: "cat-conn", desc: "서로의 생각과 느낌을 투명하게 주고받으며 깊은 연결을 맺고 싶은 욕구", sat: ["반갑다", "재미있다"], unsat: ["답답하다", "어색하다"], action: "끝까지 듣고 요약해 보세요." },
@@ -506,7 +510,7 @@ const judgmentData = [
     desc: "상대가 내 기대치에 한참 못 미치는 행동을 함", 
     sit: "중요한 약속을 가볍게 여기거나 신뢰를 저버리는 결과를 보일 때", 
     body: "모든 기운이 빠지는 듯한 깊은 한숨이 나옴", 
-    aff: "상대에 대한 기대를 막연한 실망으로 두지 말고, 내가 진정으로 원하는 욕구로 변환하여 표현하기" 
+    aff: "상대에 대한 기대를 막연 실망으로 두지 말고, 내가 진정으로 원하는 욕구로 변환하여 표현하기" 
   },
   { 
     name: "허무하다", cat: "cat-res", 
@@ -672,7 +676,7 @@ const judgmentData = [
 const emotionsData = [
     { name: "기쁘다", cat: "cat-joy", desc: "원하던 일이 뜻대로 이루어져 마음이 매우 즐겁고 흐뭇한 상태", sit: "목표 달성이나 축하를 들었을 때", body: "가슴이 벅차오르고 입가에 미소가 번지며 몸이 가벼워짐", aff: "이 기쁨을 충분히 누리며 나를 축하합니다." },
     { name: "감사하다", cat: "cat-joy", desc: "상대의 선의나 주어진 상황에 고마움을 느껴 마음이 따뜻하게 열리는 상태", sit: "배려를 경험하거나 평화를 깨달았을 때", body: "가슴 부위가 훈훈해지고 어깨의 긴장이 스르르 풀림", aff: "세상이 건네는 모든 친절에 감사합니다." },
-    { name: "행복하다", cat: "cat-joy", desc: "생활 속에서 충분한 만족และ 기쁨을 느끼며 내면이 훈훈하게 가득 찬 상태", sit: "사랑하는 이들과 함께하는 순간", body: "온몸에 따뜻한 에너지가 퍼지고 호흡이 깊고 편안해짐", aff: "나는 지금 이 순간 행복할 자격이 있습니다." },
+    { name: "행복하다", cat: "cat-joy", desc: "생활 속에서 충분한 만족과 기쁨을 느끼며 내면이 훈훈하게 가득 찬 상태", sit: "사랑하는 이들과 함께하는 순간", body: "온몸에 따뜻한 에너지가 퍼지고 호흡이 깊고 편안해짐", aff: "나는 지금 이 순간 행복할 자격이 있습니다." },
     { name: "감동하다", cat: "cat-joy", desc: "타인의 진심이나 아름다운 모습에 마음이 크게 움직여 가슴이 뭉클해지는 떨림", sit: "명장면이나 희생을 보았을 때", body: "콧날이 시큰해지거나 가슴 중앙이 조여오는 듯한 뭉클함", aff: "내 마음을적시는 따뜻한 떨림을 소중히 여깁니다." },
     { name: "만족하다", cat: "cat-joy", desc: "모자람 없이 마음에 흡족하여 모나지 않고 있는 그대로를 긍정하는 여유", sit: "몰두한 일을 마친 뒤 쉴 때", body: "몸의 모든 근욕이 이완되고 미각이나 후각이 예민해짐", aff: "나는 이미 충분하며 지금 이대로 만족합니다." },
     { name: "든든하다", cat: "cat-joy", desc: "뒤를 받쳐주는 신뢰나 지지가 있음을 확인하여 마음이 굳건하고 강인해진 상태", sit: "나를 믿어주는 사람의 격려를 받았을 때", body: "척추가 곧게 펴지는 느낌과 함께 아랫배에 힘이 들어감", aff: "소중한 존재들이 나를 지켜줍니다." },
@@ -931,6 +935,64 @@ function addEvent() {
     const u = getVal("userSelect"), e = getVal("newEventName").trim(); if(!u || u === "사용자 없음" || !e) return;
     let evs = JSON.parse(localStorage.getItem(`events_${u}`) || "[]").filter(x => x !== e); evs.unshift(e);
     localStorage.setItem(`events_${u}`, JSON.stringify(evs)); setVal("newEventName", ""); renderEventList(e);
+}
+
+function editEvent() {
+    const u = getVal("userSelect");
+    const oldEvent = getVal("eventSelect");
+    
+    // 선택된 사용자나 사건이 없으면 중단
+    if (!u || u === "사용자 없음" || !oldEvent || oldEvent === "사건 없음") {
+        return alert("수정할 사건을 먼저 선택해주세요.");
+    }
+    
+    // 새로운 사건명 입력 받기
+    const newEvent = prompt(`사건 '${oldEvent}'의 새로운 이름을 입력하세요:`, oldEvent);
+    
+    // 취소를 누르거나 입력값이 없거나 기존과 동일하면 중단
+    if (!newEvent || newEvent.trim() === "" || newEvent.trim() === oldEvent) return;
+    
+    const eName = newEvent.trim();
+    let evs = JSON.parse(localStorage.getItem(`events_${u}`) || "[]");
+    
+    // 중복 체크
+    if (evs.includes(eName)) {
+        return alert("이미 존재하는 사건명입니다. 다른 이름을 입력해주세요.");
+    }
+    
+    // 1. 이벤트 목록 배열 업데이트
+    const idx = evs.indexOf(oldEvent);
+    if (idx !== -1) {
+        evs[idx] = eName;
+        localStorage.setItem(`events_${u}`, JSON.stringify(evs));
+    }
+    
+    // 2. 기존 로컬스토리지 데이터들의 키(Key) 이름 마이그레이션(변경)
+    const oldPrefix = `mindApp_${u}_${oldEvent}`;
+    const newPrefix = `mindApp_${u}_${eName}`;
+    
+    const suffixes = [
+        "_title", 
+        "_step1", "_step2", "_step3", "_step4", "_step5", "_step6", "_step7", "_step8", 
+        "_gemini_resp_1", "_gemini_resp_2"
+    ];
+    
+    suffixes.forEach(suffix => {
+        const val = localStorage.getItem(oldPrefix + suffix);
+        if (val !== null) {
+            localStorage.setItem(newPrefix + suffix, val); // 새 키로 데이터 복사
+            localStorage.removeItem(oldPrefix + suffix);   // 예전 키 삭제
+        }
+    });
+    
+    // 마지막으로 선택된 사건 기록 업데이트
+    if (localStorage.getItem(`lastSelectedEvent_${u}`) === oldEvent) {
+        localStorage.setItem(`lastSelectedEvent_${u}`, eName);
+    }
+    
+    // 화면 갱신
+    renderEventList(eName);
+    alert(`사건명이 성공적으로 변경되었습니다.`);
 }
 
 function deleteEvent() {
