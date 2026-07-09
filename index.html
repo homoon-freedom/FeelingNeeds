@@ -94,11 +94,11 @@
         .link-anx { background-color: var(--anxiety-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         .link-ang { background-color: var(--anger-bg); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
 
-		.link-low { background-color: var(--cat-low-bg); color: var(--cat-low-text); border: 1px solid var(--cat-low-text); }
-		.link-irr { background-color: var(--cat-irr-bg); color: var(--cat-irr-text); border: 1px solid var(--cat-irr-text); }
-		.link-res { background-color: var(--cat-res-bg); color: var(--cat-res-text); border: 1px solid var(--cat-res-text); }
-		.link-neg { background-color: var(--cat-neg-bg); color: var(--cat-neg-text); border: 1px solid var(--cat-neg-text); }
-		.link-pre { background-color: var(--cat-pre-bg); color: var(--cat-pre-text); border: 1px solid var(--cat-pre-text); }
+        .link-low { background-color: var(--cat-low-bg); color: var(--cat-low-text); border: 1px solid var(--cat-low-text); }
+        .link-irr { background-color: var(--cat-irr-bg); color: var(--cat-irr-text); border: 1px solid var(--cat-irr-text); }
+        .link-res { background-color: var(--cat-res-bg); color: var(--cat-res-text); border: 1px solid var(--cat-res-text); }
+        .link-neg { background-color: var(--cat-neg-bg); color: var(--cat-neg-text); border: 1px solid var(--cat-neg-text); }
+        .link-pre { background-color: var(--cat-pre-bg); color: var(--cat-pre-text); border: 1px solid var(--cat-pre-text); }
 
         .grid { display: grid; grid-template-columns: 1fr; max-width: 440px; margin: 15px auto; padding: 0 15px; gap: 20px; }
         
@@ -135,12 +135,16 @@
         .record-card-desc { font-size: 13px; color: #8E8E93; margin-bottom: 10px; line-height: 1.6; }
         
         textarea, .editable-list { 
-            width: 100%; box-sizing: border-box; min-height: 130px; height: auto; border: none; outline: none; resize: none; 
+            width: 100%; box-sizing: border-box; min-height: 80px; height: auto; border: none; outline: none; resize: none; 
             font-size: 14px; background: var(--light-blue); padding: 12px; border-radius: 5px; line-height: 1.6; color: #2c3e50; font-family: 'Pretendard', sans-serif; 
             white-space: pre-wrap; word-break: break-all; overflow-wrap: break-word; overflow: hidden; 
         }
         textarea::placeholder { color: #9bbad3; font-size: 13px; }
         .editable-list:empty::before { content: attr(data-placeholder); color: #9bbad3; font-size: 13px; pointer-events: none; white-space: pre-wrap; }
+
+        .badge { display: inline-block; padding: 3px 8px; font-size: 0.75rem; border-radius: 6px; font-weight: bold; margin-right: 6px; }
+        .badge-other { background-color: rgba(239, 83, 80, 0.1); color: #c62828; border: 1px solid rgba(239, 83, 80, 0.3); }
+        .badge-self { background-color: rgba(0, 122, 255, 0.1); color: #0056b3; border: 1px solid rgba(0, 122, 255, 0.3); }
 
         .copy-btn {
             margin-top: 10px; padding: 12px; width: 100%; background: #333; color: white; border: none; border-radius: 10px; font-weight: 800; font-size: 0.85rem;
@@ -175,9 +179,7 @@
         .modal-content .title { font-size: 1.8rem; font-weight: 950; margin-bottom: 12px; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 5px;}
         .modal-content .desc { font-size: 0.95rem; color: #555; margin-bottom: 18px; line-height: 1.6; text-align: center; font-weight: 800; word-break: keep-all; }
 
-        /* =========================================
-           플루칙의 감정 바퀴 전용 스타일 모음
-           ========================================= */
+        /* 플루칙의 감정 바퀴 전용 스타일 */
         .p-container { max-width: 1200px; width: 100%; padding: 0 15px; box-sizing: border-box; margin: 0 auto;}
         .p-container h2 { text-align: center; font-size: 1.2rem; border-bottom: 2px solid #ddd; padding-bottom: 10px; margin-top: 20px; margin-bottom: 20px; }
         .spectrum-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
@@ -240,7 +242,6 @@
         .card-anticipation .level:nth-child(2) { background-color: var(--p-anticipation-color); color: #fff; }
         .card-anticipation .level:nth-child(3) { background-color: #F2C3A0; color: #333; }
 
-        /* 플루칙 모달 전용 스타일 */
         .p-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 6000; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease; }
         .p-modal-overlay.active { display: flex; opacity: 1; }
         .p-modal-container { background: #fff; width: 90%; max-width: 650px; max-height: 85vh; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); display: flex; flex-direction: column; transform: translateY(20px); transition: transform 0.3s ease; overflow: hidden; }
@@ -451,10 +452,10 @@
 
 <section id="judgment-section" class="content-section">
     <div class="context-guide"><span class="context-label">지금 관찰 중인 사건</span><div id="context-display-judgment" class="context-text-display">기록장에서 사건을 먼저 입력해 보세요.</div></div>
+    
     <div class="index-container" id="judgment-index"></div>
     <div class="grid" id="judgment-grid"></div>
 </section>
-
 
 <section id="needs-section" class="content-section">
     <div class="context-guide"><span class="context-label">지금 관찰 중인 사건</span><div id="context-display-needs" class="context-text-display">기록장에서 사건을 먼저 입력해 보세요.</div></div>
@@ -496,11 +497,34 @@
             <textarea id="step1" placeholder="❌ 판단:그 사람이 나를 무시했다&#10;✅ 사실:회의 중 내가 말을 할 때 그 사람이 휴대폰을 보았다"></textarea>
         </div>
         <div class="record-card"><div class="record-card-title">2. 감정 찾기(가장 강하게 올라오는 감정 3개)</div><div class="record-card-desc">카드에서 찾은 감정 단어 추가</div><textarea id="step2"></textarea></div>
-        <div class="record-card">
-            <div class="record-card-title">3. 위의 감정들을 일으킨 생각들(나와 상대에 대한 판단과 당위성)</div>
-            <div class="record-card-desc">감정을 일으킨 내 안의 '판단'이나 '생각'들을 적어보세요.<br>(원인을 상대나 상황이 아닌 내안에서 찾아보세요.)</div>
-            <div id="step3" class="editable-list" contenteditable="true" data-placeholder="❌ 그 사람이 약속시간에 늦어서 나는 화가난다.&#10;✅ 그 사람이 나를 무시했다는 생각에 화가난다."></div>
+        
+        <div class="record-card" id="step3-container">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                <div class="record-card-title" style="margin-bottom: 0; line-height: 1.2;">3. 감정을 일으킨 생각들 (나와 상대에 대한 판단과 당위성)</div>
+                <label id="toggle-judgment-label" style="font-size: 0.75rem; font-weight: 700; color: #555; display: flex; align-items: center; gap: 4px; cursor: pointer; flex-shrink: 0; padding-left: 10px;">
+                    <input type="checkbox" id="toggle-judgment-checkbox" onchange="toggleJudgmentFields()" style="margin:0;" checked>
+                    판단창 숨기기
+                </label>
+            </div>
+            <div class="record-card-desc">원인을 외부 상황이 아닌 내 머릿속의 '판단'과 '생각'에서 찾아보세요.</div>
+            
+            <div style="margin-top: 15px;">
+                <div style="font-size: 0.85rem; font-weight: 700; color: #555; margin-bottom: 5px;">감정을 일으킨 생각들 (상황이나 사실에 대한 생각)</div>
+                <textarea id="step3_1" placeholder="그때 상황에 대해 어떤 생각이 드셨나요?&#10;(예: 그 사람이 약속 시간에 늦어서 나를 무시했다는 생각이 든다)"></textarea>
+            </div>
+            
+            <div id="judgment-fields-container" style="display: none">
+                <div style="margin-top: 12px;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--danger-red); margin-bottom: 5px;"><span class="badge badge-other">상대</span>상대에 대한 나의 판단들</div>
+                    <textarea id="step3_2" placeholder="판단카드에서 찾은 상대에 대한 판단이나, 평소 상대에게 하던 비난을 적어보세요.&#10;(예: 이기적이다, 무책임하다)"></textarea>
+                </div>
+                <div style="margin-top: 12px;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 5px;"><span class="badge badge-self">나</span>나 자신에 대한 나의 판단들</div>
+                    <textarea id="step3_3" placeholder="내면에 숨겨진 자책이나 스스로를 판단하는 생각들을 적어보세요.&#10;(예: 내가 부족해서 무시당한 것이다, 나는 왜 항상 상처를 받을까)"></textarea>
+                </div>
+            </div>
         </div>
+
         <div class="record-card"><div class="record-card-title">4. 핵심 욕구(가장 원하는 욕구 3개)</div><div class="record-card-desc">욕구카드에서 찾은 욕구 단어들을 추가</div><textarea id="step4"></textarea></div>
         <div class="record-card">
             <div class="record-card-title">5. 욕구 강화(각각의 욕구를 원하는 긍정적인 이유 3개)</div>
@@ -568,8 +592,6 @@
 </div>
 
 <script>
-// --- 기존 감정/욕구/판단 데이터 ---
-const nB = ["뿌듯하다", "경쾌하다", "홀가분하다"], nC = ["허탈하다", "조급하다", "무기력하다"];
 const needsData = [
     { name: "효율성", cat: "cat-auto", desc: "최소한의 자원과 에너지로 최대한의 결실을 얻고, 질서 있게 일을 처리하고 싶은 욕구", sat: ["홀가분하다", "만족하다"], unsat: ["답답하다", "피곤하다"], action: "우선순위를 정하고 불필요한 단계를 줄여보세요." },
     { name: "효능감", cat: "cat-auto", desc: "어떤 일을 성공적으로 수행할 수 있다는 자신의 능력에 대한 믿음과 확신을 얻고 싶은 마음", sat: ["자신 있다", "활기차다", "든든하다"], unsat: ["막막하다", "회의적이다", "무력하다"], action: "아주 작은 목표를 설정하고 그것을 완수하는 경험을 반복해보세요." },
@@ -580,7 +602,7 @@ const needsData = [
     { name: "선택", cat: "cat-auto", desc: "타인에게 휘둘리지 않고 나의 의지로 삶의 방향을 정하고 결정하고 싶은 마음", sat: ["자랑스럽다", "기쁘다"], unsat: ["답답하다", "억울하다"], action: "사소한 결정부터 직관에 따라 결정해 보세요." },
     { name: "혼자만의 시간과 공간", cat: "cat-auto", desc: "타인의 시선에서 벗어나 온전히 나 자신과 마주하며 에너지를 채우고 싶은 욕구", sat: ["편안하다", "만족하다"], unsat: ["답답하다", "불편하다"], action: "아지트에서 1시간 동안 집중해 보세요." },
     { name: "자기표현", cat: "cat-auto", desc: "나만의 고유한 생각, 감정, 개성을 외부로 솔직하게 드러내고 싶은 욕구", sat: ["기쁘다", "자랑스럽다"], unsat: ["답답하다", "부끄럽다"], action: "독창적인 생각을 기록해 보세요." },
-    { name: "자기주도", cat: "cat-auto", desc: "내 삶의 주인이 되어 행동과 선택의 과정을 스스로 이끌어가고 싶은 욕구", sat: ["자유롭다", "당당하다", "활기차다"], unsat: ["무력하다", "답답하다", "억울하다"], action: "오늘 내가 스스로 선택할 수 있는 작은 일 하나를 정해보세요." },
+    { name: "자기주도", cat: "cat-auto", desc: "내 삶의 주인되어 행동과 선택의 과정을 스스로 이끌어가고 싶은 욕구", sat: ["자유롭다", "당당하다", "활기차다"], unsat: ["무력하다", "답답하다", "억울하다"], action: "오늘 내가 스스로 선택할 수 있는 작은 일 하나를 정해보세요." },
     { name: "책임감", cat: "cat-auto", desc: "주어진 역할이나 행동의 결과에 대해 주체적으로 책임을 지고 완수하려는 의지", sat: ["뿌듯하다", "신뢰받다", "든든하다"], unsat: ["불안하다", "버겁다", "회피하고싶다"], action: "오늘 완수해야 할 작은 과제 하나를 정하고, 끝까지 마무리해보세요." },
     { name: "우정", cat: "cat-conn", desc: "서로 아끼고 신뢰를 나누며 깊은 정서적 유대감을 쌓고 싶은 바람", sat: ["사랑스럽다", "든든하다"], unsat: ["서운하다", "외롭다"], action: "친구에게 안부를 물어보세요." },
     { name: "공동체", cat: "cat-conn", desc: "집단에 속해 서로 돕고 기여하며 연결되어 있음을 느끼고 싶은 욕구", sat: ["뿌듯하다", "든든하다"], unsat: ["소외되다", "불안하다"], action: "이웃에게 가벼운 인사를 건네보세요." },
@@ -671,7 +693,7 @@ const judgmentData = [
   { name: "수동적이다", cat: "cat-low", desc: "자기 주관 없이 타인의 결정에만 의존하며 책임을 피함", sit: "중요한 선택의 순간에 자신의 의견을 내지 않고 시키는 대로만 하려 할 때", body: "상대의 무책임함에 답답함이 치밀어 올라 호흡이 가빠짐", aff: "스스로 결정하는 것의 중요성을 일깨우고, 선택에 따른 책임을 지는 연습을 장려하기" },
   { name: "오지랖 넓다", cat: "cat-low", desc: "선 넘는 참견으로 타인의 사생활과 경계를 침범함", sit: "상대방의 영역에 허락 없이 깊숙이 들어와 가르치려 들거나 간섭할 때", body: "불쾌함이 머리끝까지 차올라 근육이 긴장되고 얼굴이 달아오름", aff: "나만의 건강한 경계(Boundaries)를 설정하고, 상대가 나의 영역을 존중하도록 분명히 선을 긋기" },
   { name: "변덕스럽다", cat: "cat-low", desc: "판단이나 기분이 일관성 없이 계속해서 바뀜", sit: "어제와 오늘 말이 다르고, 기분에 따라 관계의 태도가 극단적으로 달라질 때", body: "예측 불가능한 상황에 어지러움과 깊은 혼란을 느낌", aff: "상대의 변덕 이면에 있는 불안함을 수용하되, 약속의 일관성을 유지하기 위한 타협점 찾기" },
-  { name: "독단적이다", cat: "cat-low", desc: "자기 방식만을 고집하며 타인의 생각을 원천 차단함", sit: "협업하는 과정에서 내 의견을 완전히 배제하고 자신의 논리만 일방적으로 주장할 때", body: "존중받지 못했다는 생각에 가슴 속에서 끓어오르는 분노를 느낌", aff: "우리는 평등한 파트너임을 상기시키고, 상대의 경청과 존중의 태도를 요구하기" },  
+  { name: "독단적이다", cat: "cat-low", desc: "자기 방식만을 고집하며 타인의 생각을 원천 차단함", sit: "협업하는 과정에서 내 준의견을 완전히 배제하고 자신의 논리만 일방적으로 주장할 때", body: "존중받지 못했다는 생각에 가슴 속에서 끓어오르는 분노를 느낌", aff: "우리는 평등한 파트너임을 상기시키고, 상대의 경청과 존중의 태도를 요구하기" },  
   { name: "어처구니없다", cat: "cat-irr", desc: "논리적으로 도저히 설명되지 않는 상황에 당혹감을 느낌", sit: "말도 안 되는 억지를 부릴 때", body: "입이 벌어지며 할 말을 잃음", aff: "상황을 통제하려는 마음을 내려놓고 현상 유지하기" },
   { name: "황당하다", cat: "cat-irr", desc: "예상치 못한 비상식적 요구에 당황함", sit: "갑작스러운 무리한 부탁을 받을 때", body: "어이없는 실소와 함께 고개를 저음", aff: "나의 기준과 다를 수 있음을 인정하고 침착함 유지하기" },
   { name: "기가 차다", cat: "cat-irr", desc: "상식의 범주를 너무 많이 벗어나 대응할 가치조차 못 느낌", sit: "몰상식한 행동을 목격했을 때", body: "허탈한 표정으로 멍하니 상대를 응시", aff: "내 마음의 평화를 깨뜨리지 않도록 의연해지기" },
@@ -710,7 +732,7 @@ const judgmentData = [
   { name: "불쾌하다", cat: "cat-neg", desc: "무례하거나 공격적인 언행에 기분이 매우 나쁨", sit: "선 넘는 농담을 들을 때", body: "얼굴이 붉어지고 시선을 돌림", aff: "나의 불쾌감을 솔직하고 정중하게 표현하기" },
   { name: "심술궂다", cat: "cat-neg", desc: "상대가 타인을 비꼬거나 괴롭히는 모습에 거부감이 듦", sit: "비아냥거리는 말투를 들을 때", body: "눈매가 날카로워짐", aff: "상대가 사랑받고 싶은 욕구를 거칠게 표현함을 헤아리기" },
   { name: "뻔뻔하다", cat: "cat-neg", desc: "잘못을 저지르고도 수치심을 느끼지 않는 태도에 화가 남", sit: "변명으로 일관할 때", body: "어이없음의 극치로 헛웃음", aff: "상대의 자기 방어 심리를 객관적으로 바라보기" },
-  { name: "잔인하다", cat: "cat-neg", desc: "공감 없이 타인을 해치는 모습에 큰 충격을 받음", sit: "폭력적이거나 가혹한 모습을 볼 때", body: "몸이 떨리고 공포를 느낌", aff: "즉시 안전한 곳으로 몸을 피하고 보호하기" },
+  { name: "잔인하다", cat: "cat-neg", desc: "공감이 결여된 태도에 상처받거나 거리감을 느낌", sit: "폭력적이거나 가혹한 모습을 볼 때", body: "몸이 떨리고 공포를 느낌", aff: "즉시 안전한 곳으로 몸을 피하고 보호하기" },
   { name: "음흉하다", cat: "cat-neg", desc: "속을 알 수 없는 행동에 의심과 경계심이 생김", sit: "본심을 숨기는 것 같을 때", body: "상대를 계속 관찰하며 경계함", aff: "신뢰를 쌓기 위한 충분한 시간 갖기" },
   { name: "지루하다", cat: "cat-neg", desc: "상대의 대화나 행동이 너무 무미건조하여 흥미가 없음", sit: "반복적인 이야기가 계속될 때", body: "하품하거나 다른 곳을 쳐다봄", aff: "상황을 전환할 새로운 자극을 스스로 찾기" },
   { name: "경박하다", cat: "cat-neg", desc: "진지함이 부족하고 가벼운 언행에 신뢰가 가지 않음", sit: "중요한 자리에서 실없는 소리를 할 때", body: "냉소적인 눈빛", aff: "진중함의 가치를 상대에게 강요하지 않기" },
@@ -783,7 +805,7 @@ const emotionsData = [
     { name: "화나다", cat: "cat-ang", desc: "어떤 일이나 대상 때문에 몹시 언짢고 불쾌하여 감정이 격앙된 상태", sit: "자신의 뜻대로 일이 풀리지 않거나, 누군가에게 부당한 대우를 받았을 때", body: "얼굴이 붉어지고 호흡이 가빠지며, 목소리가 커지거나 심장 박동이 빨라짐", aff: "감정은 자연스러운 반응이지만, 나는 화를 건설적인 방법으로 표현하고 해소할 수 있습니다." },
     { name: "분하다", cat: "cat-ang", desc: "억울한 일을 당하거나 자신의 무력함을 느껴 화가 나고 속상한 상태", sit: "부당한 오해를 받거나, 최선을 다했음에도 외부 요인으로 인해 실패하여 억울할 때", body: "주먹을 꽉 쥐거나 입술을 깨물게 되며, 가슴이 답답하고 억눌린 울음이 터질 것 같음", aff: "이 억울함과 분노는 나를 보호하려는 마음에서 옵니다. 나는 이 에너지를 나를 발전시키는 원동력으로 바꿀 수 있습니다." },
     { name: "증오하다", cat: "cat-ang", desc: "특정 대상에 대해 극심한 반감과 혐오를 느끼며 몹시 미워하는 상태", sit: "나나 내가 소중하게 여기는 것을 심각하게 해친 대상을 떠올리거나 마주쳤을 때", body: "대상을 향해 눈빛이 차가워지고 온몸의 근육이 경직되며, 속에서 끓어오르는 듯한 열기를 느낌", aff: "누군가를 미워하는 마음은 결국 나를 지치게 합니다. 나는 상대를 위해서가 아니라 나의 해방을 위해 마음의 짐을 내려놓습니다." },
-    { name: "격노하다", cat: "cat-ang", desc: "참을 수 없을 만큼 감정이 폭발하여 몹시 맹렬하게 화를 내는 상태", sit: "도저히 용납할 수 없는 배신을 당하거나, 나의 핵심 가치나 존엄성이 심각하게 짓밟혔을 때", body: "이성을 잃고 소리를 지르거나, 온몸이 부들부들 떨리고 호흡이 통제되지 않음", aff: "나는 폭풍처럼 몰아치는 감정 속에서도 잠시 멈춰 서서 호흡을 고르고, 이성적인 판단력을 되찾을 수 있습니다." },
+    { name: "격노하다", cat: "cat-ang", desc: "참을 수 없을 만큼 감정이 폭발하여 몹시 맹렬하게 화를 내는 상태", sit: "도저히 용납할 수 없는 배신을 당하거나, 나의 핵심 가치나 존엄성이 심각하게 짓밟혔을 때", body: "이성을 잃고 소리를 지르거나, 온몸이 부들부들 떨리고 호흡이 통제되지 않음", aff: "나는 폭풍처럼 몰아치는 감정 속에서도 잠시 멈춰 서서 호흡 고르고, 이성적인 판단력을 되찾을 수 있습니다." },
     { name: "괘씸하다", cat: "cat-ang", desc: "상대방이 마땅히 지켜야 할 도리나 예의를 어겨 몹시 얄밉고 분개하는 상태", sit: "호의를 베풀었는데도 배신하거나, 믿었던 사람이 건방지고 무례하게 굴 때", body: "어이가 없어 헛웃음이 나고 혀를 차게 되며, 상대를 매섭게 쏘아보게 됨", aff: "타인의 예의 없는 행동은 그 사람의 문제일 뿐입니다. 나는 상대의 수준에 맞춰 반응하지 않고 나의 품위를 지킵니다." },
     { name: "밉다", cat: "cat-ang", desc: "대상의 행동이나 태도가 원망스러워 정서적 거리감을 두고 싶어지는 거부감", sit: "진심을 무시한 상대가 떠오를 때", body: "입술을 굳게 다물게 되고 상대 쪽으로 고개를 돌리기 싫어짐", aff: "미움 대신 나를 아끼는 마음을 채웁니다." },
     { name: "원망스럽다", cat: "cat-ang", desc: "자신이 겪는 고통이나 아픔의 원인을 대상에게 돌리며 한탄하는 아픈 마음", sit: "결정적 순간에 곁에 없었던 이에 대한 서운함", body: "가슴 깊은 곳이 쓰리고 명치 부근이 딱딱해짐", aff: "기대를 내려놓고 스스로를 돕습니다." },
@@ -803,7 +825,7 @@ const emotionsData = [
     { name: "후회하다", cat: "cat-sad", desc: "과거에 했던 자신의 선택이나 행동에 아쉬움과 미련을 느끼며 스스로를 성찰함", sit: "기회를 놓쳤거나 상처를 주었을 때", body: "가슴을치고 싶거나 머리를 감싸 쥐게 되며 속이 쓰림", aff: "과거의 실수에서 지혜를 배워 성장합니다." },
     { name: "좌절하다", cat: "cat-sad", desc: "노력하던 목표가 무너지고 희망이 꺾여 다시 일어설 엄두가 나지 않는 아픈 상태", sit: "노력이 실패로 돌아가 엄두가 나지 않을 때", body: "무릎에 힘이 풀리고 가슴이 턱 막혀 숨쉬기가 힘들듦", aff: "좌절은 멈춤이지 끝이 아닙니다." },
     { name: "지루하다", cat: "cat-sad", desc: "현재 하는 행동에서 어떠한 흥미나 의미도 발견하지 못해 시간이 정체된 느낌", sit: "단조로운 일상이 반복될 때", body: "하품이 나오고 턱을 괴거나 몸을 비틀게 됨", aff: "지루함 속에 영감의 씨앗이 있습니다." },
-    { name: "피곤하다", cat: "cat-sad", desc: "신체적, 정신적 한계를 초과하여 몸이 강력하게 휴식을 요청하는 고갈 신호", sit: "쉼 없이 달려와 모든 의욕이 사라질 때", body: "머리가 무겁고 눈이 따가우며 뒷목이 뻣뻣함", aff: "고생한 나에게 깊은 휴식을 선물합니다." },
+    { name: "피곤하다", cat: "cat-sad", desc: "신체적, 정신적 한계를 초과하여 몸이 강력하게 휴식을 요청하는 고갈 신호", sit: "쉼 없이 달려와 모든 의욕이 사라질 때", body: "머리를 무겁고 눈이 따가우며 뒷목이 뻣뻣함", aff: "고생한 나에게 깊은 휴식을 선물합니다." },
     {"name": "지친다", "cat": "cat-sad", "desc": "긴 시간 동안의 노력이나 갈등으로 인해 마음의 탄력을 잃고, 더 이상 버틸 에너지가 남아있지 않은 상태", "sit": "해결되지 않는 문제를 계속 안고 있거나, 스스로에게 너무 엄격한 기준을 적용해왔을 때", "body": "어깨가 무겁게 처지고 한숨이 잦아지며, 무표정이 익숙해지고 감각이 무뎌짐", "aff": "충분히 애썼습니다. 이제는 아무것도 하지 않고 오롯이 나를 쉬게 할 때입니다." },
     {"name": "의욕이 없다", "cat": "cat-sad", "desc": "무언가를 시작하거나 성취하고 싶다는 내면의 동기가 완전히 사라져, 모든 일이 무의미하게 느껴지는 상태", "sit": "번아웃이 오거나, 반복된 실패로 인해 미래에 대한 기대가 희미해졌을 때", "body": "몸의 움직임이 느려지고 눈빛에 생기가 없으며, 시간의 흐름을 무감각하게 받아들임", "aff": "지금의 멈춤은 더 멀리 나아가기 위한 뿌리 내림입니다. 조급해하지 않아도 괜찮습니다." },  
     {"name": "침울하다", "cat": "cat-sad", "desc": "걱정이나 근심에 잠겨서 마음이 우울한 상태", "sit": "예기치 않은 실망스러운 소식을 듣거나, 깊은 상실감이나 후회에 잠겨 혼자만의 생각에 빠져들 때", "body": "고개를 푹 숙이거나 한숨을 자주 쉬며, 주변의 밝은 자극이나 대화에 거의 반응하지 않고 굳어 있음", "aff": "마음에 짙은 구름이 낀 것처럼 무거운 날도 있습니다. 이 감정이 지나가기를 억지로 서두르지 말고, 잠시 기대어 쉬어가도 괜찮습니다."},
@@ -818,54 +840,40 @@ const emotionsData = [
     { name: "허탈하다", cat: "cat-sad", desc: "쏟아부은 노력과 기대가 한순간에 수포로 돌아가 마음속에 큰 구멍이 뚫린 허전함", sit: "노력이 수포로 돌아갔을 때", body: "팔다리에 힘이 하나도 없고 가슴 속이 텅 빈 구멍 같음", aff: "비워진 마음을 인정하며 새로운 에너지를 기다립니다." }
 ];
 
-// --- 플루칙 감정 바퀴 데이터 ---
-const plutchikEmotionData = {
-    "ecstasy": { kor: "황홀", eng: "Ecstasy", tags: ["강한 기쁨", "무아지경", "압도적 긍정"], desc: "기쁨의 가장 강렬한 형태로, 이성이 마비되고 자아의 경계가 흐려질 만큼 압도적인 환희 상태를 의미합니다.", points: ["<b>신체적 반응:</b> 심장 박동의 급격한 증가, 호흡이 가빠짐, 눈물이 날 것 같은 벅차오름, 몸이 가벼워지는 듯한 감각.", "<b>발현 상황:</b> 오랜 염원의 극적인 성취, 압도적인 예술 작품이나 자연경관을 마주했을 때, 종교적/영적 체험.", "<b>행동 경향:</b> 외부 세계에 대한 경계심이 완전히 허물어지며, 현재의 순간에 완벽하게 몰입합니다."], related_emotions: ["희열", "쾌감", "환희", "도취", "짜릿함", "벅참", "매료됨", "무아지경", "열광", "벅차오름", "감격", "황홀경", "엑스터시", "심취", "통쾌함"] },
-    "joy": { kor: "기쁨", eng: "Joy", tags: ["기본 감정", "만족", "행복", "조절"], desc: "<b>정의:</b> 자신의 욕구가 충족되었을 때 생기는 감정입니다. 만족감, 행복감, 유쾌함을 동반하며, 뇌의 보상 체계와 연동된 강력한 긍정적 에너지를 가집니다.", points: ["<b>[기쁨의 신경과학적 기제]</b><br>도파민과 베타엔도르핀이 분비되어 강렬한 '기쁨'을 느끼게 하고, 이후 세로토닌이 분비되면서 마음을 잔잔하고 충만한 '행복감'으로 채웁니다.", "<b>[현재에 머무는 의식]</b><br>들뜬 기분 속에서도 '지금, 여기'에 의식을 단단히 붙잡아 두어야 합니다."], related_emotions: ["즐거움", "반가움", "유쾌함", "흐뭇함", "명랑함", "쾌활함", "뿌듯함", "만족감", "행복함", "신남", "산뜻함", "환함", "기분좋음", "활기참", "싱그러움", "재미있음", "가뿐함"] },
-    "serenity": { kor: "평온", eng: "Serenity", tags: ["약한 기쁨", "안정", "고요함"], desc: "기쁨이 잔잔하게 가라앉은 상태로, 위협이나 결핍이 없는 상태에서 느끼는 심리적 안도와 고요함입니다.", points: ["<b>신체적 반응:</b> 호흡이 깊고 규칙적이며, 부교감신경이 활성화되어 맥박이 안정됩니다.", "<b>발현 상황:</b> 휴식 시간, 익숙하고 안전한 공간에 있을 때, 큰 고민거리가 해결된 직후의 일상.", "<b>행동 경향:</b> 외부 자극을 찾기보다 현재의 정적인 상태를 음미하며, 명상적이고 수용적인 태도를 취합니다."], related_emotions: ["편안함", "여유로움", "차분함", "홀가분함", "안도감", "느긋함", "무던함", "잔잔함", "위안", "달관", "다행스러움", "평화로움", "안락함", "고요함", "나른함"] },
-    "admiration": { kor: "경애", eng: "Admiration", tags: ["강한 신뢰", "존경", "동경"], desc: "단순히 믿는 것을 넘어 상대를 우러러보고 존경하며 끌리는 강렬한 신뢰 상태입니다.", points: ["<b>신체적 반응:</b> 대상을 향해 시선이 고정되고, 가슴이 벅차오르는 느낌, 동공 확장.", "<b>행동 경향:</b> 대상을 모방하려 하거나, 그들의 철학이나 지시를 비판 없이 깊이 수용하고 따르려 합니다."], related_emotions: ["존경", "우러러봄", "숭배", "맹신", "우상화", "심취", "감복", "감화", "찬사", "예찬", "매료"] },
-    "trust": { kor: "신뢰", eng: "Trust", tags: ["기본 감정", "신용", "관계", "성장"], desc: "<b>정의:</b> 특정한 사람이나 사물을 높이 평가하여 '모든 것을 맡길 수 있다'고 느끼는 마음입니다.", points: ["<b>[신용과 신뢰의 관계]</b><br>신용은 과거의 실적과 행동을 바탕으로 한 '객관적 평가'이며, 신뢰는 이를 토대로 형성되는 '주관적 평가'입니다."], related_emotions: ["믿음", "의지함", "안심", "친밀감", "연대감", "소속감", "동료애", "공감", "지지", "호감", "애착", "든든함", "의존", "결속력", "친숙함"] },
-    "acceptance": { kor: "수용", eng: "Acceptance", tags: ["약한 신뢰", "인정", "포용"], desc: "신뢰의 가장 옅은 형태로, 사람이나 상황을 저항 없이 있는 그대로 받아들이는 태도입니다.", points: ["<b>신체적 반응:</b> 어깨의 힘이 빠지고, 고개를 끄덕이는 등 반사적인 긍정 신체 언어 발현."], related_emotions: ["인정", "끄덕임", "포용", "관대함", "이해", "허용", "타협", "양보", "순응", "체념(받아들임)", "편견없음", "무비판"] },
-    "terror": { kor: "공포", eng: "Terror", tags: ["강한 두려움", "패닉", "생존 위협"], desc: "생존에 직각적인 위협이 다가왔을 때 이성적 판단이 불가능할 정도로 온몸을 장악하는 원초적인 감정입니다.", points: ["<b>신체적 반응:</b> 극심한 교감신경계 활성화(심박수 폭증, 동공 최대 확장, 식은땀, 안면 창백, 괄약근 통제 상실 가능성)."], related_emotions: ["경악", "섬뜩함", "오싹함", "패닉", "전율", "기겁", "혼비백산", "발작적 두려움", "소름", "극도의 경계", "아연실색"] },
-    "fear": { kor: "두려움", eng: "Fear", tags: ["기본 감정", "미래 대응", "신체 반응", "자기 방어"], desc: "<b>정의:</b> 소중한 무언가가 위협받고 있다고 느낄 때 생기는 감정입니다.", points: ["<b>[미래를 향한 경고음]</b><br>불안과 두려움은 미래를 상상할 때 발생합니다. 실제로 일어난 일이 아님에도 뇌는 이를 실재하는 위협으로 착각하여 고통을 느낍니다."], related_emotions: ["겁", "무서움", "두려움", "당혹", "위축", "주눅", "아찔함", "떨림", "두근거림", "겁먹음", "기죽음", "움츠러듦"] },
-    "apprehension": { kor: "불안", eng: "Apprehension", tags: ["약한 두려움", "예기 불안", "걱정"], desc: "위험이 구체화되지는 않았으나 미래에 나쁜 일이 일어날지도 모른다는 예감에서 오는 약하지만 지속적인 두려움입니다.", points: ["<b>신체적 반응:</b> 만성적인 어깨 뭉침, 얕고 빠른 호흡, 잦은 신경질적 움직임(다리 떨기, 손톱 물어뜯기)."], related_emotions: ["걱정", "근심", "초조함", "긴장", "조바심", "꺼림칙함", "신경쓰임", "주저함", "망설임", "불안정", "노심초사", "찜찜함", "조심스러움"] },
-    "amazement": { kor: "경탄", eng: "Amazement", tags: ["강한 놀람", "경악", "예측 붕괴"], desc: "기존의 상식이나 인지 도식으로 완전히 설명할 수 없는 대상을 마주했을 때 뇌가 일시적으로 정지하는 듯한 강한 충격과 경이로움입니다.", points: ["<b>신체적 반응:</b> 입이 무의식적으로 크게 벌어지고, 호흡을 잠시 멈추며, 눈을 크게 부릅뜸."], related_emotions: ["기막힘", "충격", "벙찜", "혼란", "말문막힘", "아찔함", "아연실색", "경천동지", "얼빠짐", "어이가없음"] },
-    "surprise": { kor: "놀람", eng: "Surprise", tags: ["기본 감정", "충격", "증폭", "적응"], desc: "<b>정의:</b> 예상치 못한 일을 마주했을 때 생기는 감정입니다.", points: ["<b>[감정 증폭 효과]</b><br>놀람은 원래의 감정을 더 크게 만듭니다. 나쁜 소식에는 암시를 주어 놀람의 강도를 완화함으로써 충격을 줄이는 지혜가 필요합니다."], related_emotions: ["어리둥절", "당황", "신기함", "호기심", "의아함", "낯섦", "깜짝놀람", "놀라워함", "기상천외함", "신비로움"] },
-    "distraction": { kor: "동요", eng: "Distraction", tags: ["약한 놀람", "산만함", "집중 저하"], desc: "크게 놀란 것은 아니지만 예상치 못한 미세한 자극들이 산발적으로 주어져 주의 집중이 흩어지고 마음이 어수선해지는 상태입니다.", points: ["<b>신체적 반응:</b> 시선이 한곳에 머물지 못하고 계속 이동, 소소한 꼼지락거림."], related_emotions: ["어수선함", "갈피를못잡음", "멍함", "두리번거림", "집중안됨", "산만함", "혼미함", "붕뜬기분"] },
-    "grief": { kor: "비탄", eng: "Grief", tags: ["강한 슬픔", "애도", "상실의 고통"], desc: "자아의 일부분이라고 느낄 만큼 소중한 대상을 영원히 상실했을 때 겪는 찢어지는 듯한 고통입니다.", points: ["<b>신체적 반응:</b> 가슴이 짓눌리는 듯한 통증, 호흡 곤란, 주체할 수 없는 오열, 식욕과 수면욕의 완전한 상실."], related_emotions: ["절망", "비참함", "참담함", "애통", "통한", "오열", "단장", "참척", "비애", "원통함", "극도의 좌절감"] },
-    "sadness": { kor: "슬픔", eng: "Sadness", tags: ["기본 감정", "상실", "치유", "성장"], desc: "<b>정의:</b> 소중한 것을 잃었을 때 생겨나는 감정입니다.", points: ["<b>[눈물의 치유 효능]</b><br>슬플 때 눈물을 흘리면 뇌에서 세로토닌과 엔도르핀이 분비되어 마음을 안정시킵니다. 참지 말고 충분히 우는 것이 자연스러운 치유의 시작입니다."], related_emotions: ["고독", "외로움", "서러움", "눈물겨움", "허탈함", "상실감", "마음아픔", "애달픔", "처량함", "가슴시림", "가엾음"] },
-    "pensiveness": { kor: "감상적", eng: "Pensiveness", tags: ["약한 슬픔", "사색", "아련함"], desc: "격렬한 고통이 동반되지 않는 차분하고 옅은 슬픔으로, 향수나 사색과 결합된 감정입니다.", points: ["<b>신체적 반응:</b> 시선을 아래로 깔거나 허공을 응시, 한숨, 조용한 몸짓."], related_emotions: ["서운함", "아쉬움", "쓸쓸함", "헛헛함", "울적함", "센티멘탈", "적적함", "싱숭생숭", "처연함", "침울함", "의기소침", "우수에젖음"] },
-    "loathing": { kor: "증오", eng: "Loathing", tags: ["강한 혐오", "적대감", "파괴 욕구"], desc: "대상 자체를 배척하고 파괴하고 싶어 하는 깊은 적대감입니다.", points: ["<b>신체적 반응:</b> 구역질을 동반한 치밀어 오름, 미간을 심하게 찌푸림, 호흡이 거칠어짐."], related_emotions: ["역겨움", "진절머리", "구역질", "넌더리", "경멸", "환멸", "혐오감", "끔찍함", "적개심", "소름끼침", "치가떨림"] },
-    "disgust": { kor: "혐오", eng: "Disgust", tags: ["기본 감정", "자기 방어", "호불호", "다양성"], desc: "<b>정의:</b> 특정 상황, 사람, 사물에 대해 '싫다', '마음에 들지 않는다'라고 느끼는 불쾌한 감정입니다.", points: ["<b>[혐오의 본질]</b><br>혐오는 무의식중에 판단 기준을 왜곡합니다. 마음에 혐오가 있으면 상대의 말과 행동을 있는 그대로 받아들이지 못하고 관계의 악순환에 빠집니다."], related_emotions: ["불쾌함", "거부감", "찝찝함", "불만족", "불호", "반감", "꺼림칙함", "미움", "얄미움", "눈에거슬림"] },
-    "boredom": { kor: "권태", eng: "Boredom", tags: ["약한 혐오", "지루함", "의미 상실"], desc: "현재 마주한 대상이나 상황이 자신에게 아무런 의미나 영양가(자극)를 주지 못하는 상태입니다.", points: ["<b>신체적 반응:</b> 턱을 괴고 몸이 늘어짐, 잦은 하품, 눈에 초점이 없음."], related_emotions: ["무관심", "심드렁함", "권태", "따분함", "시큰둥함", "귀찮음", "식상함", "흥미없음", "나태함"] },
-    "rage": { kor: "격노", eng: "Rage", tags: ["강한 분노", "폭발", "통제 상실"], desc: "분노가 한계치를 초과하여 이성적인 통제력을 완전히 상실한 폭발적인 감정 상태입니다.", points: ["<b>신체적 반응:</b> 혈압 급상승, 안면 홍조, 목에 핏대가 섬, 주먹을 강하게 쥐고 몸이 부들부들 떨림."], related_emotions: ["분개", "분통", "울화", "극대노", "격분", "적개심", "악의", "살기", "광분", "노발대발", "길길이뜀", "통분"] },
-    "anger": { kor: "분노", eng: "Anger", tags: ["기본 감정", "경고", "방어 기제", "투쟁"], desc: "<b>정의:</b> 소중한 것이 위협받았을 때 생기는 경고 감정입니다.", points: ["<b>[분노의 핵심 가치]</b><br>가치 있는 감정이지만 동시에 파괴적이므로 의식적인 관리가 필요합니다."], related_emotions: ["화", "노여움", "억울함", "답답함", "부아", "약오름", "시기", "질투", "야속함", "속상함", "원망", "괘씸함", "부당함"] },
-    "annoyance": { kor: "짜증", eng: "Annoyance", tags: ["약한 분노", "불쾌감", "마찰"], desc: "심각한 위협은 아니지만, 일상적인 흐름이나 심리적 편안함을 자잘하게 방해하는 요소들에 대한 불쾌감입니다.", points: ["<b>신체적 반응:</b> 혀를 차거나 미간을 가볍게 찌푸림, 짧고 날카로운 호흡."], related_emotions: ["신경질", "불만", "투덜거림", "성가심", "언짢음", "삐침", "심통", "뾰로통함", "거슬림", "투정"] },
-    "vigilance": { kor: "경계", eng: "Vigilance", tags: ["강한 기대", "주시", "초집중"], desc: "외부 환경에서 일어날 변화에 대비하여 감각 기관을 극도로 예민하게 세우고 모든 주의를 기울이는 상태입니다.", points: ["<b>신체적 반응:</b> 전신 근육 긴장, 시선이 고정되며 깜빡임이 줄어듦, 작은 소리에도 반응할 준비."], related_emotions: ["갈망", "열망", "야망", "조바심", "욕구", "집착", "탐욕", "예민한 주시", "과도한 몰입", "맹목적 기대", "벼름"] },
-    "anticipation": { kor: "기대", eng: "Anticipation", tags: ["기본 감정", "미래 지향", "리스크 대응", "성공 리허설"], desc: "<b>정의:</b> 의식을 미래로 향했을 때 생겨나는 감정입니다.", points: ["<b>[성공 이미지 트레이닝]</b><br>긍정적인 시나리오를 생생하게 상상하는 '성공 리허설'은 미래를 위한 예행연습이자 의욕과 용기를 주는 동력이 됩니다."], related_emotions: ["희망", "고대", "설렘", "바램", "소망", "의욕", "투지", "다짐", "기다림", "목표의식", "예감"] },
-    "interest": { kor: "관심", eng: "Interest", tags: ["약한 기대", "호기심", "주의 향함"], desc: "새롭거나 특이한 대상에 대해 자연스럽게 마음이 끌리고 더 알아보고 싶어 하는 상태입니다.", points: ["<b>신체적 반응:</b> 고개가 대상 쪽으로 약간 돌아감, 귀를 기울이는 제스처."], related_emotions: ["호기심", "끌림", "눈길이감", "흥미", "유심함", "신경쓰임", "예의주시"] },
-    "optimism": { kor: "낙관", eng: "Optimism", tags: ["혼합 감정", "기쁨 + 예기", "미래 지향"], desc: "<b>정의:</b> 바람직한 미래가 실현될 것이라는 긍정적인 전망을 믿으며 편안한 상태를 유지하는 마음입니다.", points:["<b>낙관과 비관의 균형</b>: 지나친 낙관은 계획 오류를 유발할 수 있으므로, 혁신과 의욕에는 낙관을, 리스크 대비에는 비관을 적절히 조화시켜야 합니다."], related_emotions: ["낙관", "긍정", "기대감에부푼", "전도유망함", "확신", "자신감", "당당함"] },
-    "aggressiveness": { kor: "공격성", eng: "Aggressiveness", tags: ["혼합 감정", "예기 + 분노", "투쟁 의지"], desc: "<b>정의:</b> 자신에게 소중한 것이 위협당하고 있다고 느낄 때, 그것을 지키기 위해 강한 투쟁 의지가 솟아나는 상태를 말합니다.", points:["<b>공격성의 재해석</b>: 중요한 가치를 지키기 위해 발생하는 반응으로, 이성적인 판단과 함께 활용될 때 큰 추진력이 됩니다."], related_emotions: ["공격성", "투쟁심", "복수심", "오기", "독기", "반항심", "반발심"] },
-    "contempt": { kor: "경멸", eng: "Contempt", tags: ["혼합 감정", "혐오 + 분노", "가치 평가"], desc: "<b>정의:</b> 어떤 대상을 ‘인정할 수 없다’, ‘가치가 낮다’라고 여기면서 깔보는 감정입니다.", points:["<b>심리적 이면 분석</b>: 타인을 깔봄으로써 자신의 부족한 자신감이나 불안을 보상받으려는 우월 욕구가 핵심 동기인 경우가 많습니다."], related_emotions: ["경멸", "조소", "비웃음", "냉소", "적대감", "깔봄", "무시함", "하대"] },
-    "remorse": { kor: "후회", eng: "Remorse", tags: ["혼합 감정", "슬픔 + 혐오", "과거 지향"], desc: "<b>정의:</b> 과거의 결정이나 행동이 원인이 되어 안타까운 결과가 되었다는 사실을 인식하고 슬퍼하는 감정입니다.", points:["<b>적극적인 후속 조치</b>: 실수로 타인에게 영향을 주었다면 진심 어린 사과와 수습을 통해 대처하는 것이 유일한 만회 방법입니다."], related_emotions: ["후회", "자책", "회한", "죄책감", "수치심", "부끄러움", "자기혐오", "모멸감"] },
-    "disapproval": { kor: "실망", eng: "disapproval", tags: ["혼합 감정", "놀람 + 슬픔", "기대 수용"], desc: "<b>정의:</b> 사람이나 일에 대해 품고 있던 기대가 무너졌을 때, 슬픔을 느끼며 그 상황을 거부하는 마음을 말합니다.", points:["<b>자기중심적 기대 경계</b>: 타인에게 느끼는 실망은 자신의 일방적인 기대를 상대가 충족해주지 못할 때 주로 발생하므로 명확한 소통이 필요합니다."], related_emotions: ["실망", "맥빠짐", "허무함", "배신감", "기대이하", "황망함"] },
-    "awe": { kor: "외경", eng: "Awe", tags: ["혼합 감정", "놀람 + 두려움", "경외심"], desc: "<b>정의:</b> 자신으로서는 도저히 맞설 수 없는 존재에게 압도되어 두려움에 떠는 감정입니다.", points:["<b>두려움 이상의 존경</b>: 단순한 두려움을 넘어 대상의 위대함을 인정하고 그 앞에서의 겸손함이 포함된 숭고한 감정입니다."], related_emotions: ["경외감", "위압감", "얼어붙음", "깜짝놀라겁먹음", "패닉"] },
-    "submission": { kor: "복종", eng: "Submission", tags: ["혼합 감정", "신뢰 + 두려움", "권위 수용"], desc: "<b>정의:</b> 스스로 맞설 수 없는 ‘신뢰할 수 있는 존재’를 온전히 수용하고 따르며, 헌신하고자 하는 감정입니다.", points:["<b>현명한 불복종</b>: 조직의 이익이나 더 소중한 가치를 위해 위험 상황에서는 지시를 거스르는 현명한 불복종을 늘 염두에 두어야 합니다."], related_emotions: ["복종", "순응", "주눅듦", "굴복", "비굴함", "수동성"] },
-    "love": { kor: "사랑", eng: "Love", tags: ["혼합 감정", "신뢰 + 기쁨", "관계"], desc: "<b>정의:</b> 상대에게 호감을 느끼고 깊이 아끼는 감정입니다.", points: ["<b>사랑의 기초, 신뢰</b>: 사랑은 다양한 관계 속에서 싹트지만 그 밑바탕은 언제나 신뢰입니다. 신뢰가 깨지면 사랑도 무너집니다."], related_emotions: ["사랑", "애정", "우정", "헌신", "자애로움", "아낌", "온정", "로맨틱", "다정함"] }
-};
-
-// --- 초기화 및 Supabase 연동 코드 ---
 const SUPABASE_URL = 'https://ocghxynajjbkpbyljxzg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9jZ2h4eW5hampia3BieWxqeHpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2OTg4MTksImV4cCI6MjA5MTI3NDgxOX0.weaiOCV0UMjsfSmEI_WU_0L4qJUOGRrtoWEwPKN26is';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const getEl = id => document.getElementById(id);
-const getVal = id => getEl(id).value;
-const getTxt = id => getEl(id).innerText;
+const getVal = id => { const e = getEl(id); return e ? e.value : ""; };
+const getTxt = id => { const e = getEl(id); return e ? e.innerText : ""; };
 const setVal = (id, val) => { const el = getEl(id); if(el) el.value = val; };
 const setTxt = (id, val) => { const el = getEl(id); if(el) el.innerText = val; };
 
 function getStorageKey() { return `mindApp_${getVal("userSelect") || "guest"}_${getVal("eventSelect") || "default"}`; }
+
+// 🟢 3번 항목 문자열 통합 헬퍼 함수
+function getStep3Combined() {
+    return [getVal('step3_1')||"", getVal('step3_2')||"", getVal('step3_3')||""].join('|||');
+}
+
+// 🟢 3번 항목 문자열 분해 및 세팅 헬퍼 함수
+function setStep3Split(val) {
+    val = val || "";
+    if (val.includes('|||')) {
+        const p = val.split('|||');
+        setVal('step3_1', p[0]);
+        setVal('step3_2', p[1]);
+        setVal('step3_3', p[2]);
+    } else {
+        setVal('step3_1', val);
+        setVal('step3_2', '');
+        setVal('step3_3', '');
+    }
+    ['step3_1', 'step3_2', 'step3_3'].forEach(id => {
+        autoResizeTextarea(getEl(id));
+    });
+}
 
 async function saveToSupabase() {
     const user = getVal("userSelect"), event = getVal("eventSelect");
@@ -873,7 +881,7 @@ async function saveToSupabase() {
     try {
         const { error } = await supabaseClient.from('mind_records').upsert({
             user_id: user, event_name: event, title: getVal("mainTitle"),
-            step1: getVal("step1"), step2: getVal("step2"), step3: getTxt("step3"),
+            step1: getVal("step1"), step2: getVal("step2"), step3: getStep3Combined(),
             step4: getVal("step4"), step5: getTxt("step5"), step6: getTxt("step6"),
             step7: getVal("step7"), step8: getVal("step8"), updated_at: new Date()
         }, { onConflict: 'user_id, event_name' });
@@ -890,7 +898,8 @@ async function loadFromSupabase() {
         if (error) throw error; if (!data) return alert("저장된 데이터가 없습니다.");
         if(confirm("클라우드 데이터를 불러올까요?")) {
             setVal("mainTitle", data.title || ""); setVal("step1", data.step1 || ""); setVal("step2", data.step2 || "");
-            setTxt("step3", data.step3 || ""); setVal("step4", data.step4 || ""); setTxt("step5", data.step5 || "");
+            setStep3Split(data.step3 || ""); 
+            setVal("step4", data.step4 || ""); setTxt("step5", data.step5 || "");
             setTxt("step6", data.step6 || ""); setVal("step7", data.step7 || ""); setVal("step8", data.step8 || "");
             saveAllToLocal(); updateContextDisplay(data.step1 || ""); alert("✅ 불러오기 성공!");
         }
@@ -913,7 +922,6 @@ function showSection(type) {
     getEl(type + '-section').classList.add('active');
     
     getEl('fixedBottomBar').style.display = (type === 'record') ? 'flex' : 'none';
-    
     if(type !== 'record') renderGrid(type);
     
     const step1Val = getVal('step1');
@@ -922,20 +930,11 @@ function showSection(type) {
     getEl('context-display-judgment').innerText = step1Val || "기록장에서 사건을 먼저 입력해 보세요.";
 }
 
-// 서브 탭 토글 함수
 function showSubEmotion(type) {
-    getEl('btn-sub-cards').classList.remove('active');
-    getEl('btn-sub-plutchik').classList.remove('active');
-    getEl('sub-emotion-cards').style.display = 'none';
-    getEl('sub-emotion-plutchik').style.display = 'none';
-    
-    if(type === 'cards') {
-        getEl('btn-sub-cards').classList.add('active');
-        getEl('sub-emotion-cards').style.display = 'block';
-    } else {
-        getEl('btn-sub-plutchik').classList.add('active');
-        getEl('sub-emotion-plutchik').style.display = 'block';
-    }
+    getEl('btn-sub-cards').classList.remove('active'); getEl('btn-sub-plutchik').classList.remove('active');
+    getEl('sub-emotion-cards').style.display = 'none'; getEl('sub-emotion-plutchik').style.display = 'none';
+    if(type === 'cards') { getEl('btn-sub-cards').classList.add('active'); getEl('sub-emotion-cards').style.display = 'block'; }
+    else { getEl('btn-sub-plutchik').classList.add('active'); getEl('sub-emotion-plutchik').style.display = 'block'; }
 }
 
 function updateContextDisplay(val) {
@@ -943,77 +942,83 @@ function updateContextDisplay(val) {
     getEl('context-display-emotions').innerText = txt; getEl('context-display-needs').innerText = txt; getEl('context-display-judgment').innerText = txt;
 }
 
+// 🟢 모달창에서 선택에 따라 타겟 변경
 function addToRecord(type, name, btn) {
-    const target = getEl(type === 'emotions' ? 'step2' : 'step4');
-    const item = (type === 'emotions' ? emotionsData : needsData).find(d => d.name === name);
+    let targetId = 'step4';
+    let dataType = type;
+    
+    if (type === 'emotions') {
+        targetId = 'step2';
+    } else if (type === 'judgment_other') {
+        targetId = 'step3_2';
+        dataType = 'judgment';
+    } else if (type === 'judgment_self') {
+        targetId = 'step3_3';
+        dataType = 'judgment';
+    }
+    
+    const target = getEl(targetId);
+    const item = (dataType === 'emotions' ? emotionsData : (dataType === 'needs' ? needsData : judgmentData)).find(d => d.name === name);
     const entryText = `• ${name} : ${item ? item.desc : ""}`;
-    let cur = target.value || target.innerText;
+    let cur = target.value || target.innerText || "";
     if (cur.split('\n').some(l => l.trim().startsWith(`• ${name} :`))) { alert("이미 기록장에 추가된 항목입니다."); return closeModal(); }
     const next = cur.trim() ? `${cur.trim()}\n${entryText}` : entryText;
+    
     if (target.tagName === "TEXTAREA") { target.value = next; autoResizeTextarea(target); } else { target.innerText = next; }
+    
     saveAllToLocal();
     const orig = btn.innerHTML; btn.innerHTML = `✅ 추가됨`;
     setTimeout(() => { btn.innerHTML = orig; closeModal(); }, 300);
 }
 
+// 🟢 판단 카드 시 버튼 2개 생성
 function openModal(type, name) {
     let item;
     if (type === 'needs') item = needsData.find(d => d.name === name);
     else if (type === 'judgment') item = judgmentData.find(d => d.name === name);
     else item = emotionsData.find(d => d.name === name);
-    
     if (!item) return;
 
     const modal = getEl('cardModal'), body = getEl('modalBody');
     const emojis = {joy:"😊", love:"❤️", peace:"🌿", anx:"😰", ang:"🔥", sad:"💧", auto:"🦋", conn:"🤝", well:"🍎", meaning:"💎", low:"📉", irr:"🌀", res:"⚖️", neg:"🚫", pre:"🧐"};
     const catKey = item.cat.split('-')[1];
-    
     modal.querySelector('.modal-content').style.borderTop = `10px solid var(--accent-blue)`;
     
     let html = `<div style="font-size:60px; text-align:center; margin:20px 0 10px;">${emojis[catKey] || "✨"}</div><div class="title">${item.name}</div><div class="desc">${item.desc}</div>`;
-    
     if (type === 'needs') {
         html += `<span class="section-label">충족 시</span><div>${item.sat.map(s => `<span class="emotion-tag tag-sat">${s}</span>`).join('')}</div>
                  <span class="section-label">미충족 시</span><div>${item.unsat.map(s => `<span class="emotion-tag tag-unsat">${s}</span>`).join('')}</div>
                  <div class="action-box" style="margin-top:20px;">${item.action}</div>`;
         html += `<button class="add-to-record-btn" style="margin-top:25px;" onclick="addToRecord('${type}', '${item.name}', this)">＋ 기록장에 추가</button>`;
     } else if (type === 'judgment') {
-        html += `<span class="section-label">상황</span><div class="content-text">${item.sit}</div>
-                 <span class="section-label">몸의 상태</span><div class="body-status">${item.body}</div>
+        html += `<span class="section-label">상황</span><div class="content-text">${item.sit}</div><span class="section-label">몸의 상태</span><div class="body-status">${item.body}</div>
                  <span class="section-label">확언</span><div class="affirmation-box" style="background:#f9f9f9; padding:15px; border-radius:10px; font-style:italic;">"${item.aff}"</div>`;
+        // 버튼 2개 생성
+        html += `<div style="display:flex; gap:10px; margin-top:25px;">
+                    <button class="add-to-record-btn" style="background:var(--danger-red); margin-top:0;" onclick="addToRecord('judgment_other', '${item.name}', this)">＋ 상대에 대한 판단 추가</button>
+                    <button class="add-to-record-btn" style="background:var(--primary-blue); margin-top:0;" onclick="addToRecord('judgment_self', '${item.name}', this)">＋ 나에 대한 판단 추가</button>
+                 </div>`;
     } else {
         html += `<span class="section-label">상황</span><div class="content-text">${item.sit}</div><span class="section-label">몸의 상태</span><div class="body-status">${item.body}</div>
                  <span class="section-label">확언</span><div class="affirmation-box" style="background:#f9f9f9; padding:15px; border-radius:10px; font-style:italic;">"${item.aff}"</div>`;
         html += `<button class="add-to-record-btn" style="margin-top:25px;" onclick="addToRecord('${type}', '${item.name}', this)">＋ 기록장에 추가</button>`;
     }
     
-    body.innerHTML = html;
-    modal.style.display = 'flex'; 
-    document.body.style.overflow = 'hidden';
+    body.innerHTML = html; modal.style.display = 'flex'; document.body.style.overflow = 'hidden';
 }
 
 function closeModal(event) {
     if (event && event.target.id !== 'cardModal') return;
-    const modal = getEl('cardModal');
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto';
+    getEl('cardModal').style.display = 'none'; document.body.style.overflow = 'auto';
 }
 
 function renderGrid(type) {
-    const idx = getEl(type + '-index');
-    if (idx.children.length > 0) return;
-    
-    let data;
-    if (type === 'needs') data = needsData;
-    else if (type === 'judgment') data = judgmentData;
-    else data = emotionsData;
-
+    const idx = getEl(type + '-index'); if (idx.children.length > 0) return;
+    let data = type === 'needs' ? needsData : (type === 'judgment' ? judgmentData : emotionsData);
     data.forEach(item => {
         const link = document.createElement('div');
-        const catSuffix = item.cat.split('-')[1]; 
-        link.className = `item-link link-${catSuffix}`;
-        link.innerText = item.name;
-        link.onclick = () => openModal(type, item.name);
+        link.className = `item-link link-${item.cat.split('-')[1]}`;
+        link.innerText = item.name; link.onclick = () => openModal(type, item.name);
         idx.appendChild(link);
     });
 }
@@ -1049,24 +1054,16 @@ function addEvent() {
 function editEvent() {
     const u = getVal("userSelect"), oldEvent = getVal("eventSelect");
     if (!u || u === "사용자 없음" || !oldEvent || oldEvent === "사건 없음") return alert("수정할 사건을 먼저 선택해주세요.");
-    
     const newEvent = prompt(`사건 '${oldEvent}'의 새로운 이름을 입력하세요:`, oldEvent);
     if (!newEvent || newEvent.trim() === "" || newEvent.trim() === oldEvent) return;
     
-    const eName = newEvent.trim();
-    let evs = JSON.parse(localStorage.getItem(`events_${u}`) || "[]");
+    const eName = newEvent.trim(); let evs = JSON.parse(localStorage.getItem(`events_${u}`) || "[]");
     if (evs.includes(eName)) return alert("이미 존재하는 사건명입니다.");
     
-    const idx = evs.indexOf(oldEvent);
-    if (idx !== -1) { evs[idx] = eName; localStorage.setItem(`events_${u}`, JSON.stringify(evs)); }
-    
+    const idx = evs.indexOf(oldEvent); if (idx !== -1) { evs[idx] = eName; localStorage.setItem(`events_${u}`, JSON.stringify(evs)); }
     const oldPrefix = `mindApp_${u}_${oldEvent}`, newPrefix = `mindApp_${u}_${eName}`;
     const suffixes = ["_title", "_step1", "_step2", "_step3", "_step4", "_step5", "_step6", "_step7", "_step8", "_gemini_resp_1", "_gemini_resp_2"];
-    suffixes.forEach(suffix => {
-        const val = localStorage.getItem(oldPrefix + suffix);
-        if (val !== null) { localStorage.setItem(newPrefix + suffix, val); localStorage.removeItem(oldPrefix + suffix); }
-    });
-    
+    suffixes.forEach(suffix => { const val = localStorage.getItem(oldPrefix + suffix); if (val !== null) { localStorage.setItem(newPrefix + suffix, val); localStorage.removeItem(oldPrefix + suffix); } });
     if (localStorage.getItem(`lastSelectedEvent_${u}`) === oldEvent) localStorage.setItem(`lastSelectedEvent_${u}`, eName);
     renderEventList(eName); alert(`사건명이 성공적으로 변경되었습니다.`);
 }
@@ -1094,7 +1091,9 @@ function syncTitleAndLoad() {
     if(u && u !== "사용자 없음") localStorage.setItem("lastSelectedUser", u);
     if(e && e !== "사건 없음") localStorage.setItem(`lastSelectedEvent_${u}`, e);
     if (!u || u === "사용자 없음" || !e || e === "사건 없음") {
-        setVal("mainTitle", ""); for(let i=1; i<=8; i++) { const el = getEl("step"+i); if(el) el.tagName === "TEXTAREA" ? el.value = "" : el.innerText = ""; }
+        setVal("mainTitle", ""); 
+        setStep3Split("");
+        for(let i=1; i<=8; i++) { if(i===3) continue; const el = getEl("step"+i); if(el) el.tagName === "TEXTAREA" ? el.value = "" : el.innerText = ""; }
         return loadStep9Global();
     }
     let evs = JSON.parse(localStorage.getItem(`events_${u}`) || "[]");
@@ -1103,7 +1102,11 @@ function syncTitleAndLoad() {
         getEl("eventSelect").innerHTML = evs.map(x => `<option value="${x}">${x}</option>`).join(''); getEl("eventSelect").value = e;
     }
     const key = getStorageKey(); setVal("mainTitle", localStorage.getItem(key + "_title") || e || "");
+    
+    setStep3Split(localStorage.getItem(key + "_step3") || "");
+
     for(let i=1; i<=8; i++) {
+        if (i===3) continue;
         const val = localStorage.getItem(key + "_step" + i) || "", el = getEl("step"+i); if(!el) continue;
         if(el.tagName === "TEXTAREA") { el.value = val; autoResizeTextarea(el); } else el.innerText = val;
     }
@@ -1126,18 +1129,19 @@ function saveAllToLocal() {
         getEl("eventSelect").innerHTML = evs.map(x => `<option value="${x}">${x}</option>`).join(''); getEl("eventSelect").value = e;
     }
     const key = getStorageKey(); localStorage.setItem(key + "_title", getVal("mainTitle"));
-    for(let i=1; i<=8; i++) { const el = getEl("step" + i); if(el) localStorage.setItem(key + "_step" + i, el.tagName === "TEXTAREA" ? el.value : el.innerText); }
+    
+    localStorage.setItem(key + "_step3", getStep3Combined());
+
+    for(let i=1; i<=8; i++) {
+        if(i===3) continue;
+        const el = getEl("step" + i); if(el) localStorage.setItem(key + "_step" + i, el.tagName === "TEXTAREA" ? el.value : el.innerText); 
+    }
 }
 
 function openGeminiModal(text) { setTxt("geminiModalBody", text); getEl("geminiModal").style.display = "flex"; document.body.style.overflow = "hidden"; }
 function closeGeminiModal(e) { if (e && e.target !== e.currentTarget) return; getEl("geminiModal").style.display = "none"; document.body.style.overflow = "auto"; }
 function copyGeminiResponseText() { const txt = getTxt("geminiModalBody"); if (txt && !txt.includes("🧠") && !txt.includes("⚠️")) navigator.clipboard.writeText(txt).then(() => alert("📋 복사되었습니다!")); }
-
-function showSavedGeminiResponse(mode) {
-    const key = getStorageKey(), saved = localStorage.getItem(key + "_gemini_resp_" + mode);
-    if (!saved) return alert("저장된 답변이 없습니다. '바로 질문하기'를 먼저 실행해 주세요.");
-    openGeminiModal(saved);
-}
+function showSavedGeminiResponse(mode) { const key = getStorageKey(), saved = localStorage.getItem(key + "_gemini_resp_" + mode); if (!saved) return alert("저장된 답변이 없습니다. '바로 질문하기'를 먼저 실행해 주세요."); openGeminiModal(saved); }
 
 async function askGeminiDirect(mode) {
     const key = getVal("geminiApiKey").trim(); 
@@ -1146,13 +1150,14 @@ async function askGeminiDirect(mode) {
     if (!u || u === "사용자 없음" || !e || e === "사건 없음") return alert("사건 설정을 완료해주세요.");
     
     let promptText = "", btn = getEl("btn-api-q" + mode);
+    const step3Text = `기존 생각: ${getVal('step3_1')}\n상대방에 대한 판단: ${getVal('step3_2')}\n나에 대한 판단: ${getVal('step3_3')}`;
     
     if (mode === 1) {
         if(!getVal('step1') && !getVal('step9')) return alert("내용을 입력해주세요.");
         promptText = `[나의 마음 관찰 기록 - 공감 모드]\n1. 사건: ${getVal('step1')}\n\n[Gemini 질문]\n${getVal('step9')}\n\n[AI 지침: 상대방의 핵심 욕구가 발견되면 반드시 아래 형식으로 작성해줘]\n[상대방의 욕구]\n- 욕구 이름: \n- 추측되는 상황/이유: \n- 나의 해석: \n[/상대방의 욕구]`;
     } else {
         if(!getVal('step1') && !getVal('step9_extra')) return alert("내용을 입력해주세요.");
-        promptText = `[나의 마음 관찰 기록 - 성찰 모드]\n1. 사건: ${getVal('step1')}\n2. 감정: ${getVal('step2')}\n3. 생각: ${getTxt('step3')}\n4. 욕구: ${getVal('step4')}\n5. 이유: ${getTxt('step5')}\n6. 행동: ${getTxt('step6')}\n\n[Gemini 질문]\n${getVal('step9_extra')}`;
+        promptText = `[나의 마음 관찰 기록 - 성찰 모드]\n1. 사건: ${getVal('step1')}\n2. 감정: ${getVal('step2')}\n3. 생각: \n${step3Text}\n4. 욕구: ${getVal('step4')}\n5. 이유: ${getTxt('step5')}\n6. 행동: ${getTxt('step6')}\n\n[Gemini 질문]\n${getVal('step9_extra')}`;
     }
 
     openGeminiModal("제미나이가 기록을 읽고 깊이 생각하는 중입니다... 잠시만 기다려 주세요. 🧠");
@@ -1163,10 +1168,8 @@ async function askGeminiDirect(mode) {
             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
         });
         const data = await resp.json();
-        
         if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
             let res = data.candidates[0].content.parts[0].text;
-            
             if (mode === 1) {
                 const match = res.match(/\[상대방의 욕구\]([\s\S]*?)\[\/상대방의 욕구\]/);
                 if (match?.[1]) {
@@ -1175,16 +1178,14 @@ async function askGeminiDirect(mode) {
                     res = res.replace(/\[상대방의 욕구\][\s\S]*?\[\/상대방의 욕구\]/, "").trim(); 
                 }
             }
-            res = res.replace(/###/g, "").replace(/\*/g, "");
-            localStorage.setItem(getStorageKey() + "_gemini_resp_" + mode, res); 
+            res = res.replace(/###/g, "").replace(/\*/g, ""); localStorage.setItem(getStorageKey() + "_gemini_resp_" + mode, res); 
             saveAllToLocal(); openGeminiModal(res);
         } else { openGeminiModal("⚠️ 응답 해석 실패. 키 정보나 할당량을 확인해주세요.\n" + JSON.stringify(data)); }
     } catch (err) { openGeminiModal("❌ 연결 오류: " + err.message); } finally { btn.disabled = false; btn.innerText = orig; }
 }
 
 async function makeImage() {
-    const btn = getEl("shareBtn");
-    if (btn.disabled) return;
+    const btn = getEl("shareBtn"); if (btn.disabled) return;
     btn.disabled = true; btn.innerText = "생성 중...";
 
     try {
@@ -1193,6 +1194,11 @@ async function makeImage() {
             onclone: (doc) => {
                 doc.getElementById('adminPanel').style.display = 'none'; 
                 doc.getElementById('step9-container').style.display = 'none';
+                
+                // 이미지 공유 시 체크박스 숨김 처리
+                const toggleLabel = doc.getElementById('toggle-judgment-label');
+                if (toggleLabel) toggleLabel.style.display = 'none';
+
                 doc.querySelectorAll('.record-card-desc').forEach(el => el.style.display = 'none');
                 doc.getElementById('capture').style.cssText = 'width:1800px; padding:0;';
                 
@@ -1210,7 +1216,7 @@ async function makeImage() {
                             let t = l.trim(); 
                             if (!t) return '<div style="height: 0.8em;"></div>';
                             const isStep8 = ta.id === 'step8';
-                            const shouldAddBullet = !isStep8 && !t.startsWith('•') && !t.startsWith('-') && !t.startsWith('*');
+                            const shouldAddBullet = !isStep8 && !t.startsWith('•') && !t.startsWith('-') && !t.startsWith('*') && !t.match(/^[①②③]/);
                             t = t.replace(/\(([^)]+)\)/g, '<span style="color: #007AFF; font-weight: normal;">($1)</span>');
                             const indentStyle = isStep8 ? 'padding-left:0;' : 'padding-left:1.4em; text-indent:-0.7em;';
                             return `<div style="${indentStyle} word-break:break-all; ${i === a.length - 1 ? "" : "border-bottom:2px dashed #cbd6e2; padding-bottom:25px; margin-bottom:25px;"}">${shouldAddBullet ? '• ' : ''}${t}</div>`;
@@ -1219,6 +1225,8 @@ async function makeImage() {
                     ta.replaceWith(d);
                 });
                 doc.querySelectorAll('.record-card-title').forEach(el => el.style.cssText = 'font-size:45px; margin-bottom:15px; color:#007AFF;');
+                doc.querySelectorAll('.badge').forEach(b => { b.style.cssText += "padding: 10px 15px; font-size: 30px; border-radius: 12px; margin-right: 15px; display:inline-block;"; });
+                doc.querySelectorAll('[style*="font-size: 0.85rem;"]').forEach(e => { e.style.fontSize = "38px"; e.style.marginBottom = "20px"; });
             }
         });
 
@@ -1245,73 +1253,51 @@ async function makeImage() {
 function togglestep9() { const c = getEl('step9-content'), i = getEl('toggle-icon'), isNone = c.style.display === 'none'; c.style.display = isNone ? 'block' : 'none'; i.innerText = isNone ? '▼' : '▲'; }
 function closePreview() { getEl("previewBox").style.display = "none"; }
 function copyCombined(mode) {
+    const step3Text = `기존 생각: ${getVal('step3_1')}\n상대방에 대한 판단: ${getVal('step3_2')}\n나에 대한 판단: ${getVal('step3_3')}`;
     const txt = mode === 1 ? `[나의 마음 관찰 기록 - 공감 모드]\n1. 사건: ${getVal('step1')}\n\n[Gemini 질문]\n${getVal('step9')}` :
-                          `[나의 마음 관찰 기록 - 성찰 모드]\n1. 사건: ${getVal('step1')}\n2. 감정: ${getVal('step2')}\n3. 생각: ${getTxt('step3')}\n4. 욕구: ${getVal('step4')}\n5. 이유: ${getTxt('step5')}\n6. 행동: ${getTxt('step6')}\n\n[Gemini 질문]\n${getVal('step9_extra')}`;
+                          `[나의 마음 관찰 기록 - 성찰 모드]\n1. 사건: ${getVal('step1')}\n2. 감정: ${getVal('step2')}\n3. 생각:\n${step3Text}\n4. 욕구: ${getVal('step4')}\n5. 이유: ${getTxt('step5')}\n6. 행동: ${getTxt('step6')}\n\n[Gemini 질문]\n${getVal('step9_extra')}`;
     navigator.clipboard.writeText(txt).then(() => alert("복사되었습니다!")).catch(() => alert("복사 실패"));
 }
 
-// 플루칙 모달 JS 로직
-const pModalOverlay = getEl('p-emotionModal');
-const pModalHeader = getEl('p-modalHeader');
-const pModalTitle = getEl('p-modalTitle');
-const pModalBody = getEl('p-modalBody');
+function toggleJudgmentFields() {
+    const container = getEl("judgment-fields-container");
+    const checkbox = getEl("toggle-judgment-checkbox");
+    if (!container || !checkbox) return;
 
-function openPlutchikModal(emotionKey, bgColor, textColor) {
-    const data = plutchikEmotionData[emotionKey];
-    if(!data) return;
-
-    pModalHeader.style.backgroundColor = bgColor;
-    pModalHeader.style.color = textColor;
-    pModalTitle.innerHTML = `${data.kor} <span class="eng" style="color: ${textColor}">${data.eng}</span>`;
-    
-    let tagsHtml = data.tags.map(tag => `<span class="p-tag">${tag}</span>`).join('');
-    let pointsHtml = data.points.map(point => `<li>${point}</li>`).join('');
-
-    let relatedHtml = '';
-    if (data.related_emotions && data.related_emotions.length > 0) {
-        let relatedTags = data.related_emotions.map(emotion => `<span class="p-related-tag">${emotion}</span>`).join('');
-        relatedHtml = `<h3>분류된 파생 및 유의 감정</h3><div class="p-related-tags-container">${relatedTags}</div>`;
+    if (checkbox.checked) {
+        container.style.display = "none";
+        localStorage.setItem("mindApp_hide_judgment", "true");
+    } else {
+        container.style.display = "block";
+        localStorage.setItem("mindApp_hide_judgment", "false");
     }
-
-    pModalBody.innerHTML = `
-        <div>${tagsHtml}</div>
-        <h3>정의와 구성 요소</h3>
-        <p>${data.desc}</p>
-        <h3>주요 특성</h3>
-        <ul>${pointsHtml}</ul>
-        ${relatedHtml}
-        <p style="font-size:0.9em; color:#888; text-align:right; margin-top:30px; border-top:1px dashed #eee; padding-top:10px;">
-            ※ 오시바 요시노부 『감정어 사전』 및 플루칙 스펙트럼 기반 재분류
-        </p>
-    `;
-
-    pModalOverlay.classList.add('active');
-    setTimeout(() => { pModalBody.scrollTop = 0; }, 10);
 }
-
-function closePlutchikModal() { pModalOverlay.classList.remove('active'); }
-getEl('p-closeModal').addEventListener('click', closePlutchikModal);
-pModalOverlay.addEventListener('click', (e) => { if(e.target === pModalOverlay) closePlutchikModal(); });
 
 window.onload = function() {
     renderUserList(localStorage.getItem("lastSelectedUser"));
+    
     document.querySelectorAll("textarea").forEach(ta => {
         ta.addEventListener("input", (e) => { autoResizeTextarea(e.target); saveAllToLocal(); if(e.target.id === 'step1') updateContextDisplay(e.target.value); });
         setTimeout(() => autoResizeTextarea(ta), 200); 
     });
     getEl("record-section").addEventListener("input", e => { if(e.target.classList.contains('editable-list') || e.target.id === 'mainTitle' || e.target.id === 'step7' || e.target.id === 'step8') saveAllToLocal(); });
+
     loadStep9Global();
     getEl("geminiApiKey")?.addEventListener("input", e => localStorage.setItem("gemini_api_key", e.target.value.trim()));
+
+// 🟢 새로고침 시 판단창(상대/나) 숨기기 상태 복구 (기본값이 숨기기)
+    const hideJudgment = localStorage.getItem("mindApp_hide_judgment");
+    const checkbox = getEl("toggle-judgment-checkbox");
+    const container = getEl("judgment-fields-container");
     
-    // 플루칙 카드 이벤트 바인딩
-    document.querySelectorAll('[data-emotion]').forEach(element => {
-        element.addEventListener('click', () => {
-            const emotionKey = element.getAttribute('data-emotion');
-            const bgColor = element.getAttribute('data-color');
-            const textColor = element.getAttribute('data-text');
-            openPlutchikModal(emotionKey, bgColor, textColor);
-        });
-    });
+    // 명시적으로 '보이기(false)'로 설정한 적이 있을 때만 보여줍니다.
+    if (hideJudgment === "false") {
+        if (checkbox) checkbox.checked = true;
+        if (container) container.style.display = "block";
+    } else {
+        if (checkbox) checkbox.checked = true;
+        if (container) container.style.display = "none";
+    }
 };
 </script>
 </body>
